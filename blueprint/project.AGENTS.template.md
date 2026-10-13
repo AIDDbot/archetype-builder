@@ -75,7 +75,7 @@ Contracts:
 | Concept | Path | Framework mechanism |
 | --- | --- | --- |
 | composition | `{source_root}/{main_file}`, `{source_root}/{compose_file}`, `{manifest_file}` | {mechanism} |
-| `core` | `{source_root}/{core_folder}/` | {mechanism} |
+| `core` | `{source_root}/{core_folder}/{core_file_pattern}`, such as `app.config.ts` | {mechanism} |
 | features | `{source_root}/{features_folder}/` | {mechanism} |
 | facade | `{feature}/{facade_file}` | {mechanism} |
 | `presentation` / `logic` / `data` / types | `{presentation_files}` / `{logic_files}` / `{data_files}` / `{type_files}` | {mechanism} |
