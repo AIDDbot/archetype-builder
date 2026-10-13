@@ -59,6 +59,8 @@ Do one project before you start the next. Commit each step alone, so that each s
 
 After the last project, run `/outline-system`. It writes the root `AGENTS.md` with the Blueprint of the release, and the schema documents in `.product/model/`. `define-spec` needs them.
 
+Then run `node .agents/aidd/aidd.mjs integrate "chore(scaffold): scaffold the library"`. It merges the scaffold into the default branch, so that each spec starts from there.
+
 ## 4. Deliver the foundation specs
 
 Deliver them one at a time, in the order of [`blueprint/project-types.md`](./blueprint/project-types.md), section 1. A library ships with zero debt, because each system that starts from it copies its debt (Halloween D19). For each spec:
