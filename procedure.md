@@ -4,8 +4,6 @@ A **library** is one repository of archetypes that pass one acceptance suite tog
 
 You make a library with AIDDbot, as a normal system (Halloween D10). This repository gives the generic inputs in `blueprint/`. AIDDbot gives the process.
 
-Write each document of the work system (`system.md`, each `AGENTS.md`, each spec) in English, in ASD-STE100, as the templates are. The language of the request does not change it.
-
 You use two repositories (Halloween D20):
 
 - The **work system**: a normal AIDDbot system, in any folder (such as `experiments/{library}`). You build and repair the archetypes there. Each shipped spec gets a release of the work system; its tags never reach the library.
@@ -15,7 +13,7 @@ You use two repositories (Halloween D20):
 
 - Make an empty git repository for the work system.
 - Install AIDDbot (`npx aiddbot init`) at the release whose Blueprint the library obeys.
-- Write `.product/system.md`: the purpose, the users, and each project with its type (`api`, `web`, `cli`, `e2e`). Use the format of the AIDDbot proposal (`architect-system-foundation/assets/system.template.md`).
+- Write `.product/system.md` in English: the purpose, the users, and each project with its type (`api`, `web`, `cli`, `e2e`). AIDDbot writes each record in the language of `system.md`, and a library ships in English. Use the format of the AIDDbot proposal (`architect-system-foundation/assets/system.template.md`).
 - Write the identity in the root `package.json`: `displayName`, `description`, `author` and `homepage`. `shell` and `about` read it.
 - Do not run `/architect-system-foundation`: it offers only libraries (Halloween D5), and this system makes one.
 
