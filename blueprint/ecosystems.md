@@ -95,7 +95,7 @@ The roles stay the same. The framework gives their place and how the composition
 
 ## `front-web`: the visual base
 
-The `front/` archetype of Archetype Base sets the visual base. An archetype made on demand copies it. The person who adopts AIDDbot changes it in the project.
+The `front/` archetype of Archetype Base sets the visual base. A new library with a `front-web` copies it. For now it is the brand of the author of AIDDbot (Halloween D11).
 
 - Pico CSS and the fonts are dependencies, added with the package manager: `@picocss/pico`, and `@fontsource/roboto` for the text, `@fontsource/audiowide` for the headings, `@fontsource/anonymous-pro` for code. The entry file imports them, and the bundler serves them from the project. No CDN, thus the application operates offline. Never copy their files into the project: the `upgrade` slot keeps them current.
 - Copy [`theme/theme.css`](./theme/theme.css) (typography and spacing on top of Pico), [`theme/colors.css`](./theme/colors.css) (the `--ab-*` brand tokens for the light and dark themes, mapped to the `--pico-*` variables) and [`theme/custom.css`](./theme/custom.css) (components) into the project as they are, with a copy command of the system (`cp`, `Copy-Item`), and import them after Pico. Never read them to write them again: a rewrite costs tokens and can change them. Never invent other colors: the owner changes the values only in these files.
