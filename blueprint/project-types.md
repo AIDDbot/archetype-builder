@@ -37,9 +37,8 @@ The contract of each slot is in [`project.AGENTS.template.md`](./project.AGENTS.
 | `lint` | yes | yes | yes | yes |
 | `format` | yes | yes | yes | yes |
 | `upgrade` | yes | yes | yes | yes |
-| `unit` | yes | yes | yes | n/a: the suite tests the other projects |
-| `start` | yes | yes | n/a: no server; each invocation runs and stops | n/a: it starts the projects |
-| `acceptance` | through `e2e` | through `e2e` | own tests or `e2e` | yes |
+| `test` | unit tests | unit tests | unit tests | unit tests of its `core`, then the acceptance suite, headless; the core reads it as the acceptance evidence |
+| `start` | yes | yes | n/a: no server; each invocation runs and stops | the interactive UI of the runner, for a human only; an agent never runs it |
 | `quality` | yes | yes | yes | yes |
 
 ## 3 · Architecture

@@ -31,7 +31,7 @@ Before the first business feature, each layer of each project must operate with 
 
 - `data` records one run at startup and counts the runs; its table comes in the first migration of the feature.
 - No facade. The route is public when the system has `users`.
-- A `unit` smoke test checks the `logic` with a fake `data`.
+- A unit smoke test checks the `logic` with a fake `data`.
 
 ### web
 
@@ -43,7 +43,7 @@ Before the first business feature, each layer of each project must operate with 
 
 - A local cli: `data` records one run for each invocation and counts the runs. A cli with an `api`: `data` calls `GET /api/health`.
 - A failure of the store or of the `api` goes to `core`; it never gives a successful answer.
-- A `unit` smoke test checks the `logic` with a fake `data`.
+- A unit smoke test checks the `logic` with a fake `data`.
 
 ### e2e
 

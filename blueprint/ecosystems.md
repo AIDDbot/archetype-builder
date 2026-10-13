@@ -10,7 +10,7 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 
 - Use TypeScript 7. Never pin an older major. If a tool does not support TypeScript 7, replace the tool. Do not keep the old TypeScript.
 - Use the oxc family: oxlint for `lint`, layer boundaries, and `quality`; oxfmt for `format`.
-- Use the native Node.js test runner (`node --test`) for `unit`. Node.js runs TypeScript directly.
+- Use the native Node.js test runner (`node --test`) for the unit tests of the `test` slot. Node.js runs TypeScript directly.
 - Do not add a tool that needs the JavaScript API of TypeScript (for example, dependency-cruiser or `@typescript-eslint/parser`).
 - Vite+ is not yet in the stack.
 
@@ -38,9 +38,9 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 **Script names**
 
 - Use the standard npm names, which run without `run`: `test` runs the tests of the project, and `start` runs it.
-- In an `api`, a `web` or a `cli`, `test` is the `unit` slot.
-- In an `e2e` project, `test` is the `acceptance` slot, headless. `start` opens the interactive UI of the runner, for a human only: the `start` slot stays not applicable, and an agent never runs it. `unit` runs the unit tests of its `core`.
-- The other slots keep their names: `lint`, `format`, `upgrade`, `quality`.
+- The slot names are the script names: `lint`, `format`, `upgrade`, `test`, `start`, `quality`.
+- In an `api`, a `web` or a `cli`, `test` runs the unit tests.
+- In an `e2e` project, `test` runs the unit tests of its `core`, then the acceptance suite, headless, such as `node --test "core/*.test.ts" && playwright test`. npm adds the arguments of the core (`--grep @S{nnnn}-`) at the end, so they reach the acceptance tool. `start` opens the interactive UI of the runner, for a human only.
 
 **Scaffold commands**
 
@@ -55,7 +55,7 @@ These commands were tested without a terminal (the input is closed). Run them fr
 
 Use these commands as they are. Test a different generator in a temporary folder before you write it in the proposal.
 
-| Ecosystem | `lint` | Types (inside `lint`) | `format` | `unit` | Boundaries (inside `lint`) | `quality` |
+| Ecosystem | `lint` | Types (inside `lint`) | `format` | unit tests (inside `test`) | Boundaries (inside `lint`) | `quality` |
 | --- | --- | --- | --- | --- | --- | --- |
 | JS / TS on Node | oxlint with `typeAware` and `typeCheck` (`oxlint-tsgolint`) | inside oxlint (`typeCheck`); no `tsc` | oxfmt | `node --test` | oxlint `no-restricted-imports` with `overrides` per folder and file role | oxlint with a second config that extends the first and adds complexity and size rules |
 | Go | `go vet`, golangci-lint | compiler | `gofmt -w` | `go test` | `internal/` + depguard | gocyclo, gocognit |

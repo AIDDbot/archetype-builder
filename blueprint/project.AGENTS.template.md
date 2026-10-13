@@ -34,9 +34,8 @@ Contracts:
 - lint: non-zero exit on an error; includes the strongest type check of the ecosystem and the boundary check.
 - format: rewrites files with the standard formatter; runs before integration; nothing checks it.
 - upgrade: every dependency to its latest release, majors included, and the lockfile. A major that breaks a different tool: keep the last compatible one and write why in the technology rules. Runs at the foundation and on request, never for each delivery.
-- unit: runs real tests; the foundation adds a smoke test of the health logic.
-- start: starts the project without a build; reads PORT; answers on the health route.
-- acceptance: runs the tests tagged @S{nnnn}-R{nn}; passes the arguments that the core adds (such as --grep @S0001-) to the test tool.
+- test: runs the tests of the project. In an `api`, a `web` or a `cli`: the unit tests; the foundation adds a smoke test of the health logic. In an `e2e`: the unit tests of its `core`, then the tests tagged @S{nnnn}-R{nn}, headless; it passes the arguments that the core adds (such as --grep @S0001-) to the acceptance tool.
+- start: starts the project without a build; reads PORT; answers on the health route. In an `e2e`: opens the interactive UI of the runner, for a human only.
 - quality: reports complexity and warnings against the limits of the Blueprint; its findings go to the debt register.
 -->
 
@@ -45,9 +44,8 @@ Contracts:
 | `lint` | Yes | `{command}` | {tool} |
 | `format` | No | `{command}` | {tool} |
 | `upgrade` | No | `{command}` | {tool} |
-| `unit` | Yes | `{command}` | {tool} |
+| `test` | Yes | `{command}` | {tool} |
 | `start` | No | `{command}` | {tool} |
-| `acceptance` | Yes | `{command}` | {tool} |
 | `quality` | No | `{command}` | {tool} |
 
 ## 4 · Architecture
@@ -68,7 +66,7 @@ Contracts:
 | `logic` | {from project-types.md} |
 | `data` | {from project-types.md} |
 | `shared` concerns | {from project-types.md} |
-| `unit` / `start` / `acceptance` | {from project-types.md, section 2} |
+| `test` / `start` | {from project-types.md, section 2} |
 
 ## 5 · Folder structure
 
