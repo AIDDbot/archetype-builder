@@ -61,7 +61,11 @@ After the last project, run `/outline-system`. It writes the root `AGENTS.md` wi
 
 ## 4. Deliver the foundation specs
 
-Deliver them one at a time, in the order of [`blueprint/project-types.md`](./blueprint/project-types.md), section 1. For each one, run `/build-requested-spec` with the request "Deliver the spec from `blueprint/foundation/{spec}.spec.md`". The spec file is the contract: `define-spec` writes the spec from it, with the rows of the types of the library only.
+Deliver them one at a time, in the order of [`blueprint/project-types.md`](./blueprint/project-types.md), section 1. A library ships with zero debt, because each system that starts from it copies its debt (Halloween D19). For each spec:
+
+1. Run `/build-requested-spec` with the request "Deliver the spec from `blueprint/foundation/{spec}.spec.md`". The spec file is the contract: `define-spec` writes the spec from it, with the rows of the types of the library only.
+2. Run `/craft-lasting-quality` one time. It repairs the debt by priority, at most five specs.
+3. Check that `node .agents/aidd/aidd.mjs debt list` shows no open item. If debt remains, stop and report it. Never start the next spec on open debt.
 
 | # | Spec | Condition |
 | --- | --- | --- |
@@ -73,14 +77,7 @@ Deliver them one at a time, in the order of [`blueprint/project-types.md`](./blu
 | 6 | `users` | the system has users |
 | 7 | `presentation` | always |
 
-## 5. Repair the debt to zero
-
-A library ships with zero debt, because each system that starts from it copies its debt (Halloween D19).
-
-- Run `/craft-lasting-quality`. One run repairs the debt by priority, and stops after five specs.
-- Run it again until `node .agents/aidd/aidd.mjs debt list` shows no open item.
-
-## 6. Seed the library
+## 5. Seed the library
 
 - Copy each project folder of the work system to the library, with no `.aiddbot/`, `.product/` or agent folders.
 - Copy the shipped spec instances to `foundation/` and the schema documents to `model/`.
