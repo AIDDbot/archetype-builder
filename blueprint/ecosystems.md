@@ -17,6 +17,7 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 **Type check (inside `lint`)**
 
 - Set `"options": { "typeAware": true, "typeCheck": true }` in the oxlint configuration and add `oxlint-tsgolint`. Then oxlint reports the type errors of TypeScript 7. Do not run `tsc` as a separate step.
+- Set `typescript/no-non-null-assertion` to `error`. A value that can be missing is checked, never asserted with `!`.
 - In a Vue project, oxlint type-checks the `.ts` files with TypeScript 7. Until `vue-tsc` supports TypeScript 7, the `.vue` files have no type check: write this gap in the technology rules.
 
 **Layer boundaries (inside `lint`)**
