@@ -54,7 +54,7 @@ Each project must start in the same way in each environment, with its settings o
 
 ### e2e
 
-- `core` reads `{PROJECT}_DIRECTORY`, `{PROJECT}_PORT`, `{PROJECT}_START` and `E2E_STARTUP_TIMEOUT_MS`; a `cli` has only `CLI_DIRECTORY` and `CLI_START`. An invalid value stops the suite.
+- `core` reads `{PROJECT}_DIRECTORY`, `{PROJECT}_PORT`, `{PROJECT}_START` (default: the `start` slot of the project) and `E2E_STARTUP_TIMEOUT_MS`; a `cli` has only `CLI_DIRECTORY` and `CLI_START`. An invalid value stops the suite.
 - The suite starts each server that does not answer, and stops it after the run, also after a failure. Checked by `review-implementation`, not by an acceptance test.
 - A helper in `shared` starts one project, or runs one `cli` invocation, with the environment and arguments of the test. It gives each one its own temporary database and configuration file, and deletes them after.
 

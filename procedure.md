@@ -48,7 +48,7 @@ Do one project before you start the next. Commit each step alone, so that each s
   - Never pin a major that `ecosystems.md` requires. Replace the tool that breaks.
 - Each project has the configuration file of its `format` tool, also when the defaults are enough. It leaves Markdown out.
 - The ignore file never hides source. Anchor runtime data patterns to the project root.
-- Each tooling slot of that `AGENTS.md` operates. If a mandatory slot is missing (`lint`, `test`, and `start` for runnable projects), install the usual tool of the stack.
+- Each tooling slot of that `AGENTS.md` operates. If a mandatory slot is missing (`lint`, `test`, `start`), install the usual tool of the stack.
 - For JS / TS, start from [`blueprint/oxlint.boundaries.json`](./blueprint/oxlint.boundaries.json) (or [`oxlint.boundaries.e2e.json`](./blueprint/oxlint.boundaries.e2e.json) for `e2e`) and [`blueprint/oxlint.complexity.json`](./blueprint/oxlint.complexity.json).
 - For a `web`, copy [`blueprint/theme/`](./blueprint/theme/) as it is.
 - Register the type and the slots with `node .agents/aidd/aidd.mjs config set projects.{project} '{"type":"{type}",...}'`.
