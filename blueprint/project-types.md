@@ -37,7 +37,7 @@ The contract of each slot is in [`project.AGENTS.template.md`](./project.AGENTS.
 | `lint` | yes | yes | yes | yes |
 | `format` | yes | yes | yes | yes |
 | `upgrade` | yes | yes | yes | yes |
-| `test` | unit tests | unit tests | unit tests | unit tests of its `core`, then the acceptance suite, headless; the core reads it as the acceptance evidence |
+| `test` | unit tests | unit tests | unit tests | the acceptance suite, headless; no unit tests, because each run proves its `core`; the core reads it as the acceptance evidence |
 | `start` | starts the server: reads `PORT`, answers on the health route | starts the server: reads `PORT`, answers on `/` | runs one invocation with the arguments that it gets; the `e2e` uses it as `CLI_START` | opens the interactive UI of the runner, for a human only; an agent never runs it |
 | `quality` | yes | yes | yes | yes |
 

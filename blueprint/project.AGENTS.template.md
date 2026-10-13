@@ -34,7 +34,7 @@ Contracts:
 - lint: non-zero exit on an error; includes the strongest type check of the ecosystem and the boundary check.
 - format: rewrites files with the standard formatter; runs before integration; nothing checks it.
 - upgrade: every dependency to its latest release, majors included, and the lockfile. A major that breaks a different tool: keep the last compatible one and write why in the technology rules. Runs at the foundation and on request, never for each delivery.
-- test: runs the tests of the project. In an `api`, a `web` or a `cli`: the unit tests; the foundation adds a smoke test of the health logic. In an `e2e`: the unit tests of its `core`, then the tests tagged @S{nnnn}-R{nn}, headless; it passes the arguments that the core adds (such as --grep @S0001-) to the acceptance tool.
+- test: runs the tests of the project. In an `api`, a `web` or a `cli`: the unit tests; the foundation adds a smoke test of the health logic. In an `e2e`: the tests tagged @S{nnnn}-R{nn}, headless, and no unit tests, because each run proves its `core`; it passes the arguments that the core adds (such as --grep @S0001-) to the acceptance tool.
 - start: runs the project without a build. In an `api` or a `web`: starts the server; reads PORT; answers on the health route. In a `cli`: runs one invocation with the arguments that it gets. In an `e2e`: opens the interactive UI of the runner, for a human only.
 - quality: reports complexity and warnings against the limits of the Blueprint; its findings go to the debt register.
 -->

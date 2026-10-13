@@ -40,7 +40,7 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 - Use the standard npm names, which run without `run`: `test` runs the tests of the project, and `start` runs it.
 - The slot names are the script names: `lint`, `format`, `upgrade`, `test`, `start`, `quality`.
 - In an `api`, a `web` or a `cli`, `test` runs the unit tests.
-- In an `e2e` project, `test` runs the unit tests of its `core`, then the acceptance suite, headless, such as `node --test "core/*.test.ts" && playwright test`. npm adds the arguments of the core (`--grep @S{nnnn}-`) at the end, so they reach the acceptance tool. `start` opens the interactive UI of the runner, for a human only.
+- In an `e2e` project, `test` runs the acceptance suite, headless: `playwright test --pass-with-no-tests`, so that the scaffold passes before the first spec. npm adds the arguments of the core (`--grep @S{nnnn}-`) at the end. An `e2e` has no unit tests: each run proves its `core`. `start` opens the interactive UI of the runner, for a human only.
 
 **Scaffold commands**
 
