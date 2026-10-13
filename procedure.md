@@ -4,11 +4,18 @@ A **library** is one repository of archetypes that pass one acceptance suite tog
 
 You make a library with AIDDbot, as a normal system (Halloween D10). This repository gives the generic inputs in `blueprint/`. AIDDbot gives the process.
 
-## 1. Start the repository
+You use two repositories (Halloween D20):
 
-- Make an empty repository in the `AIDDbot` organization, named `archetype-{name}`.
+- The **work system**: a normal AIDDbot system, in any folder (such as `experiments/{library}`). You build and repair the archetypes there. Each shipped spec gets a release of the work system; its tags never reach the library.
+- The **library**: the repository `AIDDbot/archetype-{name}`. It gets only the result (the seed), and only releases at the `major.minor` of AIDDbot (Halloween D6).
+
+## 1. Start the work system
+
+- Make an empty git repository for the work system.
 - Install AIDDbot (`npx aiddbot init`) at the release whose Blueprint the library obeys.
-- Write the root `AGENTS.md` with the Blueprint of that release, and a library gate (see [Archetype Base](https://github.com/AIDDbot/archetype-base/blob/main/AGENTS.md)).
+- Write `.product/system.md`: the purpose, the users, and each project with its type (`api`, `web`, `cli`, `e2e`). Use the format of the AIDDbot proposal (`architect-system-foundation/assets/system.template.md`).
+- Write the identity in the root `package.json`: `displayName`, `description`, `author` and `homepage`. `shell` and `about` read it.
+- Do not run `/architect-system-foundation`: it offers only libraries (Halloween D5), and this system makes one.
 
 ## 2. Scaffold each project
 
@@ -48,7 +55,11 @@ Do one project before you start the next. Commit each step alone, so that each s
 - `lint` and `test` pass before the commit; in an `e2e` project, only the unit tests of its `core`, because no project to test exists yet.
 - Prove the boundary check: add an import that the architecture forbids, make sure that `lint` fails, then remove the import.
 
-## 3. Deliver the foundation specs
+## 3. Outline the system
+
+After the last project, run `/outline-system`. It writes the root `AGENTS.md` with the Blueprint of the release, and the schema documents in `.product/model/`. `define-spec` needs them.
+
+## 4. Deliver the foundation specs
 
 Deliver them one at a time, in the order of [`blueprint/project-types.md`](./blueprint/project-types.md), section 1. For each one, run `/build-requested-spec` with the request "Deliver the spec from `blueprint/foundation/{spec}.spec.md`". The spec file is the contract: `define-spec` writes the spec from it, with the rows of the types of the library only.
 
@@ -62,9 +73,17 @@ Deliver them one at a time, in the order of [`blueprint/project-types.md`](./blu
 | 6 | `users` | the system has users |
 | 7 | `presentation` | always |
 
-## 4. Close the library
+## 5. Repair the debt to zero
 
-- Run `/craft-lasting-quality` until no debt is open. A library ships with zero debt, because each system that starts from it copies its debt.
+A library ships with zero debt, because each system that starts from it copies its debt (Halloween D19).
+
+- Run `/craft-lasting-quality`. One run repairs the debt by priority, and stops after five specs.
+- Run it again until `node .agents/aidd/aidd.mjs debt list` shows no open item.
+
+## 6. Seed the library
+
+- Copy each project folder of the work system to the library, with no `.aiddbot/`, `.product/` or agent folders.
 - Copy the shipped spec instances to `foundation/` and the schema documents to `model/`.
+- Write the root `AGENTS.md` of the library: the Blueprint of the root `AGENTS.md` of the work system, and a library gate (see [Archetype Base](https://github.com/AIDDbot/archetype-base/blob/main/AGENTS.md)).
 - The library gate passes.
 - Release at the `major.minor` and codename of the AIDDbot release, with tag `v{version}`. Then pin the tag in the AIDDbot catalog (`architect-system-foundation/assets/archetypes.md`).
