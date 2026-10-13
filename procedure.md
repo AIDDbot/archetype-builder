@@ -4,6 +4,8 @@ A **library** is one repository of archetypes that pass one acceptance suite tog
 
 You make a library with AIDDbot, as a normal system (Halloween D10). This repository gives the generic inputs in `blueprint/`. AIDDbot gives the process.
 
+Write each document of the work system (`system.md`, each `AGENTS.md`, each spec) in English, in ASD-STE100, as the templates are. The language of the request does not change it.
+
 You use two repositories (Halloween D20):
 
 - The **work system**: a normal AIDDbot system, in any folder (such as `experiments/{library}`). You build and repair the archetypes there. Each shipped spec gets a release of the work system; its tags never reach the library.
