@@ -2,9 +2,9 @@
 
 Guidance to fill the Tooling section of [`project.AGENTS.template.md`](./project.AGENTS.template.md). It never obliges: the archetype chooses the best tool for its stack, and any tool that meets the slot contract is valid.
 
-## JS / TS: the required stack
+## JS / TS on Node: the required stack
 
-JS / TS is the exception: AIDDbot sets its stack. Reference: `back/` of Archetype Base (`.oxlintrc.json`, `.oxlint.boundaries.json`, `.oxlint.quality.json`, `.oxfmtrc.json`).
+JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such as Bun, are not in the stack yet (Halloween D16). Reference: `back/` of Archetype Base (`.oxlintrc.json`, `.oxlint.boundaries.json`, `.oxlint.quality.json`, `.oxfmtrc.json`).
 
 **TypeScript and tools**
 
@@ -38,7 +38,7 @@ JS / TS is the exception: AIDDbot sets its stack. Reference: `back/` of Archetyp
 **Script names**
 
 - Use the standard npm names, which run without `run`: `test` runs the tests of the project, and `start` runs it.
-- In a `back-api`, a `front-web` or a `cli`, `test` is the `unit` slot.
+- In an `api`, a `web` or a `cli`, `test` is the `unit` slot.
 - In an `e2e` project, `test` is the `acceptance` slot, headless. `start` opens the interactive UI of the runner, for a human only: the `start` slot stays not applicable, and an agent never runs it. `unit` runs the unit tests of its `core`.
 - The other slots keep their names: `lint`, `format`, `upgrade`, `quality`.
 
@@ -48,16 +48,16 @@ These commands were tested without a terminal (the input is closed). Run them fr
 
 | Project | Command | Notes |
 | --- | --- | --- |
-| `back-api` | `mkdir back && (cd back && npm init -y --init-type=module)` | Writes only `package.json`. Add an ignore file with `/node_modules/` before the first commit. |
+| `api` | `mkdir back && (cd back && npm init -y --init-type=module)` | Writes only `package.json`. Add an ignore file with `/node_modules/` before the first commit. |
 | `cli` | `mkdir cli && (cd cli && npm init -y --init-type=module)` | Writes only `package.json`. Add `bin` and an ignore file with `/node_modules/` before the first commit. |
-| `front-web` | `npm create vite@latest front -- --template vanilla-ts --no-interactive --no-immediate` | Installs nothing; run `npm install` in the folder. |
-| `e2e` | `npm init playwright@latest e2e -- --quiet --browser=chromium --lang=TypeScript --no-examples --no-browsers` | Installs its dependencies, but no browser: run `npx playwright install chromium` in the folder only when the system has a `front-web`. |
+| `web` | `npm create vite@latest front -- --template vanilla-ts --no-interactive --no-immediate` | Installs nothing; run `npm install` in the folder. |
+| `e2e` | `npm init playwright@latest e2e -- --quiet --browser=chromium --lang=TypeScript --no-examples --no-browsers` | Installs its dependencies, but no browser: run `npx playwright install chromium` in the folder only when the system has a `web`. |
 
 Use these commands as they are. Test a different generator in a temporary folder before you write it in the proposal.
 
 | Ecosystem | `lint` | Types (inside `lint`) | `format` | `unit` | Boundaries (inside `lint`) | `quality` |
 | --- | --- | --- | --- | --- | --- | --- |
-| JS / TS | oxlint with `typeAware` and `typeCheck` (`oxlint-tsgolint`) | inside oxlint (`typeCheck`); no `tsc` | oxfmt | `node --test` | oxlint `no-restricted-imports` with `overrides` per folder and file role | oxlint with a second config that extends the first and adds complexity and size rules |
+| JS / TS on Node | oxlint with `typeAware` and `typeCheck` (`oxlint-tsgolint`) | inside oxlint (`typeCheck`); no `tsc` | oxfmt | `node --test` | oxlint `no-restricted-imports` with `overrides` per folder and file role | oxlint with a second config that extends the first and adds complexity and size rules |
 | Go | `go vet`, golangci-lint | compiler | `gofmt -w` | `go test` | `internal/` + depguard | gocyclo, gocognit |
 | Rust | `cargo clippy` | compiler | `cargo fmt` | `cargo test` | module visibility | `clippy::cognitive_complexity` |
 | PHP | PHP_CodeSniffer | PHPStan, Psalm | `php-cs-fixer fix` | PHPUnit, Pest | Deptrac | PHPMD |
@@ -93,9 +93,9 @@ The roles stay the same. The framework gives their place and how the composition
 | registration | `{feature}.routes.ts` | the feature module | `{feature}.routes.ts` |
 | facade | `{feature}.api.ts` | the `exports` of the feature module | `{feature}.api.ts` |
 
-## `front-web`: the visual base
+## `web`: the visual base
 
-The `front/` archetype of Archetype Base sets the visual base. A new library with a `front-web` copies it. For now it is the brand of the author of AIDDbot (Halloween D11).
+The `front/` archetype of Archetype Base sets the visual base. A new library with a `web` copies it. For now it is the brand of the author of AIDDbot (Halloween D11).
 
 - Pico CSS and the fonts are dependencies, added with the package manager: `@picocss/pico`, and `@fontsource/roboto` for the text, `@fontsource/audiowide` for the headings, `@fontsource/anonymous-pro` for code. The entry file imports them, and the bundler serves them from the project. No CDN, thus the application operates offline. Never copy their files into the project: the `upgrade` slot keeps them current.
 - Copy [`theme/theme.css`](./theme/theme.css) (typography and spacing on top of Pico), [`theme/colors.css`](./theme/colors.css) (the `--ab-*` brand tokens for the light and dark themes, mapped to the `--pico-*` variables) and [`theme/custom.css`](./theme/custom.css) (components) into the project as they are, with a copy command of the system (`cp`, `Copy-Item`), and import them after Pico. Never read them to write them again: a rewrite costs tokens and can change them. Never invent other colors: the owner changes the values only in these files.

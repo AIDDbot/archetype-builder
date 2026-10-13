@@ -1,8 +1,8 @@
 <!--
-Foundation spec 1 of 8 (Columbus principle 9; D17, D18, D39, D44, D48, D51).
+Foundation spec 1 of 7: how does the system start? (Halloween D8, D12, D13; Columbus D17, D18, D39, D44, D48, D51).
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat configuration "Configuration" --domain foundation
-Instance: replace each role (`back-api`, `front-web`, `cli`, `e2e`) with the project name.
+Instance: replace each role (`api`, `web`, `cli`, `e2e`) with the project name.
 Remove the rows, requirements and Solution subsections of the roles that the system does not have. Then number the requirements again, with no gaps.
 The technology is in the AGENTS.md of each project, never here.
 -->
@@ -16,87 +16,89 @@ Each project must start in the same way in each environment, with its settings o
 
 - As an operator, I want **to set each project with environment variables** so that one build operates in each environment.
 - As a developer, I want **an incorrect setting to stop the project when it starts** so that I never examine a system with an incomplete configuration.
+- As a user of a `cli`, I want **to keep my settings in a file and change them with a command** so that I do not type them at each invocation.
 
 ### Business rules
 
 - Each setting must have a documented default.
 - A project must stop cleanly: it must not lose a request in progress or a log line.
+- A `cli` must read each setting from the first source that has it: argument, environment, configuration file, default.
 
 ### Out of context
 
-- The log and the error format (`monitoring`), the health status (`health`).
-- The management of secrets. Configuration files, other than an optional local `.env` file.
-
-## Requirements
-
-- **R01**: WHEN the `back-api` starts with `PORT` set, it SHALL accept HTTP connections on that port.
-- **R02**: WHEN the `back-api` starts without `PORT`, it SHALL accept HTTP connections on port 3000.
-- **R03**: WHEN the `front-web` starts with `PORT` set, it SHALL serve its application at `/` on that port.
-- **R04**: WHEN the `front-web` starts without `PORT`, it SHALL serve its application at `/` on port 4000.
-- **R05**: WHEN a project starts with a `PORT` that is not an integer from 1 to 65535, it SHALL stop with a non-zero exit code and a message that contains `PORT`.
-- **R06**: WHEN a request to the `back-api` has an `Origin` header that `CORS_ORIGIN` contains, the `back-api` SHALL answer with `Access-Control-Allow-Origin` set to that origin.
-- **R07**: WHILE `CORS_ORIGIN` is not set, the `back-api` SHALL answer each request with `Access-Control-Allow-Origin: *`.
-- **R08**: WHEN the `cli` runs with `--version`, it SHALL show its version and stop with exit code 0.
-- **R09**: WHEN the `front-web` starts with `API_BASE_URL` set, `GET /runtime-config.json` SHALL answer 200 with `{ "apiBaseUrl": "<that URL>" }`.
-- **R10**: WHEN a project with a database (the `back-api`, or a local `cli`) starts, it SHALL apply each migration that the database does not have, in order, and record the version of each one.
-- **R11**: IF the database has a schema version that the project does not know, THEN the project SHALL stop with a non-zero exit code and a message that contains that version.
-
-## Expected URLs and APIs
-
-| Kind | Project | Address | Expected answer | Requirements |
-| --- | --- | --- | --- | --- |
-| api | back-api | any path on `PORT` | An HTTP response with the CORS header | R01, R02, R06, R07 |
-| page | front-web | `/` on `PORT` | The application document | R03, R04 |
-| api | front-web | `GET /runtime-config.json` | 200 `{ "apiBaseUrl": "..." }`. No error status. | R09 |
-| command | cli | `--version` | The version. Exit code 0. | R08 |
-| process | back-api, cli | start on a database | Applies the missing migrations, or stops on an unknown version | R10, R11 |
+- The log, the error format and the exit codes (`monitoring`). The version (`about`).
+- The management of secrets.
+- A configuration file for the `api` and the `web`: only environment variables and an optional local `.env` file.
 
 ## Solution
 
-### back-api
+### api
 
 - Settings: `PORT` (3000), `HOST` (all interfaces), `DATABASE_URL` (a local default), `CORS_ORIGIN` (comma list, `*`).
-- `core` reads and checks each setting one time, before it opens the port, with the shared primitives `readSetting` and `parseInteger`. It adds them when they do not exist. `parseInteger` gets the variable name as its field, so its error names the variable. No project writes its own integer check. `shared` never reads settings.
-- A relative path in a setting starts at the project folder, never at the working directory.
-- `core` opens the database from `DATABASE_URL`. The composition gives it to the features through its contract in `shared`.
-- Migrations: one numbered file for each schema change (`0001-{name}`), all in one folder; a feature adds its own there. The runner of `core` applies each missing one before the port opens, each in one transaction, and records its version and time. No feature creates a table.
-- Clean stop, checked by `review-implementation` (a stop signal is not the same on each operating system): on a stop signal, no new connection, the requests in progress complete, the queued log lines are written, the database closes, exit code 0. After a short timeout: stop them, non-zero exit code.
+- `core` checks each setting one time, before the port opens, with `readSetting` and `parseInteger`; the error names the variable.
+- `core` opens the database and applies the migrations of the features (`0001-{name}`, one transaction each). No feature creates a table.
+- Clean stop on a stop signal, checked by `review-implementation`: finish the requests, write the log, close the database.
 
-### front-web
+### web
 
-- `PORT` (4000), `API_BASE_URL` (`http://localhost:3000`).
-- `core` serves `GET /runtime-config.json`. The HTTP client reads it one time at startup and is the only user of `API_BASE_URL`. No build for each environment.
+- Settings: `PORT` (4000), `API_BASE_URL` (`http://localhost:3000`).
+- `core` serves `GET /runtime-config.json`; the HTTP client is its only reader. No build for each environment.
 
 ### cli
 
-- `core` reads the arguments and the environment. An argument has priority.
-- In a system with no `back-api`, the cli is local and owns its store: no port, no server. Each invocation does one command and stops.
-- Settings of a local cli: `DATABASE_URL` (a local default) for its store. `core` checks it one time, before the command, with `readSetting`. When the store is a database, it uses migrations as the `back-api` does: the runner of `core` applies them before the command (R10, R11).
+- A local cli owns its store: no server; each invocation does one command and stops.
+- Settings: `CONFIG_FILE` (`./config.json`), `DATABASE_URL` for a local store, `API_BASE_URL` for a cli with an `api`. One list of settings in `core` (name, default, check); a feature adds its settings there.
+- Sources: the option `--{name}` (such as `--database-url`), the variable `{NAME}`, the key `{NAME}` of the configuration file, the default. `CONFIG_FILE` never comes from the file.
+- Feature `config`, with the operations `get` and `set`, through the settings contract of `shared`. `set` checks the value before it writes.
+- Migrations as the `api`, before the command.
 
 ### e2e
 
-- For each project under test (`{PROJECT}` in upper case), `core` reads `{PROJECT}_DIRECTORY` (default: its source folder, such as `../back`), `{PROJECT}_PORT` (3000 back, 4000 front, written one time in `core`), `{PROJECT}_START` (default: its `start` slot) and `E2E_STARTUP_TIMEOUT_MS` (15000). A `cli` has only `CLI_DIRECTORY` and `CLI_START`. An invalid value stops the suite; it never falls back to the default.
-- Without `{PROJECT}_PORT`, the suite starts the project without `PORT`, so the project uses its own default.
-- Checked by `review-implementation`, not by a test: a project that answers on its port is used, never started a second time; otherwise the suite starts it, waits, and stops it after the run, also after a failure or a timeout, so that no process of the suite stays alive; an invalid setting or a timeout stops the suite before the first test, with the variable or the project and the cause. A unit test of `core` can prove the stop; never an acceptance test, because the suite is tooling, not a requirement.
-- The suite never starts a `cli` for the run. Each test runs it with the helper below.
-- `core` gives the base URLs to the tests through the runner configuration. Tests read them through the fixtures in `shared`, never write a port or a URL, and get a free port from `shared`.
-- A helper in `shared` (a shared primitive) starts one project with an environment that the test gives, and returns its output, exit code, base URL and stop operation. `core` uses it too. For a `cli`, the test also gives the arguments; the helper waits until the cli stops, and returns its standard output, standard error and exit code, with no base URL. Tests use only the test runner, with no browser.
-- Each instance that a test starts has its own temporary database when the test gives no `DATABASE_URL`. The helper never takes `DATABASE_URL` from the environment of the runner, and deletes the database after the stop. No retries and no single worker to hide a shared database.
+- `core` reads `{PROJECT}_DIRECTORY`, `{PROJECT}_PORT`, `{PROJECT}_START` and `E2E_STARTUP_TIMEOUT_MS`; a `cli` has only `CLI_DIRECTORY` and `CLI_START`. An invalid value stops the suite.
+- The suite starts each server that does not answer, and stops it after the run, also after a failure. Checked by `review-implementation`, not by an acceptance test.
+- A helper in `shared` starts one project, or runs one `cli` invocation, with the environment and arguments of the test. It gives each one its own temporary database and configuration file, and deletes them after.
 
 ### All projects
 
 - An example environment file lists each variable and its default.
+- A relative path in a setting starts at the project folder, never at the working directory.
 
-## Schema impact
+### Schema impact
 
 | Schema | Element | Change | Description |
 | --- | --- | --- | --- |
-| back-api.db, cli store | table of applied versions | new | `version`, `appliedAt`. One row for each applied migration. |
+| api.db, cli store | table of applied versions | new | `version`, `appliedAt`. One row for each applied migration. |
 
-## Test notes
+## Verification
 
-- **R01, R03, R05, R09**: start an own instance with the helper, on a free port, with no browser.
-- **R02, R04**: use the instance that the suite started without `PORT`; its base URL has the default port.
-- **R10**: start on a new temporary database, stop, start again on it: no version has two rows.
-- **R11**: record an unknown version in a temporary database before the start.
-- **R08**: run the cli with the helper; check the shape of the version, never an exact value.
+### Requirements
+
+- **R01**: WHEN the `api` starts with `PORT` set, it SHALL accept HTTP connections on that port.
+- **R02**: WHEN the `api` starts without `PORT`, it SHALL accept HTTP connections on port 3000. Test: use the instance that the suite started without `PORT`.
+- **R03**: WHEN a request to the `api` has an `Origin` header that `CORS_ORIGIN` contains, the `api` SHALL answer with `Access-Control-Allow-Origin` set to that origin.
+- **R04**: WHILE `CORS_ORIGIN` is not set, the `api` SHALL answer each request with `Access-Control-Allow-Origin: *`.
+- **R05**: WHEN the `web` starts with `PORT` set, it SHALL serve its application at `/` on that port.
+- **R06**: WHEN the `web` starts without `PORT`, it SHALL serve its application at `/` on port 4000. Test: use the instance that the suite started without `PORT`.
+- **R07**: WHEN the `web` starts with `API_BASE_URL` set, `GET /runtime-config.json` SHALL answer 200 with `{ "apiBaseUrl": "<that URL>" }`.
+- **R08**: WHEN a server starts with a `PORT` that is not an integer from 1 to 65535, it SHALL stop with a non-zero exit code and a message that contains `PORT`.
+- **R09**: WHEN a project with a database (the `api`, or a local `cli`) starts, it SHALL apply each migration that the database does not have, in order, and record the version of each one. Test: start two times on one temporary database; no version has two rows.
+- **R10**: IF the database has a schema version that the project does not know, THEN the project SHALL stop with a non-zero exit code and a message that contains that version. Test: record an unknown version before the start.
+- **R11**: WHEN the `cli` runs `config set <name> <value>` with a known setting and a valid value, it SHALL write the value to its configuration file and stop with exit code 0. The next invocation SHALL use that value.
+- **R12**: IF `config set` gets an unknown setting or a value that is not valid for that setting, THEN the `cli` SHALL stop with a non-zero exit code and a message that contains the name of the setting, and SHALL not change the configuration file.
+- **R13**: WHEN the `cli` runs `config get`, it SHALL show each setting with its value and its source: `argument`, `environment`, `file` or `default`.
+- **R14**: WHEN the `cli` runs `config get <name>` with a known setting, it SHALL show only the value of that setting.
+- **R15**: WHEN a setting has a value in more than one source, the `cli` SHALL use the value of the first source in this order: argument, environment, configuration file, default. Test: give three values, then remove the argument and then the variable.
+- **R16**: IF the configuration file is not a valid JSON object, THEN the `cli` SHALL stop with a non-zero exit code and a message that contains the path of the file.
+
+### Expected URLs and APIs
+
+| Kind | Project | Address | Expected answer | Requirements |
+| --- | --- | --- | --- | --- |
+| api | api | any path on `PORT` | An HTTP response with the CORS header | R01–R04 |
+| page | web | `/` on `PORT` | The application document | R05, R06 |
+| api | web | `GET /runtime-config.json` | 200 `{ "apiBaseUrl": "..." }`. No error status. | R07 |
+| process | api, web | start with an incorrect `PORT` | Stops with a message that contains `PORT` | R08 |
+| process | api, cli | start on a database | Applies the missing migrations, or stops on an unknown version | R09, R10 |
+| command | cli | `config set <name> <value>` | Writes the file. Exit code 0. An unknown name or an invalid value: the file does not change. | R11, R12 |
+| command | cli | `config get [<name>]` | Each setting with its value and source, or the value of one setting | R13–R15 |
+| process | cli | any command with an incorrect configuration file | Stops with a message that contains the path | R16 |

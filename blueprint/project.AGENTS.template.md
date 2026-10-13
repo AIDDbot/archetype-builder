@@ -53,22 +53,22 @@ Contracts:
 ## 4 · Architecture
 
 <!--
-[Blueprint] The variations by project type. [Project] Keep only the column of this project type, and remove the other columns. Each n/a has its reason. Principle 7, D39.
+[Blueprint] The column of this project type in section 3 of `project-types.md`, with each n/a and its reason. Principle 7, D39; Halloween D15.
 [Archetype] Write how the composition gives the services of `core` to the features: by the framework injector, or as arguments of the registration. The contracts are in `shared`; a feature never imports `core`. Section 5 gives where the composition, the manifest and the facade are.
 -->
 
 **Services of `core`**: {framework injector | registration arguments}, contracts in `{shared_folder}/{contracts_location}`
 
-| Item | `back-api` | `front-web` | `cli` | `e2e` |
-| --- | --- | --- | --- | --- |
-| composition | process entry and manifest | browser entry and manifest | executable entry and manifest | n/a: the test runner is the entry |
-| `core` | server, configuration, logger, connections, error handler | shell, layout, router, theme, configuration | argument parser, configuration, output | life cycle of the suite |
-| features | endpoints | pages | commands | tests, one folder for each feature of the system |
-| `presentation` | route / controller and its registration | page / component and its registration | command and its registration | n/a: no layers |
-| `logic` | service | store / use case | service | n/a: no layers |
-| `data` | repository | API client | repository / file system | n/a: no layers |
-| `shared` concerns | `http`, `database` | `components` | `output` | `page-objects/`, `test-data/`, `database`, `projects` |
-| `unit` / `start` / `acceptance` | yes / yes / through `e2e` | yes / yes / through `e2e` | yes / n/a: no server / own tests or `e2e` | n/a / n/a: it starts the projects / yes |
+| Item | `{project_type}` |
+| --- | --- |
+| composition | {from project-types.md} |
+| `core` | {from project-types.md} |
+| features | {from project-types.md} |
+| `presentation` | {from project-types.md} |
+| `logic` | {from project-types.md} |
+| `data` | {from project-types.md} |
+| `shared` concerns | {from project-types.md} |
+| `unit` / `start` / `acceptance` | {from project-types.md, section 2} |
 
 ## 5 · Folder structure
 
@@ -107,13 +107,7 @@ The index of `shared`. Read it before you write a check or a conversion. Helpers
 | `isRecord(value)` | True for a key-value object. Other type guards use it. | `{shared_folder}/{types_file}` |
 | {environment primitive} | {contract} | {path} |
 
-<!--
-[Project] Write the environment primitive of this project type in the row above, and remove this list.
-- back-api: readSetting(name, fallback, parse) — the parsed environment variable or its fallback; an invalid value stops the startup.
-- front-web: escapeHtml(text) — text that is safe in a page; formatDate(value) — a date and time that a person reads, in the language of the browser (Intl.DateTimeFormat); formatDuration(seconds) — a duration that a person reads, such as `1 h 2 min` (Intl.DurationFormat).
-- cli: fail(message) — writes `error: <message>` to standard error and exits with code 1.
-- e2e: uniqueValue(prefix), in test-data/ — a value that no other test run uses.
--->
+<!-- [Project] Write the environment primitive of this project type in the row above, from section 4 of `project-types.md`. -->
 
 ## 6 · Coding rules
 

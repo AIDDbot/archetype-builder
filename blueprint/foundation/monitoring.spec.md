@@ -1,8 +1,8 @@
 <!--
-Foundation spec 2 of 8 (Columbus principle 9; D17, D18, D39, D51). It needs `configuration`.
+Foundation spec 2 of 7: how do we observe the system? (Halloween D7, D12, D13; Columbus D17, D18, D39, D51). It needs `configuration`.
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat monitoring "Monitoring" --domain foundation
-Instance: replace each role (`back-api`, `front-web`, `cli`, `e2e`) with the project name.
+Instance: replace each role (`api`, `web`, `cli`, `e2e`) with the project name.
 Remove the rows, requirements and Solution subsections of the roles that the system does not have. Then number the requirements again, with no gaps.
 -->
 # {id}-monitoring — Monitoring
@@ -13,78 +13,79 @@ When a failure occurs, the operator must see what occurred, and each client must
 
 ### User Stories
 
-- As an operator, I want **one short log line for each request and each error, in a daily file** so that I can find the cause of a failure.
+- As an operator, I want **one short log line for each request, each command and each error, in a daily file** so that I can find the cause of a failure.
 - As a client developer, I want **each API error in one body shape** so that I handle failures in one location.
+- As a script author, I want **each `cli` failure on standard error with an exit code that tells its kind** so that a script can react to it.
 - As a developer, I want **each server to show its address when it starts** so that I can open it.
 
 ### Business rules
 
-- A log line is plain text that a person can read, never JSON.
-- An error response must not show internal details.
+- A log line must be plain text that a person can read, never JSON.
+- An error must not show internal details.
 - A log line or a console line must never contain a password, a token or a form value.
+- The exit code of a `cli` must be 0 for a success, 1 for a rule that rejects the input, 2 for an incorrect usage, and 3 for a missing configuration or resource.
 
 ### Out of context
 
-- Metrics, tracing, log shipping, rate limits.
-- Log rotation, other than one file for each day.
-
-## Requirements
-
-- **R01**: WHEN the `back-api` completes a request, it SHALL add one plain-text line to `{LOG_DIR}/{yyyy-mm-dd}.log` with the columns `time source LEVEL message`, separated by spaces. The `time` SHALL be the local time of day `HH:MM:SS.mmm`, with no date. The message SHALL contain the method, path, status and duration in milliseconds, and no request identifier.
-- **R02**: WHEN a request completes, the `back-api` SHALL log it at level `ERROR` if the status is 500 or more, at `WARN` if the status is from 400 to 499, and at `INFO` for other statuses.
-- **R03**: WHILE `LOG_LEVEL` is set, the `back-api` SHALL write no line below that level.
-- **R04**: WHEN a request goes to an API path that does not exist, the `back-api` SHALL answer 404 with `{ "error": "Not found" }`.
-- **R05**: WHEN a request body is not valid JSON, the `back-api` SHALL answer 400 with `{ "error": "<message>" }`.
-- **R06**: WHEN a `cli` command fails, it SHALL write `error: <message>` to standard error and stop with exit code 1.
-- **R07**: WHEN a request has an `X-Request-Id` header, the `back-api` SHALL answer with the same `X-Request-Id`.
-- **R08**: WHEN a request has no `X-Request-Id` header, the `back-api` SHALL make a new unique identifier and answer with it in `X-Request-Id`.
-- **R09**: WHEN the `back-api` answers a request, the answer SHALL have the headers `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` and `Referrer-Policy: no-referrer`.
-- **R10**: IF a request body is larger than `BODY_LIMIT_KB` kilobytes, THEN the `back-api` SHALL answer 413 with `{ "error": "<message>" }`.
-- **R11**: WHEN the `back-api` starts to listen, it SHALL write one console line with a URL that a browser can open: the configured host, or `localhost` when it listens on all interfaces.
-- **R12**: WHEN the `front-web` server starts to listen, it SHALL write one console line with a URL that a browser can open.
-- **R13**: IF a server cannot start, THEN it SHALL write no listening line.
-
-## Expected URLs and APIs
-
-| Kind | Project | Address | Expected answer | Requirements |
-| --- | --- | --- | --- | --- |
-| api | back-api | `GET /api/{unknown}` | 404 `{ "error": "Not found" }` | R01, R02, R04 |
-| api | back-api | `POST /api/{any}` with an incorrect body | 400 `{ "error": "<message>" }`, with `fields` for an input error | R05 |
-| api | back-api | `POST /api/{any}` with a body larger than the limit | 413 `{ "error": "<message>" }` | R10 |
-| api | back-api | any path | `X-Request-Id` and the security headers, also on an error. An unexpected failure: 500 `{ "error": "Internal server error" }` | R07, R08, R09 |
-| process | back-api, front-web | start | One console line with an openable URL | R11, R12, R13 |
-| command | cli | `{unknown-command}` | `error: <message>` on standard error. Exit code 1. | R06 |
+- The answer to an unknown path or command, and the `--json` output (`shell`).
+- Metrics, tracing, log shipping, rate limits. Log rotation, other than one file for each day.
 
 ## Solution
 
-### back-api
+### api
 
-- The logger is in `core`, with its contract in `shared`: one line for each event; line breaks in a message (such as a stack trace) become ` | `; `WARN` and `ERROR` go to standard error.
-- It never blocks a request: a queue, asynchronous file writes, all queued lines written before the process stops. A failed write is reported one time; the request continues.
-- Settings (see `configuration`): `LOG_DIR` (`./logs`), `LOG_LEVEL` (`debug`, `info`, `warn`, `error`; `info`), `BODY_LIMIT_KB` (100).
-- A received `X-Request-Id` stays only if it is a short text of letters, digits and `-`; otherwise a new one.
-- The error handler of `core` is the only code that changes an error into a response. An expected error has its status, message and optional `fields`; any other error is logged at `ERROR` with its cause.
-- `shared` defines the one expected error type. The validation primitives of `shared` raise it with the field name.
-- The listening line comes only after the server confirms that it listens. An IPv6 host is in brackets.
+- Logger in `core`, contract in `shared`: one line for each event, ` | ` for line breaks, `WARN` and `ERROR` to standard error. It never blocks a request, and writes each queued line before the stop.
+- Settings: `LOG_DIR` (`./logs`), `LOG_LEVEL` (`debug`, `info`, `warn`, `error`; `info`), `BODY_LIMIT_KB` (100).
+- One expected error type in `shared`, with status, message and optional `fields`. The error handler of `core` is the only code that makes an error response; it logs any other error at `ERROR` with its cause.
+- Keep a received `X-Request-Id` only if it is a short text of letters, digits and `-`.
 
-### front-web
+### web
 
-- The listening line comes only after the server confirms that it listens.
-- The console logger of the browser is in `core`, with its contract in `shared`: one short plain-text line for each user action, with the action name and its path or value. A feature gives the action name; the logger has no words of a feature and never gets a form value, a password or a token. `layout` and the features add the actions.
-- The only HTTP client is in `core`, with its contract in `shared`. It changes each non-2xx `{ "error": ... }` answer into the expected error, with its `fields`. Pages show the message, never a raw failure; a form shows each field message next to its field.
+- The listening line comes only after the server listens.
+- Console logger in `core`, contract in `shared`: one line for each user action, with no words of a feature and no form value.
+- The HTTP client of `core` changes each error answer into the expected error, with its `fields`.
 
 ### cli
 
-- `core` catches each failure at the top level. Features raise the expected error of `shared`.
-- The result of a command goes to standard output; errors go to standard error. An unexpected failure shows a short message, never a stack trace.
+- Logger as the `api`, with the same settings except `BODY_LIMIT_KB`.
+- One expected error type in `shared`, with its kind: `rule` (1), `usage` (2) or `unavailable` (3). In `config set`, an unknown setting is `usage` and an invalid value is `rule`; an invalid setting or an unknown schema version is `unavailable`.
+- `core` catches each failure at the top level and is the only code that makes an exit code. An unexpected failure writes `error: Unexpected failure`, exit code 1, and logs its cause. Never a stack trace on the console.
+- Results go to standard output; messages and errors go to standard error.
 
 ### e2e
 
-- One helper in `shared` checks the uniform error body and its `fields`. All tests use it.
+- Helpers in `shared` check the error body of the `api` and the `error:` line and exit code of the `cli`. All tests use them.
 
-## Test notes
+## Verification
 
-- **R01**: send a known `X-Request-Id`; the line must not contain it. A JSON line fails.
-- **R03**: start with `LOG_LEVEL=warn`; a successful request writes no line.
-- **R11, R12**: start on a free port; the line has `http://localhost:{port}`, and that URL answers.
-- **R13**: start the `back-api` with an incorrect `PORT`.
+### Requirements
+
+- **R01**: WHEN the `api` completes a request, it SHALL add one plain-text line to `{LOG_DIR}/{yyyy-mm-dd}.log` with the columns `time source LEVEL message`, separated by spaces. The `time` SHALL be the local time of day `HH:MM:SS.mmm`. The message SHALL contain the method, path, status and duration in milliseconds, and no request identifier. Test: send a known `X-Request-Id`; the line does not contain it.
+- **R02**: WHEN a request completes, the `api` SHALL log it at level `ERROR` if the status is 500 or more, at `WARN` if the status is from 400 to 499, and at `INFO` for other statuses.
+- **R03**: WHEN a request body is not valid JSON, the `api` SHALL answer 400 with `{ "error": "<message>" }`.
+- **R04**: IF a request body is larger than `BODY_LIMIT_KB` kilobytes, THEN the `api` SHALL answer 413 with `{ "error": "<message>" }`.
+- **R05**: WHEN a request has an `X-Request-Id` header, the `api` SHALL answer with the same `X-Request-Id`.
+- **R06**: WHEN a request has no `X-Request-Id` header, the `api` SHALL make a new unique identifier and answer with it in `X-Request-Id`.
+- **R07**: WHEN the `api` answers a request, the answer SHALL have the headers `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` and `Referrer-Policy: no-referrer`.
+- **R08**: WHEN the `api` starts to listen, it SHALL write one console line with a URL that a browser can open: the configured host, or `localhost` when it listens on all interfaces. Test: start on a free port; that URL answers.
+- **R09**: WHEN the `web` server starts to listen, it SHALL write one console line with a URL that a browser can open.
+- **R10**: IF a server cannot start, THEN it SHALL write no listening line. Test: start with an incorrect `PORT`.
+- **R11**: WHEN a `cli` invocation completes, the `cli` SHALL add one line with the columns of R01 to `{LOG_DIR}/{yyyy-mm-dd}.log`. The message SHALL contain the command, the exit code and the duration in milliseconds, and no argument value. Test: give a setting as an argument; the line does not contain its value.
+- **R12**: WHEN an invocation completes, the `cli` SHALL log it at level `ERROR` for exit code 3, at `WARN` for exit codes 1 and 2, and at `INFO` for exit code 0.
+- **R13**: WHILE `LOG_LEVEL` is set, the `api` and the `cli` SHALL write no line below that level. Test: with `LOG_LEVEL=warn`, a success writes no line.
+- **R14**: IF a `cli` command rejects its input by a rule, THEN the `cli` SHALL write `error: <message>` to standard error and stop with exit code 1. Test: `config set LOG_LEVEL loud`.
+- **R15**: IF a `cli` invocation has an option that its command does not know, THEN the `cli` SHALL write `error: <message>` with the name of that option to standard error and stop with exit code 2.
+- **R16**: IF a setting of the `cli` is not valid, or the `cli` cannot open its store or reach the `api`, THEN the `cli` SHALL write `error: <message>` with the setting or the resource to standard error and stop with exit code 3. Test: give `DATABASE_URL` a path that is a folder.
+
+### Expected URLs and APIs
+
+| Kind | Project | Address | Expected answer | Requirements |
+| --- | --- | --- | --- | --- |
+| api | api | `POST /api/{any}` with an incorrect body | 400 `{ "error": "<message>" }`, with `fields` for an input error | R01, R02, R03 |
+| api | api | `POST /api/{any}` with a body larger than the limit | 413 `{ "error": "<message>" }` | R04 |
+| api | api | any path | `X-Request-Id` and the security headers, also on an error. An unexpected failure: 500 `{ "error": "Internal server error" }` | R05, R06, R07 |
+| process | api, web | start | One console line with an openable URL | R08, R09, R10 |
+| command | cli | any command | One log line for each invocation | R11, R12, R13 |
+| command | cli | `config set LOG_LEVEL {incorrect}` | `error: <message>`. Exit code 1. | R14 |
+| command | cli | `config get --no-such-option` | `error: <message>`. Exit code 2. | R15 |
+| command | cli | any command on a store that does not open | `error: <message>`. Exit code 3. | R16 |

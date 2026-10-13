@@ -22,7 +22,7 @@ Do one project before you start the next. Commit each step alone, so that each s
 
 ### Step 1: generate
 
-- Fill [`blueprint/project.AGENTS.template.md`](./blueprint/project.AGENTS.template.md) for the technology. Use [`blueprint/ecosystems.md`](./blueprint/ecosystems.md) as guidance, not as rules.
+- Fill [`blueprint/project.AGENTS.template.md`](./blueprint/project.AGENTS.template.md) for the technology, with the column of its type from [`blueprint/project-types.md`](./blueprint/project-types.md). Use [`blueprint/ecosystems.md`](./blueprint/ecosystems.md) as guidance, not as rules.
 - Run the official generator (`npm create`, `ng new`, `cargo new`) with no functional code.
 
 ### Step 2: shape to blueprint
@@ -43,25 +43,24 @@ Do one project before you start the next. Commit each step alone, so that each s
 - The ignore file never hides source. Anchor runtime data patterns to the project root.
 - Each tooling slot of that `AGENTS.md` operates. If a mandatory slot is missing (`lint`, `unit`, and `start` for runnable projects), install the usual tool of the stack.
 - For JS / TS, start from [`blueprint/oxlint.boundaries.json`](./blueprint/oxlint.boundaries.json) (or [`oxlint.boundaries.e2e.json`](./blueprint/oxlint.boundaries.e2e.json) for `e2e`) and [`blueprint/oxlint.complexity.json`](./blueprint/oxlint.complexity.json).
-- For a `front-web`, copy [`blueprint/theme/`](./blueprint/theme/) as it is.
+- For a `web`, copy [`blueprint/theme/`](./blueprint/theme/) as it is.
 - Register the slots with `node .agents/aidd/aidd.mjs config set projects.{project} '{...}'`.
 - `lint` and `unit` pass before the commit.
 - Prove the boundary check: add an import that the architecture forbids, make sure that `lint` fails, then remove the import.
 
 ## 3. Deliver the foundation specs
 
-Deliver them one at a time, in this order. For each one, run `/build-requested-spec` with the request "Deliver the spec from `blueprint/foundation/{spec}.spec.md`". The spec file is the contract: `define-spec` writes the spec from it.
+Deliver them one at a time, in the order of [`blueprint/project-types.md`](./blueprint/project-types.md), section 1. For each one, run `/build-requested-spec` with the request "Deliver the spec from `blueprint/foundation/{spec}.spec.md`". The spec file is the contract: `define-spec` writes the spec from it, with the rows of the types of the library only.
 
 | # | Spec | Condition |
 | --- | --- | --- |
 | 1 | `configuration` | always |
 | 2 | `monitoring` | always |
-| 3 | `layout` | the library has a `front-web` |
-| 4 | `health` | always |
-| 5 | `basic-auth` | the library has users |
-| 6 | `account` | `basic-auth` was delivered |
-| 7 | `about` | the library has a `front-web` |
-| 8 | `record-views` | the library has a `front-web` |
+| 3 | `shell` | always |
+| 4 | `about` | always |
+| 5 | `health` | always |
+| 6 | `users` | the system has users |
+| 7 | `presentation` | always |
 
 ## 4. Close the library
 
