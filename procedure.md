@@ -1,4 +1,4 @@
-# Procedure: make a library of archetypes
+# Procedure: build a library of archetypes
 
 A **library** is one repository of archetypes that pass one acceptance suite together, with the instances of their foundation specs (`foundation/`) and their schema documents (`model/`). Archetype Base and Archetype CLI are libraries. AIDDbot offers only libraries.
 
@@ -7,7 +7,7 @@ You make a library with AIDDbot, as a normal system (Halloween D10). This reposi
 You use two repositories (Halloween D20):
 
 - The **work system**: a normal AIDDbot system, in any folder (such as `experiments/{library}`). You build and repair the archetypes there. Each shipped spec gets a release of the work system; its tags never reach the library.
-- The **library**: the repository `AIDDbot/archetype-{name}`. It gets only the result (the seed), and only releases at the `major.minor` of AIDDbot (Halloween D6).
+- The **library**: the repository `AIDDbot/archetype-{name}`. It gets only the result, with [`seed.md`](./seed.md), and only releases at the `major.minor` of AIDDbot (Halloween D6).
 
 ## 1. Start the work system
 
@@ -41,10 +41,4 @@ Deliver them one at a time, in this order. The first one, `scaffold`, makes the 
 | 6 | `users` | the system has users |
 | 7 | `presentation` | always |
 
-## 3. Seed the library
-
-- Copy each project folder of the work system to the library, with no `.aiddbot/`, `.product/` or agent folders.
-- Copy the shipped spec instances to `foundation/` and the schema documents to `model/`.
-- Write the root `AGENTS.md` of the library: the Blueprint of the root `AGENTS.md` of the work system, and a library gate (see [Archetype Base](https://github.com/AIDDbot/archetype-base/blob/main/AGENTS.md)).
-- The library gate passes.
-- Release at the `major.minor` and codename of the AIDDbot release, with tag `v{version}`. Then pin the tag in the AIDDbot catalog (`architect-system-foundation/assets/archetypes.md`).
+When the last spec ships with zero debt, the work system is complete. To publish it, follow [`seed.md`](./seed.md).
