@@ -66,10 +66,10 @@ Then run `node .agents/aidd/aidd.mjs integrate "chore(scaffold): scaffold the li
 Deliver them one at a time, in the order of [`blueprint/project-types.md`](./blueprint/project-types.md), section 1. A library ships with zero debt, because each system that starts from it copies its debt (Halloween D19). For each spec:
 
 1. Run `/build-requested-spec` with the request "Deliver the spec from `blueprint/foundation/{spec}.spec.md`". The spec file is the contract: `define-spec` writes the spec from it, with the rows of the types of the library only.
-2. Run `/craft-lasting-quality` one time. It scans at its start, only when no `medium` debt is open, and repairs the debt by priority, at most five specs (Halloween D25).
+2. Run `/craft-lasting-quality` one time. It scans at its start, only when no `medium` debt is open, and repairs the debt by priority, at most five specs (Halloween D25). When no `high` or `medium` debt remains, it hardens one time: the warnings of `lint` become `low` debt (Halloween D26).
 3. Check that `node .agents/aidd/aidd.mjs debt list` shows no open item. If debt remains, stop and report it. Never start the next spec on open debt.
 
-`craft` never scans at its end. Thus, after the last spec, run `/craft-lasting-quality` again until its scan records nothing and `debt list` shows no open item.
+`craft` never scans at its end. Thus, after the last spec, run `/craft-lasting-quality` again until its scan and its hardening record nothing and `debt list` shows no open item.
 
 | # | Spec | Condition |
 | --- | --- | --- |

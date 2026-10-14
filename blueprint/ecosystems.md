@@ -9,7 +9,7 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 **TypeScript and tools**
 
 - Use TypeScript 7. Never pin an older major. If a tool does not support TypeScript 7, replace the tool. Do not keep the old TypeScript.
-- Use the oxc family: oxlint for `lint`, layer boundaries, and `quality`; oxfmt for `format`.
+- Use the oxc family: oxlint for `lint`, layer boundaries, `quality`, and `harden`; oxfmt for `format`.
 - Use the native Node.js test runner (`node --test`) for the unit tests of the `test` slot. Node.js runs TypeScript directly.
 - Do not add a tool that needs the JavaScript API of TypeScript (for example, dependency-cruiser or `@typescript-eslint/parser`).
 - Vite+ is not yet in the stack.
@@ -30,17 +30,23 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 
 **Quality**
 
-- Use a second oxlint configuration that extends the first and adds the complexity and size limits of the Blueprint. Start from [`oxlint.complexity.json`](./oxlint.complexity.json).
+- Use a second oxlint configuration with only the complexity and size limits of the Blueprint. Start from [`oxlint.complexity.json`](./oxlint.complexity.json). It never extends the `lint` configuration and turns off the default `correctness` rules, so that `quality` never reports the warnings of `lint` (Halloween D26).
 - Its override gives the test thresholds to `**/*.test.ts` and `**/*.spec.ts`.
 - In an `e2e` project:
   - Set the `files` of that override to all files.
-  - Turn off `no-empty-pattern` for the fixtures file in the `lint` configuration, which the `quality` one extends: Playwright fixtures with no dependency take `({}, use)`. Never add a false dependency to avoid the rule.
+  - Turn off `no-empty-pattern` for the fixtures file in the `lint` configuration: Playwright fixtures with no dependency take `({}, use)`. Never add a false dependency to avoid the rule.
+
+**Hardening**
+
+- `harden` is the final polish (Halloween D26): the `lint` command without `--quiet`, so that it reports the warnings. A stricter rule goes to a third configuration that extends the `lint` one, never to `lint`.
+- A false alarm of a rule is turned off in the `lint` configuration of the project, for its files, never with a comment in each place.
 
 **Script names**
 
 - Use the standard npm names, which run without `run`: `test` runs the tests of the project, and `start` runs it.
-- The slot names are the script names: `lint`, `lint:files`, `format`, `upgrade`, `test`, `test:files`, `start`, `quality`.
-- `lint:files` and `test:files` take the files that the core gives as arguments, so that the Builder checks only what it changes (Halloween D22). `lint:files` is the `lint` command without its folder, for example `oxlint -c .oxlintrc.json`. `test:files` is the unit runner without its glob: `node --test`. An `e2e` has `lint:files` and no `test:files`: the Builder checks its tests with `aidd run test --spec`.
+- The slot names are the script names: `lint`, `lint:files`, `format`, `upgrade`, `test`, `test:files`, `start`, `quality`, `harden`.
+- `lint` and `lint:files` report only errors: add `--quiet`. A warning never blocks, so it is only noise for each build; `harden` reports it.
+- `lint:files` and `test:files` take the files that the core gives as arguments, so that the Builder checks only what it changes (Halloween D22). `lint:files` is the `lint` command without its folder, for example `oxlint -c .oxlintrc.json --quiet`. `test:files` is the unit runner without its glob: `node --test`. An `e2e` has `lint:files` and no `test:files`: the Builder checks its tests with `aidd run test --spec`.
 - In an `api`, a `web` or a `cli`, `test` runs the unit tests.
 - In an `e2e` project, `test` runs the acceptance suite, headless: `playwright test --pass-with-no-tests`, so that the scaffold passes before the first spec. npm adds the arguments of the core (`--grep @S{nnnn}-`) at the end. An `e2e` has no unit tests: each run proves its `core`. `start` opens the interactive UI of the runner, for a human only.
 
@@ -59,7 +65,7 @@ Use these commands as they are. Test a different generator in a temporary folder
 
 | Ecosystem | `lint` | Types (inside `lint`) | `format` | unit tests (inside `test`) | Boundaries (inside `lint`) | `quality` |
 | --- | --- | --- | --- | --- | --- | --- |
-| JS / TS on Node | oxlint with `typeAware` and `typeCheck` (`oxlint-tsgolint`) | inside oxlint (`typeCheck`); no `tsc` | oxfmt | `node --test` | oxlint `no-restricted-imports` with `overrides` per folder and file role | oxlint with a second config that extends the first and adds complexity and size rules |
+| JS / TS on Node | oxlint with `typeAware` and `typeCheck` (`oxlint-tsgolint`) | inside oxlint (`typeCheck`); no `tsc` | oxfmt | `node --test` | oxlint `no-restricted-imports` with `overrides` per folder and file role | oxlint with a second config of complexity and size rules only |
 | Go | `go vet`, golangci-lint | compiler | `gofmt -w` | `go test` | `internal/` + depguard | gocyclo, gocognit |
 | Rust | `cargo clippy` | compiler | `cargo fmt` | `cargo test` | module visibility | `clippy::cognitive_complexity` |
 | PHP | PHP_CodeSniffer | PHPStan, Psalm | `php-cs-fixer fix` | PHPUnit, Pest | Deptrac | PHPMD |
