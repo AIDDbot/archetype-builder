@@ -35,9 +35,11 @@ The contract of each slot is in [`project.AGENTS.template.md`](./project.AGENTS.
 | Slot | `api` | `web` | `cli` | `e2e` |
 | --- | --- | --- | --- | --- |
 | `lint` | yes | yes | yes | yes |
+| `lint:files` | yes | yes | yes | yes |
 | `format` | yes | yes | yes | yes |
 | `upgrade` | yes | yes | yes | yes |
 | `test` | unit tests | unit tests | unit tests | the acceptance suite, headless; no unit tests, because each run proves its `core`; the core reads it as the acceptance evidence |
+| `test:files` | the unit tests of the given files | the unit tests of the given files | the unit tests of the given files | n/a: the Builder checks the acceptance tests with `aidd run test --spec` |
 | `start` | starts the server: reads `PORT`, answers on the health route | starts the server: reads `PORT`, answers on `/` | runs one invocation with the arguments that it gets; the `e2e` uses it as `CLI_START` | opens the interactive UI of the runner, for a human only; an agent never runs it |
 | `quality` | yes | yes | yes | yes |
 
