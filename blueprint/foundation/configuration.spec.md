@@ -34,7 +34,7 @@ Each project must start in the same way in each environment, with its settings o
 
 ### api
 
-- Settings: `PORT` (3000), `HOST` (all interfaces), `DATABASE_URL` (a local default), `CORS_ORIGIN` (comma list, `*`).
+- Settings: `PORT` (3000), `HOST` (all interfaces), `DATABASE_URL` (`./data/app.sqlite`), `CORS_ORIGIN` (comma list, `*`).
 - `core` checks each setting one time, before the port opens, with `readSetting` and `parseInteger`; the error names the variable.
 - `core` opens the database and applies the migrations of the features (`0001-{name}`, one transaction each). No feature creates a table.
 - Clean stop on a stop signal, checked by `review-implementation`: finish the requests, write the log, close the database.
@@ -47,7 +47,7 @@ Each project must start in the same way in each environment, with its settings o
 ### cli
 
 - A local cli owns its store: no server; each invocation does one command and stops.
-- Settings: `CONFIG_FILE` (`./config.json`), `DATABASE_URL` for a local store, `API_BASE_URL` for a cli with an `api`. One list of settings in `core` (name, default, check); a feature adds its settings there.
+- Settings: `CONFIG_FILE` (`./config.json`), `DATABASE_URL` (`./data/app.sqlite`) for a local store, `API_BASE_URL` for a cli with an `api`. One list of settings in `core` (name, default, check); a feature adds its settings there.
 - Sources: the option `--{name}` (such as `--database-url`), the variable `{NAME}`, the key `{NAME}` of the configuration file, the default. `CONFIG_FILE` never comes from the file.
 - Feature `config`, with the operations `get` and `set`, through the settings contract of `shared`. `set` checks the value before it writes.
 - Migrations as the `api`, before the command.
@@ -62,6 +62,7 @@ Each project must start in the same way in each environment, with its settings o
 
 - An example environment file lists each variable and its default.
 - A relative path in a setting starts at the project folder, never at the working directory.
+- The check of each setting: a port is an integer from 1 to 65535; a path (`CONFIG_FILE`, `DATABASE_URL`) is not empty; a URL (`API_BASE_URL`) is an absolute `http` or `https` URL; `CORS_ORIGIN` is `*` or a comma list of origins. A setting that a feature adds has its own check.
 
 ### Schema impact
 

@@ -41,6 +41,12 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 - `harden` is the final polish (Halloween D26): the `lint` command without `--quiet`, so that it reports the warnings. A stricter rule goes to a third configuration that extends the `lint` one, never to `lint`.
 - A false alarm of a rule is turned off in the `lint` configuration of the project, for its files, never with a comment in each place.
 
+**Persistence**
+
+- Use `node:sqlite` (`DatabaseSync`) for the database of an `api` and the local store of a `cli`. It is part of Node.js: no dependency to add or upgrade.
+- `DATABASE_URL` is the path of the database file. Its default is `./data/app.sqlite`, relative to the project folder.
+- Write it in the main dependencies and in the technology rules of the project `AGENTS.md`: the specs never name it.
+
 **Script names**
 
 - Use the standard npm names, which run without `run`: `test` runs the tests of the project, and `start` runs it.
