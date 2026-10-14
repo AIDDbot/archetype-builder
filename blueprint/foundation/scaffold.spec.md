@@ -75,7 +75,7 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
 
 ### Requirements
 
-None: a `chore` changes nothing that an observer sees. The regression of the release (`format`, `lint` and `test` of all projects) and the boundary proof of step 3 are its verification.
+None: a `chore` changes nothing that an observer sees. The regression of the release (`lint`, `format` and `test` of all projects) and the boundary proof of step 3 are its verification.
 
 ### Expected URLs and APIs
 
