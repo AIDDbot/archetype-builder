@@ -47,14 +47,14 @@ Each project must start in the same way in each environment, with its settings o
 ### cli
 
 - A local cli owns its store: no server; each invocation does one command and stops.
-- Settings: `CONFIG_FILE` (`./config.json`), `DATABASE_URL` (`./data/app.sqlite`) for a local store, `API_BASE_URL` for a cli with an `api`. One list of settings in `core` (name, default, check); a feature adds its settings there.
+- Settings: `CONFIG_FILE` (`./config.json`), `DATABASE_URL` (`./data/app.sqlite`) for a local store, `API_BASE_URL` (`http://localhost:3000`) for a cli with an `api`. One list of settings in `core` (name, default, check); a feature adds its settings there.
 - Sources: the option `--{name}` (such as `--database-url`), the variable `{NAME}`, the key `{NAME}` of the configuration file, the default. `CONFIG_FILE` never comes from the file.
 - Feature `config`, with the operations `get` and `set`, through the settings contract of `shared`. `set` checks the value before it writes.
 - Migrations as the `api`, before the command.
 
 ### e2e
 
-- `core` reads `{PROJECT}_DIRECTORY`, `{PROJECT}_PORT`, `{PROJECT}_START` (default: the `start` slot of the project) and `E2E_STARTUP_TIMEOUT_MS`; a `cli` has only `CLI_DIRECTORY` and `CLI_START`. An invalid value stops the suite.
+- `core` reads `{PROJECT}_DIRECTORY` (`../{folder}`, the sibling folder of the project), `{PROJECT}_PORT` (the default port of the project), `{PROJECT}_START` (the `start` slot of the project) and `E2E_STARTUP_TIMEOUT_MS` (15000); a `cli` has only `CLI_DIRECTORY` and `CLI_START`. An invalid value stops the suite.
 - The suite starts each server that does not answer, and stops it after the run, also after a failure. Checked by `review-implementation`, not by an acceptance test.
 - A helper in `shared` starts one project, or runs one `cli` invocation, with the environment and arguments of the test. It gives each one its own temporary database and configuration file, and deletes them after.
 
@@ -62,7 +62,7 @@ Each project must start in the same way in each environment, with its settings o
 
 - An example environment file lists each variable and its default.
 - A relative path in a setting starts at the project folder, never at the working directory.
-- The check of each setting: a port is an integer from 1 to 65535; a path (`CONFIG_FILE`, `DATABASE_URL`) is not empty; a URL (`API_BASE_URL`) is an absolute `http` or `https` URL; `CORS_ORIGIN` is `*` or a comma list of origins. A setting that a feature adds has its own check.
+- The check of each setting: a port is an integer from 1 to 65535; a path (`CONFIG_FILE`, `DATABASE_URL`, `{PROJECT}_DIRECTORY`) or a command (`{PROJECT}_START`) is not empty; a timeout (`E2E_STARTUP_TIMEOUT_MS`) is a positive integer; a URL (`API_BASE_URL`) is an absolute `http` or `https` URL; `CORS_ORIGIN` is `*` or a comma list of origins. A setting that a feature adds has its own check.
 
 ### Schema impact
 
