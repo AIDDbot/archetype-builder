@@ -10,7 +10,7 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 
 - Use TypeScript 7. Never pin an older major. If a tool does not support TypeScript 7, replace the tool. Do not keep the old TypeScript.
 - Use the oxc family: oxlint for `lint`, layer boundaries, `quality`, and `harden`; oxfmt for `format`.
-- Use the native Node.js test runner (`node --test`) for the unit tests of the `test` slot. Node.js runs TypeScript directly.
+- Use the native Node.js test runner (`node --test`) for the unit tests of the `test` slot. Node.js runs TypeScript directly. Write `void test(...)`: the runner owns the promise of each registration, and `typescript/no-floating-promises` reports it without `void`.
 - Do not add a tool that needs the JavaScript API of TypeScript (for example, dependency-cruiser or `@typescript-eslint/parser`).
 - Vite+ is not yet in the stack.
 
@@ -34,7 +34,7 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 - Its override gives the test thresholds to `**/*.test.ts` and `**/*.spec.ts`.
 - In an `e2e` project:
   - Set the `files` of that override to all files.
-  - Turn off `no-empty-pattern` for the fixtures file in the `lint` configuration: Playwright fixtures with no dependency take `({}, use)`. Never add a false dependency to avoid the rule.
+  - Turn off `no-empty-pattern` for all files in the `lint` configuration: Playwright fixtures and tests with no fixture take `({}, use)` or `({}, testInfo)`. Never add a false dependency to avoid the rule.
 
 **Hardening**
 
