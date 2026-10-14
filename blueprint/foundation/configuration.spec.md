@@ -56,7 +56,7 @@ Each project must start in the same way in each environment, with its settings o
 
 - `core` reads `{PROJECT}_DIRECTORY` (`../{folder}`, the sibling folder of the project), `{PROJECT}_PORT` (the default port of the project), `{PROJECT}_START` (the `start` slot of the project) and `E2E_STARTUP_TIMEOUT_MS` (15000); a `cli` has only `CLI_DIRECTORY` and `CLI_START`. An invalid value stops the suite.
 - The suite starts each server that does not answer, and stops it after the run, also after a failure. Checked by `review-implementation`, not by an acceptance test.
-- A helper in `shared` starts one project, or runs one `cli` invocation, with the environment and arguments of the test. It gives each test its own temporary database and configuration file, which all the invocations of that test share, and deletes them after the test. A test that needs a clean store makes a second helper.
+- A helper in `shared` starts one project, or runs one `cli` invocation, with the environment and arguments of the test. It gives each test its own temporary database and configuration file, which all the invocations of that test share, and deletes them after the test. A test that needs a clean store makes a second helper. A test that copies the `cli` project to a temporary folder, such as for relative paths, also copies the root `package.json`: `shell` and `about` read the identity there.
 - A test checks what its spec adds and the order that it needs, never that nothing else exists: later specs add settings, migrations and commands.
 
 ### All projects
