@@ -50,7 +50,7 @@ When a failure occurs, the operator must see what occurred, and each client must
 
 - Logger as the `api`, with the same settings except `BODY_LIMIT_KB`.
 - One expected error type in `shared`, with its kind: `rule` (1), `usage` (2) or `unavailable` (3). In `config set`, an unknown setting is `usage` and an invalid value is `rule`; an invalid setting or an unknown schema version is `unavailable`.
-- `core` catches each failure at the top level and is the only code that makes an exit code. An unexpected failure writes `error: Unexpected failure`, exit code 1, and logs its cause. Never a stack trace on the console.
+- `core` catches each failure at the top level and is the only code that makes an exit code. An unexpected failure writes `error: Unexpected failure`, exit code 1, and logs its cause. Never a stack trace on the console. No public command can cause an unexpected failure: a unit test of `core` proves it, never an acceptance test, and no test injects a failure into the `cli` process.
 - Results go to standard output; messages and errors go to standard error.
 
 ### e2e
