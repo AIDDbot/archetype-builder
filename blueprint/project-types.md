@@ -16,10 +16,11 @@ A cell that does not apply is `n/a` with its reason. An empty cell is an error.
 
 Deliver them in this order (Halloween D12, D13). Only a property of the system makes a spec optional, never the project type. Today there is one: the system has users. The Solution of each spec has the details of each type.
 
-Before them, the [`scaffold`](./foundation/scaffold.spec.md) spec (a `chore`, number 0) makes each project with its shape and its tooling slots, with no functional code.
+The first one, `scaffold`, is a `chore`: it makes each project with its shape and its tooling slots, with no functional code.
 
 | # | Spec (question) | `api` | `web` | `cli` | `e2e` |
 | --- | --- | --- | --- | --- | --- |
+| 0 | [`scaffold`](./foundation/scaffold.spec.md) — how is each project made? | generator, shape, slots | generator, shape, slots, theme | generator, shape, slots | generator, shape, slots; `test` passes with no test |
 | 1 | [`configuration`](./foundation/configuration.spec.md) — how does it start? | `PORT`, CORS, `DATABASE_URL`, migrations | `PORT`, `API_BASE_URL` | arguments, environment, JSON file with `config get\|set`, migrations | the settings of each project, start of the suite |
 | 2 | [`monitoring`](./foundation/monitoring.spec.md) — how do we observe it? | log file, error body, request identifier, security headers | listening line, console logger, errors of the HTTP client | log file, `error:` line, exit codes 0 / 1 / 2 / 3 | error helpers |
 | 3 | [`shell`](./foundation/shell.spec.md) — how do people use it? | API index, unknown path → 404 | layout: frame, menu, theme, home, not-found page | usage: help, unknown command → exit code 2, `--json` | shell page objects, `--json` helper |

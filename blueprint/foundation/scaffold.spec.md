@@ -9,7 +9,7 @@ A `chore` has no requirements: nothing that an observer sees changes. The regres
 
 ## Problem
 
-Each project of the system must exist, with the shape of the Blueprint and all its tooling slots, before the first foundation spec adds a behavior.
+Each project of `.product/system.md` must exist, with the shape of the Blueprint and all its tooling slots, before the first foundation spec adds a behavior.
 
 ### User Stories
 
@@ -27,6 +27,10 @@ Each project of the system must exist, with the shape of the Blueprint and all i
 - The root `AGENTS.md` and the schema documents: `ship-spec` runs `outline-system` for the new projects.
 
 ## Solution
+
+### The system
+
+- The root `package.json` holds the identity of `.product/system.md`: `displayName`, `description`, `author` and `homepage`. `shell` and `about` read it; `aidd release` writes its `version`. Commit it as `chore: set the system identity`, before the first project.
 
 ### Each project
 
