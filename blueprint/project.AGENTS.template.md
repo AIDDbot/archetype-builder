@@ -100,15 +100,23 @@ Contracts:
 
 ### Shared primitives
 
-<!-- [Blueprint] Seed: one topic for each file, one function for each contract, named by what it returns or checks; a failed check raises the expected error of `monitoring`. [Archetype] Paths and idiomatic names. [Project] `ship-spec` adds each new primitive that two or more features use. A helper of one feature (such as its page object or its test data) follows the naming convention below and gets no row. A helper of the life cycle of `core` gets no row. D29. -->
+<!-- [Blueprint] Seed: the scaffold makes these primitives, with their unit tests, before the first spec (Halloween cli-6). One topic for each file, one function for each contract, named by what it returns or checks; a failed check raises the expected error of `monitoring`. [Archetype] Paths and idiomatic names. [Project] `ship-spec` adds each new primitive that two or more features use. A helper of one feature (such as its page object or its test data) follows the naming convention below and gets no row. A helper of the life cycle of `core` gets no row. D29. -->
 
 The index of `shared`. Read it before you write a check or a conversion. Helpers of one feature follow `{shared_folder}/{feature_helper_pattern}` and have no row.
 
 | Primitive | Contract | Path |
 | --- | --- | --- |
-| `parseInteger(value, field, range)` | Integer in `range` (`{ min, max }`), or an expected error with the field and the range. | `{shared_folder}/{numbers_file}` |
+| `isRecord(value)` | True for a key-value object. Other type guards use it. | `{shared_folder}/{checks_file}` |
+| `isText(value)` | True for a text with a character that is not a space. | `{shared_folder}/{checks_file}` |
+| `isOneOf(value, options)` | True for one of a closed list of values; narrows the type. | `{shared_folder}/{checks_file}` |
+| `findByName(items, name)` | The item with that `name`, or nothing. | `{shared_folder}/{checks_file}` |
+| `requireByName(items, name, kind)` | The item with that `name`, or an expected error that names the kind and the name. | `{shared_folder}/{checks_file}` |
 | `requireText(value, field)` | Text without end spaces, or an expected error with the field. | `{shared_folder}/{text_file}` |
-| `isRecord(value)` | True for a key-value object. Other type guards use it. | `{shared_folder}/{types_file}` |
+| `parseInteger(value, field, range)` | Integer in `range` (`{ min, max }`), or an expected error with the field and the range. | `{shared_folder}/{numbers_file}` |
+| `formatDate(date)` | `YYYY-MM-DD` in local time. | `{shared_folder}/{dates_file}` |
+| `formatTime(date)` | `HH:MM:SS.mmm` in local time. | `{shared_folder}/{dates_file}` |
+| `formatDateTime(date)` | `YYYY-MM-DD HH:MM:SS` in local time, for a person. | `{shared_folder}/{dates_file}` |
+| `attempt(action, message)` | The result of `action`, or the expected error `unavailable` with `message` when an external resource fails. Only `data` and `core` use it. | `{shared_folder}/{errors_file}` |
 | {environment primitive} | {contract} | {path} |
 
 <!-- [Project] Write the environment primitive of this project type in the row above, from section 4 of `project-types.md`. -->

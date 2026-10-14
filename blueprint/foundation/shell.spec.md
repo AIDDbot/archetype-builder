@@ -52,8 +52,8 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 ### cli
 
-- Each command registration gives its name, summary, usage, operations and options. The help comes from the registrations, in the order of the manifest.
-- `core` reads `--help`, `--json` and the setting options before the command. An option that the command does not declare is a `usage` error.
+- Each command registration gives its name, summary, usage, operations and options. An option is typed data (name, value placeholder, summary, default), never a help text that code parses again. The help comes from the registrations, in the order of the manifest, and from the setting definitions of `configuration`: nothing copies them by hand.
+- `core` parses the arguments one time, then runs one pipeline: parse, run, render, report, each in its own function. It reads `--help`, `--json` and the setting options before the command. An option that the command does not declare is a `usage` error. A `usage` error of a command shows its declared usage.
 - Output contract in `shared`: a command gives its result as data; `core` writes it as text, or as one JSON object with `--json`. A command never writes to the standard output itself.
 - `config get` uses this contract: `{ "settings": [ { "name", "value", "source" } ] }`, or one `{ "name", "value", "source" }`.
 

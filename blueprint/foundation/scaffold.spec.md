@@ -18,7 +18,7 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
 
 ### Business rules
 
-- A project has no functional code: no setting, no command, no route, no page, and no acceptance test.
+- A project has no functional code: no setting, no command, no route, no page, and no acceptance test. The seed primitives of `shared` are not functional code: they have no behavior that an observer sees.
 - Do one project before you start the next. Commit each step alone, so that each step can be reviewed and reverted.
 
 ### Out of context
@@ -52,6 +52,7 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
   - Keep the mechanisms of the framework (injector, router, store, file names) and map them to the concepts.
   - Move folders by technical layer (such as `components/`, `views/`, `stores/`) into `shared` as primitives, or into features.
 - Remove each sample of the generator (demo pages, images, icons).
+- Make the seed primitives of the shared primitives table in `shared`, with their unit tests. An `e2e` makes only the ones that it uses, with no unit tests. Each primitive keeps its row.
 - Keep only the package manager of that `AGENTS.md`. Remove the files of all other package managers.
 
 **Step 3: register tooling**
