@@ -18,7 +18,7 @@ Before the first business feature, each layer of each project must operate with 
 
 ### Business rules
 
-- The health answer must contain only the status, the startup count and the uptime.
+- The health answer must contain only the status, the startup count and the uptime. A local `cli` has no uptime: each invocation stops at once.
 
 ### Out of context
 

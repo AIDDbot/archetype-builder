@@ -62,6 +62,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 - Page objects in `shared/page-objects/` for the shell, the not-found page and the home page.
 - A helper in `shared` runs one `cli` invocation with `--json` and returns the parsed object and the exit code.
 - The tests read the expected identity from the root `package.json`, never from fixed text.
+- A test checks what its spec adds and the order that it needs, never that nothing else exists: later specs add settings, migrations and commands.
 
 ## Verification
 
