@@ -28,7 +28,7 @@ A record is one thing that the application shows, such as the health of the syst
 
 ### Out of context
 
-- New business data, charts, animations, and changes to the texts of earlier specs.
+- New business data, charts, animations, and changes to the texts of earlier specs, other than the views that this spec names.
 - Sort, filter and search of a list. Business specs add them when they need them.
 - A new style sheet library or new brand tokens.
 
@@ -62,7 +62,7 @@ A record is one thing that the application shows, such as the health of the syst
 ### cli
 
 - The output contract of `shell` gets a typed view (list or record); `core` writes it as text, or as JSON with `--json`. A command never formats a value or pads a column.
-- `health` adds the operation `runs`, with `readOptions`. `config get` becomes a list.
+- `health` adds the operation `runs`, with `readOptions`. `config get` becomes a list: its table replaces the text of the `configuration` requirement that shows each setting with its value and source (`Replaces:` that requirement), and its test changes with it. Its JSON shape stays as `shell` says.
 - Unit tests prove the empty list (`No {records}.`) and the alignment of a table.
 
 ### e2e
