@@ -16,6 +16,8 @@ A cell that does not apply is `n/a` with its reason. An empty cell is an error.
 
 Deliver them in this order (Halloween D12, D13). Only a property of the system makes a spec optional, never the project type. Today there is one: the system has users. The Solution of each spec has the details of each type.
 
+Before them, the [`scaffold`](./foundation/scaffold.spec.md) spec (a `chore`, number 0) makes each project with its shape and its tooling slots, with no functional code.
+
 | # | Spec (question) | `api` | `web` | `cli` | `e2e` |
 | --- | --- | --- | --- | --- | --- |
 | 1 | [`configuration`](./foundation/configuration.spec.md) — how does it start? | `PORT`, CORS, `DATABASE_URL`, migrations | `PORT`, `API_BASE_URL` | arguments, environment, JSON file with `config get\|set`, migrations | the settings of each project, start of the suite |
