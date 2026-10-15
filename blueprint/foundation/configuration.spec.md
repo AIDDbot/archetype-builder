@@ -87,7 +87,7 @@ Each project must start in the same way in each environment, with its settings o
 - **R10**: IF the database has a schema version that the project does not know, THEN the project SHALL stop with a non-zero exit code and a message that contains that version. Test: record an unknown version before the start.
 - **R11**: WHEN the `cli` runs `config set <name> <value>` with a known setting and a valid value, it SHALL write the value to its configuration file and stop with exit code 0. The next invocation SHALL use that value.
 - **R12**: IF `config set` gets an unknown setting or a value that is not valid for that setting, THEN the `cli` SHALL stop with a non-zero exit code and a message that contains the name of the setting, and SHALL not change the configuration file.
-- **R13**: WHEN the `cli` runs `config get`, it SHALL show each setting with its value and its source: `argument`, `environment`, `file` or `default`.
+- **R13**: WHEN the `cli` runs `config get`, it SHALL show each setting with its value and its source: `argument`, `environment`, `file` or `default`. Test: check each setting of this spec with its value and its source; never the whole list or its order, because later specs add settings.
 - **R14**: WHEN the `cli` runs `config get <name>` with a known setting, it SHALL show only the value of that setting.
 - **R15**: WHEN a setting has a value in more than one source, the `cli` SHALL use the value of the first source in this order: argument, environment, configuration file, default. Test: give three values, then remove the argument and then the variable.
 - **R16**: IF the configuration file is not a valid JSON object, THEN the `cli` SHALL stop with a non-zero exit code and a message that contains the path of the file.
