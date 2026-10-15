@@ -14,7 +14,7 @@ You use two repositories (Halloween D20):
 The human prepares an empty work system:
 
 - An empty git repository, with AIDDbot installed (`npx aiddbot init`) at the release whose Blueprint the library obeys.
-- This procedure and `blueprint/` in `builder/`. The agent reads only its own folder, and the run stays fixed when the Builder changes.
+- A copy of `blueprint/` in `.product/blueprint/`, without `foundation-0.3/`: the plan of the archetype is product. The agent reads only its own folder, and the run stays fixed when the Builder changes. This procedure stays here: the prompt of the run gives its steps.
 - The manifest of the library in `.product/system.md`, in English, from `libraries/{library}.system.md`: the purpose, the users, the identity, and each project with its type. AIDDbot writes each record in the language of `system.md`, and a library ships in English.
 - One commit of all of it on the default branch.
 
@@ -22,6 +22,6 @@ Do not run `/architect-system-foundation`: it offers only libraries (Halloween D
 
 ## 2. Deliver the specs
 
-Run `/build-ordered-specs` with the spec files of `builder/blueprint/foundation/`, in the order of section 1 of `builder/blueprint/project-types.md`. The first one, `scaffold`, makes the projects. A library ships with zero debt, because each system that starts from it copies its debt (Halloween D19).
+Run `/build-ordered-specs` with the spec files of `.product/blueprint/foundation/`, in the order of section 1 of `.product/blueprint/project-types.md`. The first one, `scaffold`, makes the projects. A library ships with zero debt, because each system that starts from it copies its debt (Halloween D19).
 
 When the last spec ships with zero debt, the work system is complete. To publish it, follow [`seed.md`](./seed.md).

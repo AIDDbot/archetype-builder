@@ -23,10 +23,10 @@ The system has no user accounts.
 
 ## Technical decisions
 
-- TypeScript on Node.js, with the stack of `builder/blueprint/ecosystems.md`.
+- TypeScript on Node.js, with the stack of `.product/blueprint/ecosystems.md`.
 - Identity in the root `package.json`: `displayName` "Archetype CLI", `description` "A local command-line application and its acceptance suite", `author` "AIDDbot", `homepage` "https://aiddbot.com".
 - Basic authentication: no, the system has no users.
 
 ## Scaffold
 
-The `scaffold` spec of `builder/blueprint/foundation/` makes each project.
+The `scaffold` spec of `.product/blueprint/foundation/` makes each project.

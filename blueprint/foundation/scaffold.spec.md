@@ -42,7 +42,7 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
 
 **Step 1: generate**
 
-- Fill `builder/blueprint/project.AGENTS.template.md` for the technology, with the column of its type from `builder/blueprint/project-types.md`. Use `builder/blueprint/ecosystems.md` as guidance, not as rules.
+- Fill `.product/blueprint/project.AGENTS.template.md` for the technology, with the column of its type from `.product/blueprint/project-types.md`. Use `.product/blueprint/ecosystems.md` as guidance, not as rules.
 - Run the official generator with no functional code. Use the scaffold commands of `ecosystems.md` as they are.
 
 **Step 2: shape to blueprint**
@@ -63,8 +63,8 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
 - Each project has the configuration file of its `format` tool, also when the defaults are enough. It leaves Markdown out.
 - The ignore file never hides source. Anchor runtime data patterns to the project root.
 - Each tooling slot of that `AGENTS.md` operates. If a mandatory slot is missing (`lint`, `test`, `start`), install the usual tool of the stack.
-- For JS / TS, start from `builder/blueprint/oxlint.boundaries.json` (or `oxlint.boundaries.e2e.json` for `e2e`) and `builder/blueprint/oxlint.complexity.json`.
-- For a `web`, copy `builder/blueprint/theme/` as it is.
+- For JS / TS, start from `.product/blueprint/oxlint.boundaries.json` (or `oxlint.boundaries.e2e.json` for `e2e`) and `.product/blueprint/oxlint.complexity.json`.
+- For a `web`, copy `.product/blueprint/theme/` as it is.
 - Register the type and the slots with `node .agents/aidd/aidd.mjs config set projects.{project} '{"type":"{type}",...}'`.
 - Prove the boundary check: add an import that the architecture forbids, make sure that `lint --changed` fails, then remove the import.
 
