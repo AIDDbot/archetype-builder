@@ -53,7 +53,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 ### cli
 
 - Each command registration gives its name, summary, usage, operations and options. An option is typed data (name, value placeholder, summary, default), never a help text that code parses again. The help comes from the registrations, in the order of the manifest, and from the setting definitions of `configuration`: nothing copies them by hand.
-- `core` parses the arguments one time, then runs one pipeline: parse, run, render, report, each in its own function. It reads `--help`, `--json` and the setting options before the command. An option that the command does not declare is a `usage` error. A `usage` error of a command shows its declared usage.
+- `core` adds the options of each registration to the one parse of `configuration`, never a second parse, then runs one pipeline: parse, run, render, report, each in its own function. It reads `--help`, `--json` and the setting options before the command. An option that the command does not declare, or an argument that it does not take, is a `usage` error. A `usage` error of a command shows its declared usage.
 - Output contract in `shared`: a command gives its result as data; `core` writes it as text, or as one JSON object with `--json`. A command never writes to the standard output itself.
 - `config get` uses this contract: `{ "settings": [ { "name", "value", "source" } ] }`, or one `{ "name", "value", "source" }`.
 
@@ -88,6 +88,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 - **R18**: WHEN the `cli` runs a command with `--json`, it SHALL write one JSON object, and nothing else, to its standard output. Test: each command of the foundation.
 - **R19**: IF a command with `--json` fails, THEN the `cli` SHALL write `{ "error": "<message>" }` to standard output, nothing to standard error, and stop with the exit code of that failure.
 - **R20**: WHEN the `cli` runs `help --json`, it SHALL write `{ "name": "<name>", "commands": [ { "name": "<command>", "summary": "<summary>", "usage": "<usage>" } ] }`.
+- **R21**: IF a command gets an option that it does not declare or an argument that it does not take, THEN the `cli` SHALL write `error: <message>` and the usage of that command to standard error, and stop with exit code 2. Test: one extra argument and one unknown option of a foundation command.
 
 ### Expected URLs and APIs
 

@@ -49,6 +49,7 @@ Each project must start in the same way in each environment, with its settings o
 - A local cli owns its store: no server; each invocation does one command and stops.
 - Settings: `CONFIG_FILE` (`./config.json`), `DATABASE_URL` (`./data/app.sqlite`) for a local store, `API_BASE_URL` (`http://localhost:3000`) for a cli with an `api`. One list of settings in `core` (name, default, check); a feature adds its settings there.
 - Sources: the option `--{name}` (such as `--database-url`), the variable `{NAME}`, the key `{NAME}` of the configuration file, the default. `CONFIG_FILE` never comes from the file.
+- `core` parses the arguments one time, in one function, from options as data: each setting gives its option. A later spec adds its options to that parse, never a second parse.
 - Feature `config`, with the operations `get` and `set`, through the settings contract of `shared`. `set` checks the value before it writes.
 - Migrations as the `api`, before the command.
 
