@@ -62,6 +62,7 @@ export default defineConfig({
 - Each rule is an `error`, so that a check fails with its findings. The configurations turn off the default `correctness` rules: a debt check never reports what the hook reports.
 - Oxlint reads the `files` of an override relative to the configuration file. Start each path with `**/` (`**/src/core/**/*.ts`): a path such as `src/core/*.ts` matches nothing from `lint/`, and the check passes with no warning.
 - A later override replaces the rule; it does not merge it. Thus each override repeats all of its groups.
+- The last override is for the tests: a test can import any layer, but no module of disk, database, network or process (`node:fs`, `node:sqlite`, `node:child_process`, …) and no `*.repository.ts` or `*.client.ts`. Thus "a unit test proves logic only" is a check, not a review.
 - Coverage: add `@vitest/coverage-v8` at the Vitest version of `vite-plus`. In the `vite.config.ts` of the project, `coverage.include` is `src/**/*.ts` without the tests (else a file that no test loads does not count), and `coverage.thresholds` gives 80 for `statements`, `branches`, `functions` and `lines` to `src/core/**` and `src/shared/**`, with `perFile: true` (else a file with no test passes inside the mean of its folder).
 - A false alarm of a rule is turned off in the `lint/` configuration of the project, for its files, never with a comment in each place.
 - Do not write an own boundary checker: the overrides check the imports, and the `debt:medium` run of the core reports a subfolder in a feature.
