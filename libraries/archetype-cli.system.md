@@ -1,6 +1,6 @@
 # Archetype CLI
 
-> Author: AIDDbot · Website: https://aiddbot.com · approved: 2026-10-14
+> Author: Alberto Basalo · Website: https://aiddbot.com · approved: 2026-10-14
 
 ## Purpose
 
@@ -24,7 +24,8 @@ The system has no user accounts.
 ## Technical decisions
 
 - TypeScript on Node.js, with the stack of `.product/blueprint/ecosystems.md`.
-- Identity in the root `package.json`: `displayName` "Archetype CLI", `description` "A local command-line application and its acceptance suite", `author` "AIDDbot", `homepage` "https://aiddbot.com".
+- Identity in the root `package.json`: `displayName` "Archetype CLI", `description` "A local command-line application and its acceptance suite", `author` "Alberto Basalo" with `url` "https://x.com/albertobasalo", `homepage` "https://aiddbot.com", `license` "MIT".
+- License: MIT, with the copyright of Alberto Basalo, in `LICENSE` at the root.
 - Basic authentication: no, the system has no users.
 
 ## Scaffold
