@@ -18,7 +18,7 @@ AIDDbot offers only libraries. When no library fits a system, AIDDbot says so an
 | [`blueprint/foundation-0.3/`](./blueprint/foundation-0.3/) | The 8 foundation specs of Archetype Base 0.3. Reference until Base 0.5. |
 | [`blueprint/project.AGENTS.template.md`](./blueprint/project.AGENTS.template.md) | The template of the `AGENTS.md` of one archetype. |
 | [`blueprint/ecosystems.md`](./blueprint/ecosystems.md) | Guidance for the tooling of each ecosystem. |
-| [`blueprint/oxlint.*.json`](./blueprint/) | Boundary and complexity rules for JS / TS. |
+| [`blueprint/lint/`](./blueprint/lint/) | Dependency and complexity rules for JS / TS, by debt level. |
 | [`blueprint/theme/`](./blueprint/theme/) | The brand theme for a `web`. |
 
 ## Status
