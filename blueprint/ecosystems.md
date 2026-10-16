@@ -19,7 +19,7 @@ A repository has one pre-commit hook, so the root of the system is one Vite+ wor
 - Each project is a flat folder with its name: `back/`, `front/`, `cli/`, `e2e/`. It is a project, never an app: do not use the `apps/` and `packages/` folders of the Vite+ templates.
 - The root `package.json` has `"workspaces"` with each project folder, the identity of the system, `vite-plus` in `devDependencies`, `"prepare": "vp config"` (it installs the hook) and `"test": "vp run -r test"`.
 - `.vite-hooks/pre-commit` contains `vp staged`. `vp config` installs the dispatcher, but not this file: write it.
-- The root `tsconfig.json` includes only `vite.config.ts`. Each project has its own `tsconfig.json`.
+- The root `tsconfig.json` includes only `vite.config.ts`. Each project has its own `tsconfig.json`, with `"erasableSyntaxOnly": true`, `"allowImportingTsExtensions": true` and `"types": ["node"]`: Node.js runs the TypeScript files as they are, so a syntax that it cannot erase (such as a parameter property `constructor(public readonly kind)`) fails at run time, not at the type check.
 - Each project has its `package.json` with its scripts, its `vite.config.ts` with its Vitest project (`name`, `include`) and its coverage, its `lint/` folder, and a `.gitignore` that anchors its runtime data, such as `/data/`.
 - The root `.gitignore` does not anchor `node_modules/`, `.vite/` and `coverage/`: Vitest makes them in each project.
 
@@ -63,15 +63,21 @@ export default defineConfig({
 - Oxlint reads the `files` of an override relative to the configuration file. Start each path with `**/` (`**/src/core/**/*.ts`): a path such as `src/core/*.ts` matches nothing from `lint/`, and the check passes with no warning.
 - A later override replaces the rule; it does not merge it. Thus each override repeats all of its groups.
 - The last override is for the tests: a test can import any layer, but no module of disk, database, network or process (`node:fs`, `node:sqlite`, `node:child_process`, …) and no `*.repository.ts` or `*.client.ts`. Thus "a unit test proves logic only" is a check, not a review.
-- Coverage: add `@vitest/coverage-v8` at the Vitest version of `vite-plus`. In the `vite.config.ts` of the project, `coverage.include` is `src/**/*.ts` without the tests (else a file that no test loads does not count), and `coverage.thresholds` gives 80 for `statements`, `branches`, `functions` and `lines` to `src/core/**` and `src/shared/**`, with `perFile: true` (else a file with no test passes inside the mean of its folder).
+- Coverage: add `@vitest/coverage-v8` to the root `devDependencies`, next to `vite-plus` and at its Vitest version. In the `vite.config.ts` of the project, `coverage.include` is `src/**/*.ts` without the tests (else a file that no test loads does not count), and `coverage.thresholds` gives 80 for `statements`, `branches`, `functions` and `lines` to `src/core/**` and `src/shared/**`, with `perFile: true` (else a file with no test passes inside the mean of its folder).
 - A false alarm of a rule is turned off in the `lint/` configuration of the project, for its files, never with a comment in each place.
 - Do not write an own boundary checker: the overrides check the imports, and the `debt:medium` run of the core reports a subfolder in a feature.
 
 **Acceptance tests**
 
 - The `e2e` project is a sibling folder. It starts each project with its `start` command and never imports its code: the `**/src/**` group of `lint/dependencies.e2e.json` checks it.
+- The settings of each project (its folder, its start command) and its client are in `shared/projects/`. A test gets them from there, never from `core`: `core` is only the life cycle of the suite.
 - A system with no `web`: Vitest. The `vite.config.ts` of the `e2e` includes `**/*.test.ts`. The requirement tag goes in the title of the test (`"@S0001-R01 …"`): Vitest has no tags.
 - A system with a `web`: Playwright, with one browser engine (Chromium). Turn off `no-empty-pattern` for the Playwright fixtures and tests with no fixture (`({}, use)`, `({}, testInfo)`). Never add a false dependency to avoid the rule.
+
+**Arguments of a `cli`**
+
+- `core` reads the arguments with `node:util` `parseArgs` (`strict: true`, `allowPositionals: true`), from the options that each registration gives as data. It never writes an own parser: a hand-written parser goes over the complexity limits again and again (cli-9).
+- An error of `parseArgs` (`code` `ERR_PARSE_ARGS_*`) is the `usage` error of `monitoring`. Any other error is a defect of the definitions, and passes as it is.
 
 **Persistence**
 
@@ -83,7 +89,8 @@ export default defineConfig({
 
 - The slot names are the script names: `upgrade`, `test`, `test:spec`, `start`, `debt:medium`, `debt:low`. Use the standard npm names, which run without `run`: `test` and `start`.
 - Lint, format and the affected unit tests are no scripts: the hook runs them.
-- `test` runs all the tests of the project: `vp test run`. In an `e2e` project, `vp test run --passWithNoTests` (or `playwright test --pass-with-no-tests`), so that the scaffold passes before the first spec. There, `start` opens the interactive UI of the runner, for a human only.
+- `test` runs all the tests of the project: `vp test run`. In an `e2e` project, `vp test run --passWithNoTests` (or `playwright test --pass-with-no-tests`), so that the scaffold passes before the first spec.
+- In an `e2e` project, `start` is for a human only: with Vitest, the watch mode `vp test --passWithNoTests`, with no UI package; with Playwright, `playwright test --ui`.
 - `test:spec` exists only in an `e2e` project. It ends in the filter flag of the runner, because the core adds only the tag (`@S0001-`): `vp test run --passWithNoTests -t` (or `playwright test --pass-with-no-tests --grep`).
 - `debt:medium` has one script for each check, because the core runs each one also after a failure: `debt:medium:dependencies` (`vp lint -c lint/medium.json`) and, in an `api`, a `web` or a `cli`, `debt:medium:coverage` (`vp test run --coverage`). `debt:medium` runs both for a human. The project registers the list of the parts.
 - `debt:low` is `vp lint -c lint/low.json`.

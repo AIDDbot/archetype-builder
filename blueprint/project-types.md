@@ -40,7 +40,7 @@ The contract of each slot is in [`project.AGENTS.template.md`](./project.AGENTS.
 | `upgrade` | yes | yes | yes | yes |
 | `test` | all the unit tests | all the unit tests | all the unit tests | the full acceptance suite, headless; no unit tests, because each run proves its `core`; the core reads it as the acceptance evidence |
 | `test:spec` | n/a: no acceptance tests | n/a: no acceptance tests | n/a: no acceptance tests | the acceptance tests of one tag: the command ends in the filter flag of the runner, and the core adds the tag |
-| `start` | starts the server: reads `PORT`, answers on the health route | starts the server: reads `PORT`, answers on `/` | runs one invocation with the arguments that it gets; the `e2e` uses it as `CLI_START` | opens the interactive UI of the runner, for a human only; an agent never runs it |
+| `start` | starts the server: reads `PORT`, answers on the health route | starts the server: reads `PORT`, answers on `/` | runs one invocation with the arguments that it gets; the `e2e` uses it as `CLI_START` | runs the runner for a human only (watch mode or its UI); an agent never runs it |
 | `debt:medium` | dependencies between layers, test coverage | dependencies between layers, test coverage | dependencies between layers, test coverage | dependencies between its containers |
 | `debt:low` | complexity, limits of code | complexity, limits of code | complexity, limits of code | complexity, limits of tests |
 

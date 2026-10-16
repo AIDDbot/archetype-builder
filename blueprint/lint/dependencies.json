@@ -2,14 +2,19 @@
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
   "overrides": [
     {
-      "files": ["**/src/app.*.ts"],
+      "files": [
+        "**/src/app.*.ts"
+      ],
       "rules": {
         "eslint/no-restricted-imports": [
           "error",
           {
             "patterns": [
               {
-                "group": ["./features/**", "!./features/features.manifest.ts"],
+                "group": [
+                  "./features/**",
+                  "!./features/features.manifest.ts"
+                ],
                 "message": "main uses the features only through the manifest."
               }
             ]
@@ -18,14 +23,21 @@
       }
     },
     {
-      "files": ["**/src/core/**/*.ts", "**/src/core/**/*.vue"],
+      "files": [
+        "**/src/core/**/*.ts",
+        "**/src/core/**/*.vue"
+      ],
       "rules": {
         "eslint/no-restricted-imports": [
           "error",
           {
             "patterns": [
               {
-                "group": ["**/features/**", "**/app.*.ts"],
+                "group": [
+                  "**/features/**",
+                  "**/app.main.ts",
+                  "**/app.compose.ts"
+                ],
                 "message": "core never uses a feature, the manifest or main. The composition connects them."
               }
             ]
@@ -34,7 +46,9 @@
       }
     },
     {
-      "files": ["**/src/features/features.manifest.ts"],
+      "files": [
+        "**/src/features/features.manifest.ts"
+      ],
       "rules": {
         "eslint/no-restricted-imports": [
           "error",
@@ -65,18 +79,29 @@
       }
     },
     {
-      "files": ["**/src/features/*/*.ts", "**/src/features/*/*.vue"],
+      "files": [
+        "**/src/features/*/*.ts",
+        "**/src/features/*/*.vue"
+      ],
       "rules": {
         "eslint/no-restricted-imports": [
           "error",
           {
             "patterns": [
               {
-                "group": ["../../core/**", "../../app.*.ts", "../features.manifest.ts"],
+                "group": [
+                  "../../core/**",
+                  "../../app.*.ts",
+                  "../features.manifest.ts"
+                ],
                 "message": "A feature never uses core, main or the manifest. The composition gives it the services of core through the contracts of shared."
               },
               {
-                "group": ["../*/*.ts", "../*/*.vue", "!../*/*.api.ts"],
+                "group": [
+                  "../*/*.ts",
+                  "../*/*.vue",
+                  "!../*/*.api.ts"
+                ],
                 "message": "A feature uses a different feature only through its facade ({feature}.api.ts)."
               }
             ]
@@ -105,11 +130,19 @@
           {
             "patterns": [
               {
-                "group": ["../../core/**", "../../app.*.ts", "../features.manifest.ts"],
+                "group": [
+                  "../../core/**",
+                  "../../app.*.ts",
+                  "../features.manifest.ts"
+                ],
                 "message": "A feature never uses core, main or the manifest. The composition gives it the services of core through the contracts of shared."
               },
               {
-                "group": ["../*/*.ts", "../*/*.vue", "!../*/*.api.ts"],
+                "group": [
+                  "../*/*.ts",
+                  "../*/*.vue",
+                  "!../*/*.api.ts"
+                ],
                 "message": "A feature uses a different feature only through its facade ({feature}.api.ts)."
               },
               {
@@ -127,18 +160,28 @@
       }
     },
     {
-      "files": ["**/src/features/*/*.api.ts"],
+      "files": [
+        "**/src/features/*/*.api.ts"
+      ],
       "rules": {
         "eslint/no-restricted-imports": [
           "error",
           {
             "patterns": [
               {
-                "group": ["../../core/**", "../../app.*.ts", "../features.manifest.ts"],
+                "group": [
+                  "../../core/**",
+                  "../../app.*.ts",
+                  "../features.manifest.ts"
+                ],
                 "message": "A feature never uses core, main or the manifest. The composition gives it the services of core through the contracts of shared."
               },
               {
-                "group": ["../*/*.ts", "../*/*.vue", "!../*/*.api.ts"],
+                "group": [
+                  "../*/*.ts",
+                  "../*/*.vue",
+                  "!../*/*.api.ts"
+                ],
                 "message": "A feature uses a different feature only through its facade ({feature}.api.ts)."
               },
               {
@@ -184,11 +227,19 @@
           {
             "patterns": [
               {
-                "group": ["../../core/**", "../../app.*.ts", "../features.manifest.ts"],
+                "group": [
+                  "../../core/**",
+                  "../../app.*.ts",
+                  "../features.manifest.ts"
+                ],
                 "message": "A feature never uses core, main or the manifest. The composition gives it the services of core through the contracts of shared."
               },
               {
-                "group": ["../*/*.ts", "../*/*.vue", "!../*/*.api.ts"],
+                "group": [
+                  "../*/*.ts",
+                  "../*/*.vue",
+                  "!../*/*.api.ts"
+                ],
                 "message": "A feature uses a different feature only through its facade ({feature}.api.ts)."
               },
               {
@@ -229,11 +280,19 @@
           {
             "patterns": [
               {
-                "group": ["../../core/**", "../../app.*.ts", "../features.manifest.ts"],
+                "group": [
+                  "../../core/**",
+                  "../../app.*.ts",
+                  "../features.manifest.ts"
+                ],
                 "message": "A feature never uses core, main or the manifest. The composition gives it the services of core through the contracts of shared."
               },
               {
-                "group": ["../*/*.ts", "../*/*.vue", "!../*/*.api.ts"],
+                "group": [
+                  "../*/*.ts",
+                  "../*/*.vue",
+                  "!../*/*.api.ts"
+                ],
                 "message": "A feature uses a different feature only through its facade ({feature}.api.ts)."
               },
               {
@@ -296,7 +355,10 @@
       }
     },
     {
-      "files": ["**/*.test.ts", "**/*.spec.ts"],
+      "files": [
+        "**/*.test.ts",
+        "**/*.spec.ts"
+      ],
       "rules": {
         "eslint/no-restricted-imports": [
           "error",
@@ -377,7 +439,10 @@
             ],
             "patterns": [
               {
-                "group": ["**/*.repository.ts", "**/*.client.ts"],
+                "group": [
+                  "**/*.repository.ts",
+                  "**/*.client.ts"
+                ],
                 "message": "A unit test proves logic with a fake data, never the real repository or client."
               }
             ]

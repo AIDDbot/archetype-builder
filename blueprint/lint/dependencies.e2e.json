@@ -40,7 +40,7 @@
                 "group": [
                   "../../core/**"
                 ],
-                "message": "Tests never use core. They get the address of each project from the fixtures."
+                "message": "Tests never use core. They get the settings and the client of each project from shared/projects/."
               },
               {
                 "group": [
