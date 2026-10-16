@@ -16,10 +16,10 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 
 A repository has one pre-commit hook, so the root of the system is one Vite+ workspace (quality gates, step 3):
 
-- Each project is a flat folder with its name: `back/`, `front/`, `cli/`, `e2e/`. It is a project, never an app: do not use the `apps/` and `packages/` folders of the Vite+ templates.
-- The root `package.json` has `"workspaces"` with each project folder, the identity of the system, `vite-plus` in `devDependencies`, `"prepare": "vp config"` (it installs the hook) and `"test": "vp run -r test"`.
+- Each project is a flat folder with its name in `projects/`: `projects/back/`, `projects/front/`, `projects/cli/`, `projects/e2e/`. It is a project, never an app: do not use the `apps/` and `packages/` folders of the Vite+ templates. Thus the root keeps only the records of AIDDbot, the hook and the workspace.
+- The root `package.json` has `"workspaces": ["projects/*"]`, the identity of the system, `vite-plus` in `devDependencies`, `"prepare": "vp config"` (it installs the hook) and `"test": "vp run -r test"`.
 - `.vite-hooks/pre-commit` contains `vp staged`. `vp config` installs the dispatcher, but not this file: write it.
-- The root `tsconfig.json` includes only `vite.config.ts`. Each project has its own `tsconfig.json`, with `"erasableSyntaxOnly": true`, `"allowImportingTsExtensions": true` and `"types": ["node"]`: Node.js runs the TypeScript files as they are, so a syntax that it cannot erase (such as a parameter property `constructor(public readonly kind)`) fails at run time, not at the type check.
+- The root has no `tsconfig.json`. Each project has its own `tsconfig.json`, with `"erasableSyntaxOnly": true`, `"allowImportingTsExtensions": true` and `"types": ["node"]`: Node.js runs the TypeScript files as they are, so a syntax that it cannot erase (such as a parameter property `constructor(public readonly kind)`) fails at run time, not at the type check.
 - Each project has its `package.json` with its scripts, its `vite.config.ts` with its Vitest project (`name`, `include`) and its coverage, its `lint/` folder, and a `.gitignore` that anchors its runtime data, such as `/data/`.
 - The root `.gitignore` does not anchor `node_modules/`, `.vite/` and `coverage/`: Vitest makes them in each project.
 
@@ -38,7 +38,7 @@ export default defineConfig({
     options: { typeAware: true, typeCheck: true },
     rules: { "typescript/no-non-null-assertion": "error" },
   },
-  test: { projects: ["cli", "e2e"] },
+  test: { projects: ["projects/*"] },
 });
 ```
 
@@ -57,7 +57,7 @@ export default defineConfig({
 
 **Debt checks**
 
-- `lint/` at the root: copy [`lint/complexity.json`](./lint/complexity.json) (the limits of code, with an override for `*.test.ts`) and [`lint/complexity.tests.json`](./lint/complexity.tests.json) (the limits of tests for all files). The `lint/low.json` of each project extends `../../lint/complexity.json`, or `../../lint/complexity.tests.json` in an `e2e` project.
+- `projects/lint/`, next to the projects that use it: copy [`lint/complexity.json`](./lint/complexity.json) (the limits of code, with an override for `*.test.ts`) and [`lint/complexity.tests.json`](./lint/complexity.tests.json) (the limits of tests for all files). The `lint/low.json` of each project extends `../../lint/complexity.json`, or `../../lint/complexity.tests.json` in an `e2e` project. `projects/lint/` has no `package.json`, so the workspace and Vitest skip it.
 - Each project: copy [`lint/dependencies.json`](./lint/dependencies.json) (or [`lint/dependencies.e2e.json`](./lint/dependencies.e2e.json) for the `e2e`) to its `lint/`, and add `lint/medium.json` that extends it. Change the folder map if the project has a different one.
 - Each rule is an `error`, so that a check fails with its findings. The configurations turn off the default `correctness` rules: a debt check never reports what the hook reports.
 - Oxlint reads the `files` of an override relative to the configuration file. Start each path with `**/` (`**/src/core/**/*.ts`): a path such as `src/core/*.ts` matches nothing from `lint/`, and the check passes with no warning.
@@ -103,10 +103,10 @@ These commands were tested without a terminal (the input is closed). Run them fr
 | Project | Command | Notes |
 | --- | --- | --- |
 | system root | `npm init -y --init-type=module && npm install -D vite-plus` | Then write the workspace files above, and run `npm install`: its `prepare` installs the hook. |
-| `api` | `mkdir back && (cd back && npm init -y --init-type=module)` | Writes only `package.json`. Not tested yet in a Vite+ workspace. |
-| `cli` | `mkdir cli && (cd cli && npm init -y --init-type=module)` | Writes only `package.json`. Add `bin`. |
-| `web` | `npm create vite@latest front -- --template vanilla-ts --no-interactive --no-immediate` | Installs nothing; run `npm install` in the folder. Not tested yet in a Vite+ workspace. |
-| `e2e` | `mkdir e2e && (cd e2e && npm init -y --init-type=module)` | With a `web`: `npm init playwright@latest e2e -- --quiet --browser=chromium --lang=TypeScript --no-examples --no-browsers`, then `npx playwright install chromium` in the folder. |
+| `api` | `mkdir -p projects/back && (cd projects/back && npm init -y --init-type=module)` | Writes only `package.json`. Not tested yet in a Vite+ workspace. |
+| `cli` | `mkdir -p projects/cli && (cd projects/cli && npm init -y --init-type=module)` | Writes only `package.json`. Add `bin`. |
+| `web` | `npm create vite@latest projects/front -- --template vanilla-ts --no-interactive --no-immediate` | Installs nothing; run `npm install` in the folder. Not tested yet in a Vite+ workspace. |
+| `e2e` | `mkdir -p projects/e2e && (cd projects/e2e && npm init -y --init-type=module)` | With a `web`: `npm init playwright@latest projects/e2e -- --quiet --browser=chromium --lang=TypeScript --no-examples --no-browsers`, then `npx playwright install chromium` in the folder. |
 
 Use these commands as they are. Test a different generator in a temporary folder before you write it in the proposal.
 
