@@ -37,8 +37,8 @@ Contracts:
 - test: runs all the tests of the project. In an `api`, a `web` or a `cli`: the unit tests, fast and with no data access; the foundation adds a smoke test of the health logic. In an `e2e`: all the tests tagged @S{nnnn}-R{nn}, headless, and no unit tests, because each run proves its `core`.
 - test:spec: only in an `e2e`: the acceptance tests of one tag. The command ends in the filter flag of the runner, because the core adds only the tag (such as @S0001-). In an `api`, a `web` or a `cli`: n/a.
 - start: runs the project without a build. In an `api` or a `web`: starts the server; reads PORT; answers on the health route. In a `cli`: runs one invocation with the arguments that it gets. In an `e2e`: runs the runner for a human only, in watch mode or with its UI.
-- debt:medium: a list of checks, one command each, so that each runs also after a failure: the dependency rules between layers and, in an `api`, a `web` or a `cli`, the test coverage of `core` and `shared`; never the rules of the hook; never blocks; its findings go to the debt register as medium debt.
-- debt:low: the complexity and size limits of the Blueprint; never the rules of the hook; never blocks; its findings go to the debt register as low debt, one item for each rule.
+- debt:medium: a list of checks, one command each, so that each runs also after a failure: the dependency rules between layers; never the rules of the hook; never blocks; its findings go to the debt register as medium debt.
+- debt:low: a list of checks, one command each: the complexity and size limits of the Blueprint and, in an `api`, a `web` or a `cli`, the test coverage of `core` and `shared`; never the rules of the hook; never blocks; its findings go to the debt register as low debt, one item for each rule.
 -->
 
 | Slot | Blocks | Command | Tool |

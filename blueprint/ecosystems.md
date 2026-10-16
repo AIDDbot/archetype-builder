@@ -92,8 +92,7 @@ export default defineConfig({
 - `test` runs all the tests of the project: `vp test run`. In an `e2e` project, `vp test run --passWithNoTests` (or `playwright test --pass-with-no-tests`), so that the scaffold passes before the first spec.
 - In an `e2e` project, `start` is for a human only: with Vitest, the watch mode `vp test --passWithNoTests`, with no UI package; with Playwright, `playwright test --ui`.
 - `test:spec` exists only in an `e2e` project. It ends in the filter flag of the runner, because the core adds only the tag (`@S0001-`): `vp test run --passWithNoTests -t` (or `playwright test --pass-with-no-tests --grep`).
-- `debt:medium` has one script for each check, because the core runs each one also after a failure: `debt:medium:dependencies` (`vp lint -c lint/medium.json`) and, in an `api`, a `web` or a `cli`, `debt:medium:coverage` (`vp test run --coverage`). `debt:medium` runs both for a human. The project registers the list of the parts.
-- `debt:low` is `vp lint -c lint/low.json`.
+- Each debt slot has one script for each check, because the core runs each one also after a failure, and the project registers the list of the parts. `debt:medium:dependencies` is `vp lint -c lint/medium.json`; `debt:medium` runs it for a human. `debt:low:complexity` is `vp lint -c lint/low.json` and, in an `api`, a `web` or a `cli`, `debt:low:coverage` is `vp test run --coverage`; `debt:low` runs both for a human.
 - `upgrade` raises `vite-plus` and `@vitest/coverage-v8` together: their Vitest must be the same.
 
 **Scaffold commands**
