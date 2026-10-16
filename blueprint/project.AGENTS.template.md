@@ -24,6 +24,7 @@ Obey the Blueprint of the root `AGENTS.md`. This file gives only the data of thi
 - **Runtime / framework**: {runtime and framework}
 - **Main dependencies**: {library — role}
 - **Package manager**: {one package manager only}
+- **Pre-commit hook**: `{command}` — formats, lints and type-checks the staged files with safe fixes, and runs the unit tests that they affect
 
 ## 3 · Tooling
 
@@ -31,28 +32,23 @@ Obey the Blueprint of the root `AGENTS.md`. This file gives only the data of thi
 [Archetype] Commands and tools. [Project] Records them with `aidd config set`, and leaves out each row that the Common stack of the root AGENTS.md gives. D1, D12, D20, D26.
 Each slot is a capability, not a tool. A slot that does not apply is `n/a` with its reason. An empty slot is an error.
 Contracts:
-- lint: non-zero exit on an error; reports only errors, never warnings; includes the strongest type check of the ecosystem and the boundary check.
-- lint:files: the same lint, on the files that the core gives as arguments.
-- format: rewrites files with the standard formatter; runs before integration; nothing checks it.
+- The pre-commit hook of the technology is no slot: at each commit, it formats, lints and type-checks the staged files with safe fixes (the strongest type check of the ecosystem), and runs the unit tests that they affect. A failure stops the commit.
 - upgrade: every dependency to its latest release, majors included, and the lockfile. A major that breaks a different tool: keep the last compatible one and write why in the technology rules. Runs at the foundation and on request, never for each delivery.
-- test: runs the tests of the project. In an `api`, a `web` or a `cli`: the unit tests; the foundation adds a smoke test of the health logic. In an `e2e`: the tests tagged @S{nnnn}-R{nn}, headless, and no unit tests, because each run proves its `core`; it passes the arguments that the core adds (such as --grep @S0001-) to the acceptance tool.
-- test:files: the unit tests of the test files that the core gives as arguments. In an `e2e`: n/a.
+- test: runs all the tests of the project. In an `api`, a `web` or a `cli`: the unit tests, fast and with no data access; the foundation adds a smoke test of the health logic. In an `e2e`: all the tests tagged @S{nnnn}-R{nn}, headless, and no unit tests, because each run proves its `core`.
+- test:spec: only in an `e2e`: the acceptance tests of one tag. The command ends in the filter flag of the runner, because the core adds only the tag (such as @S0001-). In an `api`, a `web` or a `cli`: n/a.
 - start: runs the project without a build. In an `api` or a `web`: starts the server; reads PORT; answers on the health route. In a `cli`: runs one invocation with the arguments that it gets. In an `e2e`: opens the interactive UI of the runner, for a human only.
-- quality: reports complexity and size against the limits of the Blueprint, never the warnings of lint; its findings go to the debt register as medium debt.
-- harden: the final polish of code that works: the warnings of lint, and stricter rules; never blocks; its findings go to the debt register as low debt, one item for each rule.
+- debt:medium: a list of checks, one command each, so that each runs also after a failure: the dependency rules between layers and, in an `api`, a `web` or a `cli`, the test coverage of `core` and `shared`; never the rules of the hook; never blocks; its findings go to the debt register as medium debt.
+- debt:low: the complexity and size limits of the Blueprint; never the rules of the hook; never blocks; its findings go to the debt register as low debt, one item for each rule.
 -->
 
 | Slot | Blocks | Command | Tool |
 | --- | --- | --- | --- |
-| `lint` | Yes | `{command}` | {tool} |
-| `lint:files` | Yes | `{command}` | {tool} |
-| `format` | No | `{command}` | {tool} |
 | `upgrade` | No | `{command}` | {tool} |
 | `test` | Yes | `{command}` | {tool} |
-| `test:files` | Yes | `{command}` | {tool} |
+| `test:spec` | Yes | `{command}` | {tool} |
 | `start` | No | `{command}` | {tool} |
-| `quality` | No | `{command}` | {tool} |
-| `harden` | No | `{command}` | {tool} |
+| `debt:medium` | No | `{command}` | {tool} |
+| `debt:low` | No | `{command}` | {tool} |
 
 ## 4 · Architecture
 
@@ -110,12 +106,13 @@ The index of `shared`. Read it before you write a check or a conversion. Helpers
 | `isText(value)` | True for a text with a character that is not a space. | `{shared_folder}/{checks_file}` |
 | `isOneOf(value, options)` | True for one of a closed list of values; narrows the type. | `{shared_folder}/{checks_file}` |
 | `findByName(items, name)` | The item with that `name`, or nothing. | `{shared_folder}/{checks_file}` |
-| `requireByName(items, name, kind)` | The item with that `name`, or an expected error that names the kind and the name. | `{shared_folder}/{checks_file}` |
+| `requireByName(items, { name, kind })` | The item with that `name`, or an expected error that names the kind and the name. | `{shared_folder}/{checks_file}` |
 | `requireText(value, field)` | Text without end spaces, or an expected error with the field. | `{shared_folder}/{text_file}` |
-| `parseInteger(value, field, range)` | Integer in `range` (`{ min, max }`), or an expected error with the field and the range. | `{shared_folder}/{numbers_file}` |
+| `parseInteger(value, { field, min, max })` | Integer from `min` to `max`, or an expected error with the field and the range. | `{shared_folder}/{numbers_file}` |
 | `formatDate(date)` | `YYYY-MM-DD` in local time. | `{shared_folder}/{dates_file}` |
 | `formatTime(date)` | `HH:MM:SS.mmm` in local time. | `{shared_folder}/{dates_file}` |
 | `formatDateTime(date)` | `YYYY-MM-DD HH:MM:SS` in local time, for a person. | `{shared_folder}/{dates_file}` |
+| `ExpectedError(kind, message)` | The expected error, with its kind: `rule`, `usage` or `unavailable`. Each failed check raises it; `monitoring` gives each kind its exit code or status. | `{shared_folder}/{errors_file}` |
 | `attempt(action, message)` | The result of `action`, or the expected error `unavailable` with `message` when an external resource fails. Only `data` and `core` use it. | `{shared_folder}/{errors_file}` |
 | {environment primitive} | {contract} | {path} |
 

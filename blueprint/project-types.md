@@ -37,15 +37,14 @@ The contract of each slot is in [`project.AGENTS.template.md`](./project.AGENTS.
 
 | Slot | `api` | `web` | `cli` | `e2e` |
 | --- | --- | --- | --- | --- |
-| `lint` | yes | yes | yes | yes |
-| `lint:files` | yes | yes | yes | yes |
-| `format` | yes | yes | yes | yes |
 | `upgrade` | yes | yes | yes | yes |
-| `test` | unit tests | unit tests | unit tests | the acceptance suite, headless; no unit tests, because each run proves its `core`; the core reads it as the acceptance evidence |
-| `test:files` | the unit tests of the given files | the unit tests of the given files | the unit tests of the given files | n/a: the Builder checks the acceptance tests with `aidd run test --spec` |
+| `test` | all the unit tests | all the unit tests | all the unit tests | the full acceptance suite, headless; no unit tests, because each run proves its `core`; the core reads it as the acceptance evidence |
+| `test:spec` | n/a: no acceptance tests | n/a: no acceptance tests | n/a: no acceptance tests | the acceptance tests of one tag: the command ends in the filter flag of the runner, and the core adds the tag |
 | `start` | starts the server: reads `PORT`, answers on the health route | starts the server: reads `PORT`, answers on `/` | runs one invocation with the arguments that it gets; the `e2e` uses it as `CLI_START` | opens the interactive UI of the runner, for a human only; an agent never runs it |
-| `quality` | yes | yes | yes | yes |
-| `harden` | yes | yes | yes | yes |
+| `debt:medium` | dependencies between layers, test coverage | dependencies between layers, test coverage | dependencies between layers, test coverage | dependencies between its containers |
+| `debt:low` | complexity, limits of code | complexity, limits of code | complexity, limits of code | complexity, limits of tests |
+
+Lint, format and the affected unit tests are no slots: the pre-commit hook of the technology runs them at each commit, for all projects (quality gates, step 3).
 
 ## 3 · Architecture
 

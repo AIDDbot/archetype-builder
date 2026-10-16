@@ -4,42 +4,73 @@ Guidance to fill the Tooling section of [`project.AGENTS.template.md`](./project
 
 ## JS / TS on Node: the required stack
 
-JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such as Bun, are not in the stack yet (Halloween D16). Reference: `back/` of Archetype Base (`.oxlintrc.json`, `.oxlint.boundaries.json`, `.oxlint.quality.json`, `.oxfmtrc.json`).
+JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such as Bun, are not in the stack yet (Halloween D16). Reference: the Vite+ trial of Halloween steps 2 and 3 (`.product/halloween/quality-gates.prompt.md` of AIDDbot).
 
 **TypeScript and tools**
 
+- Use Vite+ (`vite-plus`, command `vp`) for each project: Oxfmt formats, Oxlint lints and checks the types, Vitest runs the tests, and `vp staged` is the pre-commit hook. Never add a different formatter, linter, test runner or hook tool.
 - Use TypeScript 7. Never pin an older major. If a tool does not support TypeScript 7, replace the tool. Do not keep the old TypeScript.
-- Use the oxc family: oxlint for `lint`, layer boundaries, `quality`, and `harden`; oxfmt for `format`.
-- Use the native Node.js test runner (`node --test`) for the unit tests of the `test` slot. Node.js runs TypeScript directly. Write `void test(...)`: the runner owns the promise of each registration, and `typescript/no-floating-promises` reports it without `void`.
 - Do not add a tool that needs the JavaScript API of TypeScript (for example, dependency-cruiser or `@typescript-eslint/parser`).
-- Vite+ is not yet in the stack.
 
-**Type check (inside `lint`)**
+**System workspace**
 
-- Set `"options": { "typeAware": true, "typeCheck": true }` in the oxlint configuration and add `oxlint-tsgolint`. Then oxlint reports the type errors of TypeScript 7. Do not run `tsc` as a separate step.
-- Set `typescript/no-non-null-assertion` to `error`. A value that can be missing is checked, never asserted with `!`.
-- In a Vue project, oxlint type-checks the `.ts` files with TypeScript 7. Until `vue-tsc` supports TypeScript 7, the `.vue` files have no type check: write this gap in the technology rules.
+A repository has one pre-commit hook, so the root of the system is one Vite+ workspace (quality gates, step 3):
 
-**Layer boundaries (inside `lint`)**
+- Each project is a flat folder with its name: `back/`, `front/`, `cli/`, `e2e/`. It is a project, never an app: do not use the `apps/` and `packages/` folders of the Vite+ templates.
+- The root `package.json` has `"workspaces"` with each project folder, the identity of the system, `vite-plus` in `devDependencies`, `"prepare": "vp config"` (it installs the hook) and `"test": "vp run -r test"`.
+- `.vite-hooks/pre-commit` contains `vp staged`. `vp config` installs the dispatcher, but not this file: write it.
+- The root `tsconfig.json` includes only `vite.config.ts`. Each project has its own `tsconfig.json`.
+- Each project has its `package.json` with its scripts, its `vite.config.ts` with its Vitest project (`name`, `include`) and its coverage, its `lint/` folder, and a `.gitignore` that anchors its runtime data, such as `/data/`.
+- The root `.gitignore` does not anchor `node_modules/`, `.vite/` and `coverage/`: Vitest makes them in each project.
 
-- For `.ts` and `.vue` files, merge the `overrides` of [`oxlint.boundaries.json`](./oxlint.boundaries.json) into the oxlint configuration. It uses the file names of the JS / TS convention below.
-- For the `e2e` project, use [`oxlint.boundaries.e2e.json`](./oxlint.boundaries.e2e.json) instead: `core`, `features/{feature}/` and `shared/`.
-- Change the paths and depths if the folder map of the project is different.
+The root `vite.config.ts`:
+
+```ts
+import { defineConfig } from "vite-plus";
+
+export default defineConfig({
+  staged: {
+    "*": "vp check --fix",
+    "*.ts": "vp test related --run --passWithNoTests",
+  },
+  fmt: { ignorePatterns: ["**/*.md"] },
+  lint: {
+    options: { typeAware: true, typeCheck: true },
+    rules: { "typescript/no-non-null-assertion": "error" },
+  },
+  test: { projects: ["cli", "e2e"] },
+});
+```
+
+**Pre-commit hook**
+
+- The hook formats, lints and checks the types of the staged files with the safe fixes, and runs the unit tests that import them. It adds the fixes to the commit. A failure stops the commit.
+- `vp check` checks the types only with `typeAware` and `typeCheck`. Without them, a type error passes.
+- Formatting leaves Markdown out (`ignorePatterns`). A commit of specs or docs only runs no test.
+- `test.projects` names the folder of each Vitest project, so that `vp test related` uses the configuration of each project.
+- A value that can be missing is checked, never asserted with `!` (`typescript/no-non-null-assertion`).
+
+**Unit tests**
+
+- Vitest, through `vp test`. A test imports from `vite-plus/test`. The `vite.config.ts` of the project includes `src/**/*.test.ts`.
+- A unit test proves logic only. It is fast and touches no disk, database, network or process: the acceptance tests prove `data`.
+
+**Debt checks**
+
+- `lint/` at the root: copy [`lint/complexity.json`](./lint/complexity.json) (the limits of code, with an override for `*.test.ts`) and [`lint/complexity.tests.json`](./lint/complexity.tests.json) (the limits of tests for all files). The `lint/low.json` of each project extends `../../lint/complexity.json`, or `../../lint/complexity.tests.json` in an `e2e` project.
+- Each project: copy [`lint/dependencies.json`](./lint/dependencies.json) (or [`lint/dependencies.e2e.json`](./lint/dependencies.e2e.json) for the `e2e`) to its `lint/`, and add `lint/medium.json` that extends it. Change the folder map if the project has a different one.
+- Each rule is an `error`, so that a check fails with its findings. The configurations turn off the default `correctness` rules: a debt check never reports what the hook reports.
+- Oxlint reads the `files` of an override relative to the configuration file. Start each path with `**/` (`**/src/core/**/*.ts`): a path such as `src/core/*.ts` matches nothing from `lint/`, and the check passes with no warning.
 - A later override replaces the rule; it does not merge it. Thus each override repeats all of its groups.
-- Do not write an own boundary checker: the overrides above check the imports, and the `quality` run of the core reports a subfolder in a feature.
+- Coverage: add `@vitest/coverage-v8` at the Vitest version of `vite-plus`. In the `vite.config.ts` of the project, `coverage.include` is `src/**/*.ts` without the tests (else a file that no test loads does not count), and `coverage.thresholds` gives 80 for `statements`, `branches`, `functions` and `lines` to `src/core/**` and `src/shared/**`, with `perFile: true` (else a file with no test passes inside the mean of its folder).
+- A false alarm of a rule is turned off in the `lint/` configuration of the project, for its files, never with a comment in each place.
+- Do not write an own boundary checker: the overrides check the imports, and the `debt:medium` run of the core reports a subfolder in a feature.
 
-**Quality**
+**Acceptance tests**
 
-- Use a second oxlint configuration with only the complexity and size limits of the Blueprint. Start from [`oxlint.complexity.json`](./oxlint.complexity.json). It never extends the `lint` configuration and turns off the default `correctness` rules, so that `quality` never reports the warnings of `lint` (Halloween D26).
-- Its override gives the test thresholds to `**/*.test.ts` and `**/*.spec.ts`.
-- In an `e2e` project:
-  - Set the `files` of that override to all files.
-  - Turn off `no-empty-pattern` for all files in the `lint` configuration: Playwright fixtures and tests with no fixture take `({}, use)` or `({}, testInfo)`. Never add a false dependency to avoid the rule.
-
-**Hardening**
-
-- `harden` is the final polish (Halloween D26): the `lint` command without `--quiet`, so that it reports the warnings. A stricter rule goes to a third configuration that extends the `lint` one, never to `lint`.
-- A false alarm of a rule is turned off in the `lint` configuration of the project, for its files, never with a comment in each place.
+- The `e2e` project is a sibling folder. It starts each project with its `start` command and never imports its code: the `**/src/**` group of `lint/dependencies.e2e.json` checks it.
+- A system with no `web`: Vitest. The `vite.config.ts` of the `e2e` includes `**/*.test.ts`. The requirement tag goes in the title of the test (`"@S0001-R01 …"`): Vitest has no tags.
+- A system with a `web`: Playwright, with one browser engine (Chromium). Turn off `no-empty-pattern` for the Playwright fixtures and tests with no fixture (`({}, use)`, `({}, testInfo)`). Never add a false dependency to avoid the rule.
 
 **Persistence**
 
@@ -49,14 +80,13 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 
 **Script names**
 
-- Use the standard npm names, which run without `run`: `test` runs the tests of the project, and `start` runs it.
-- The slot names are the script names: `lint`, `lint:files`, `format`, `upgrade`, `test`, `test:files`, `start`, `quality`, `harden`.
-- `lint` and `lint:files` report only errors: add `--quiet`. A warning never blocks, so it is only noise for each build; `harden` reports it.
-- `lint` and `lint:files` apply the safe fixes of the linter: add `--fix`, never `--fix-suggestions` or `--fix-dangerously`. A safe fix keeps the behavior, so no agent spends a turn on it. `harden` and `quality` only report.
-- `format` writes the files: `oxfmt --write .`. The flag is the default, but it shows that the command changes files.
-- `lint:files` and `test:files` take the files that the core gives as arguments, so that the Builder checks only what it changes (Halloween D22). `lint:files` is the `lint` command without its folder, for example `oxlint -c .oxlintrc.json --quiet --fix`. `test:files` is the unit runner without its glob: `node --test`. An `e2e` has `lint:files` and no `test:files`: the Builder checks its tests with `aidd run test --spec`.
-- In an `api`, a `web` or a `cli`, `test` runs the unit tests.
-- In an `e2e` project, `test` runs the acceptance suite, headless: `playwright test --pass-with-no-tests`, so that the scaffold passes before the first spec. npm adds the arguments of the core (`--grep @S{nnnn}-`) at the end. An `e2e` has no unit tests: each run proves its `core`. `start` opens the interactive UI of the runner, for a human only.
+- The slot names are the script names: `upgrade`, `test`, `test:spec`, `start`, `debt:medium`, `debt:low`. Use the standard npm names, which run without `run`: `test` and `start`.
+- Lint, format and the affected unit tests are no scripts: the hook runs them.
+- `test` runs all the tests of the project: `vp test run`. In an `e2e` project, `vp test run --passWithNoTests` (or `playwright test --pass-with-no-tests`), so that the scaffold passes before the first spec. There, `start` opens the interactive UI of the runner, for a human only.
+- `test:spec` exists only in an `e2e` project. It ends in the filter flag of the runner, because the core adds only the tag (`@S0001-`): `vp test run --passWithNoTests -t` (or `playwright test --pass-with-no-tests --grep`).
+- `debt:medium` has one script for each check, because the core runs each one also after a failure: `debt:medium:dependencies` (`vp lint -c lint/medium.json`) and, in an `api`, a `web` or a `cli`, `debt:medium:coverage` (`vp test run --coverage`). `debt:medium` runs both for a human. The project registers the list of the parts.
+- `debt:low` is `vp lint -c lint/low.json`.
+- `upgrade` raises `vite-plus` and `@vitest/coverage-v8` together: their Vitest must be the same.
 
 **Scaffold commands**
 
@@ -64,21 +94,22 @@ These commands were tested without a terminal (the input is closed). Run them fr
 
 | Project | Command | Notes |
 | --- | --- | --- |
-| `api` | `mkdir back && (cd back && npm init -y --init-type=module)` | Writes only `package.json`. Add an ignore file with `/node_modules/` before the first commit. |
-| `cli` | `mkdir cli && (cd cli && npm init -y --init-type=module)` | Writes only `package.json`. Add `bin` and an ignore file with `/node_modules/` before the first commit. |
-| `web` | `npm create vite@latest front -- --template vanilla-ts --no-interactive --no-immediate` | Installs nothing; run `npm install` in the folder. |
-| `e2e` | `npm init playwright@latest e2e -- --quiet --browser=chromium --lang=TypeScript --no-examples --no-browsers` | Installs its dependencies, but no browser: run `npx playwright install chromium` in the folder only when the system has a `web`. |
+| system root | `npm init -y --init-type=module && npm install -D vite-plus` | Then write the workspace files above, and run `npm install`: its `prepare` installs the hook. |
+| `api` | `mkdir back && (cd back && npm init -y --init-type=module)` | Writes only `package.json`. Not tested yet in a Vite+ workspace. |
+| `cli` | `mkdir cli && (cd cli && npm init -y --init-type=module)` | Writes only `package.json`. Add `bin`. |
+| `web` | `npm create vite@latest front -- --template vanilla-ts --no-interactive --no-immediate` | Installs nothing; run `npm install` in the folder. Not tested yet in a Vite+ workspace. |
+| `e2e` | `mkdir e2e && (cd e2e && npm init -y --init-type=module)` | With a `web`: `npm init playwright@latest e2e -- --quiet --browser=chromium --lang=TypeScript --no-examples --no-browsers`, then `npx playwright install chromium` in the folder. |
 
 Use these commands as they are. Test a different generator in a temporary folder before you write it in the proposal.
 
-| Ecosystem | `lint` | Types (inside `lint`) | `format` | unit tests (inside `test`) | Boundaries (inside `lint`) | `quality` |
-| --- | --- | --- | --- | --- | --- | --- |
-| JS / TS on Node | oxlint with `typeAware` and `typeCheck` (`oxlint-tsgolint`) | inside oxlint (`typeCheck`); no `tsc` | oxfmt | `node --test` | oxlint `no-restricted-imports` with `overrides` per folder and file role | oxlint with a second config of complexity and size rules only |
-| Go | `go vet`, golangci-lint | compiler | `gofmt -w` | `go test` | `internal/` + depguard | gocyclo, gocognit |
-| Rust | `cargo clippy` | compiler | `cargo fmt` | `cargo test` | module visibility | `clippy::cognitive_complexity` |
-| PHP | PHP_CodeSniffer | PHPStan, Psalm | `php-cs-fixer fix` | PHPUnit, Pest | Deptrac | PHPMD |
-| Python | Ruff | mypy, pyright | `ruff format` | pytest | import-linter | radon, Ruff `C901` |
-| Java / Kotlin | Checkstyle, detekt | compiler | google-java-format, ktlint | JUnit | ArchUnit | PMD, detekt complexity |
+| Ecosystem | Hook: lint, format, affected unit tests | Types | Unit tests (inside `test`) | Boundaries (`debt:medium`) | Complexity (`debt:low`) |
+| --- | --- | --- | --- | --- | --- |
+| JS / TS on Node | `vp staged`: `vp check --fix`, `vp test related` | Oxlint `typeCheck` (TypeScript 7); no `tsc` | Vitest (`vp test`) | Oxlint `no-restricted-imports` with `overrides` per folder and file role | Oxlint with a configuration of complexity and size rules only |
+| Go | `go vet`, golangci-lint, `gofmt -w`, `go test` of the changed packages | compiler | `go test` | `internal/` + depguard | gocyclo, gocognit |
+| Rust | `cargo clippy`, `cargo fmt`, `cargo test` | compiler | `cargo test` | module visibility | `clippy::cognitive_complexity` |
+| PHP | PHP_CodeSniffer, `php-cs-fixer fix` | PHPStan, Psalm | PHPUnit, Pest | Deptrac | PHPMD |
+| Python | Ruff, `ruff format`, pytest-testmon | mypy, pyright | pytest | import-linter | radon, Ruff `C901` |
+| Java / Kotlin | Checkstyle, detekt, google-java-format, ktlint | compiler | JUnit | ArchUnit | PMD, detekt complexity |
 
 ### JS / TS file names
 

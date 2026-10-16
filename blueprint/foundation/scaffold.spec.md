@@ -30,7 +30,8 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
 
 ### The system
 
-- The root `package.json` holds the identity of `.product/system.md`: `displayName`, `description`, `author` and `homepage`. `shell` and `about` read it; `aidd release` writes its `version`. Commit it as `chore: set the system identity`, before the first project.
+- The root `package.json` holds the identity of `.product/system.md`: `displayName`, `description`, `author`, `homepage` and `license`. `shell` and `about` read it; `aidd release` writes its `version`. Commit it as `chore: set the system identity`, before the first project.
+- The root of the system holds the tooling that all projects share: the pre-commit hook of the technology, the format and lint configuration, and the limits of complexity of the Blueprint. For JS / TS, it is the Vite+ workspace of `.product/blueprint/ecosystems.md`, with `.product/blueprint/lint/complexity.json` and `complexity.tests.json` in `lint/`. The format leaves Markdown out. Commit it as `chore: set the system tooling`, before the first project; each project adds itself to it.
 
 ### Each project
 
@@ -60,23 +61,24 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
 - Run the `upgrade` command one time, because models remember old releases.
   - If a new major breaks a different tool of the stack, keep the last compatible major. Write the pin and its reason in the technology rules of that `AGENTS.md`.
   - Never pin a major that `ecosystems.md` requires. Replace the tool that breaks.
-- Each project has the configuration file of its `format` tool, also when the defaults are enough. It leaves Markdown out.
 - The ignore file never hides source. Anchor runtime data patterns to the project root.
-- Each tooling slot of that `AGENTS.md` operates. If a mandatory slot is missing (`lint`, `test`, `start`), install the usual tool of the stack.
-- For JS / TS, start from `.product/blueprint/oxlint.boundaries.json` (or `oxlint.boundaries.e2e.json` for `e2e`) and `.product/blueprint/oxlint.complexity.json`.
+- Each tooling slot of that `AGENTS.md` operates. If a mandatory slot is missing (`test`, `start`, `debt:medium`, `debt:low`), install the usual tool of the stack.
+- The pre-commit hook of the root runs the unit tests of the project that a commit affects.
+- For JS / TS, start the dependency rules from `.product/blueprint/lint/dependencies.json` (or `dependencies.e2e.json` for `e2e`), and extend the complexity limits of the root.
 - For a `web`, copy `.product/blueprint/theme/` as it is.
 - Register the type and the slots with `node .agents/aidd/aidd.mjs config set projects.{project} '{"type":"{type}",...}'`.
-- Prove the boundary check: add an import that the architecture forbids, make sure that `lint --changed` fails, then remove the import.
+- Prove the debt checks: add an import that the architecture forbids, make sure that `debt:medium` fails, then remove the import. Do the same with a function over the limits and `debt:low`.
+- Prove the hook: stage a unit test that fails, make sure that the commit fails, then repair it.
 
 ### e2e
 
-- `test` passes with no acceptance test, so that the scaffold ships before the first spec.
+- `test` and `test:spec` pass with no acceptance test, so that the scaffold ships before the first spec.
 
 ## Verification
 
 ### Requirements
 
-None: a `chore` changes nothing that an observer sees. The regression of the release (`lint`, `format` and `test` of all projects) and the boundary proof of step 3 are its verification.
+None: a `chore` changes nothing that an observer sees. The regression of the release (`test` of all projects), the hook at each commit, and the proofs of step 3 are its verification.
 
 ### Expected URLs and APIs
 
