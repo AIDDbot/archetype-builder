@@ -78,6 +78,7 @@ export default defineConfig({
 - The settings of each project (its folder, its start command) and its client are in `shared/projects/`. A test gets them from there, never from `core`: `core` is only the life cycle of the suite.
 - A test keeps the tag of each requirement that it proves. A later spec adds its tag next to the others; it never replaces the tag of another spec.
 - A system with no `web`: Vitest. The `vite.config.ts` of the `e2e` includes `**/*.test.ts`. The requirement tag goes in the title of the test (`"@S0001-R01 …"`): Vitest has no tags.
+- No script of an operating system in the suite (PowerShell, shell scripts) and no branch for a platform: a requirement that needs a signal of the operating system, such as a clean stop that writes the queued log lines, is proved by a unit test of `core` with the life cycle as an argument.
 - A system with a `web`: Playwright, with one browser engine (Chromium). Turn off `no-empty-pattern` for the Playwright fixtures and tests with no fixture (`({}, use)`, `({}, testInfo)`). Never add a false dependency to avoid the rule.
 
 **Arguments of a `cli`**
@@ -132,7 +133,7 @@ Use the pattern `{business}.{role}.ts`. The role tells the layer. The boundary r
 | Concept | File |
 | --- | --- |
 | composition | `src/app.main.ts` (entry), `src/app.compose.ts` (`createApp()`) and `src/features/features.manifest.ts` |
-| `core` | `src/core/app.{service}.ts`, for example `app.config.ts`, `app.logger.ts`, `app.server.ts` |
+| `core` | `src/core/app.{service}.ts`, for example `app.config.ts`, `app.logger.ts`, `app.server.ts`; the middleware of an `api` in `src/core/{concern}.middleware.ts` |
 | facade | `src/features/{feature}/{feature}.api.ts`, only when other features use it |
 | `presentation` | `*.routes.ts` (the registration that the manifest imports), `*.controller.ts`, `*.request.ts`, `*.command.ts`, `*.page.ts`, `*.component.ts`, `*.card.ts` (`.tsx` in a React `web`) |
 | `logic` | `*.service.ts`, `*.policy.ts`, `*.store.ts` |
@@ -162,7 +163,7 @@ Use the current major of each framework and its current idioms. Never write the 
 
 - ES modules and async handlers. Express 5 sends a rejected promise to the error handler of `core`: no `try`/`catch` in a handler only to call `next(error)`, and no wrapper package such as `express-async-errors`.
 - `express.json()` with the body limit of `configuration`; no `body-parser`. One `express.Router()` for each feature, in its `{feature}.routes.ts`.
-- `core` writes its own middleware for CORS, the security headers, the request identifier and the log line: no `cors`, `helmet`, `morgan` or similar package.
+- `core` writes its own middleware for CORS, the security headers, the request identifier and the log line: no `cors`, `helmet`, `morgan` or similar package. Each one is in `src/core/{concern}.middleware.ts`, where the shared limits allow the signature of Express (`request, response, next`, and `error` first in the error handler): no lint comment and no exception in `lint/`. The composition registers the middleware of `core`; it never writes one.
 - The platform first: `node:sqlite`, `node:crypto` (`scrypt` with a random salt for a password, `randomUUID`), global `fetch` and `AbortSignal.timeout`.
 
 **React (19 or later), with react-router (7 or later)**
@@ -170,7 +171,8 @@ Use the current major of each framework and its current idioms. Never write the 
 - Function components and hooks only: no class component, no `React.FC`, no `forwardRef` (a `ref` is a prop), no `import React`. Named exports. `StrictMode` in the root.
 - The router in data mode: `createBrowserRouter` with the route objects of the manifest. A page gets its data from the `loader` of its route (`useLoaderData`), and changes data with the `action` of its route (`<Form>`, `useActionState`, `useNavigation`): never `useEffect` to fetch data, and no data library.
 - The error of a route goes to its `ErrorBoundary`; the not-found page is the route `*`.
-- No manual memoization (`useMemo`, `useCallback`, `memo`) unless a measured problem needs it. A form uses the elements of HTML and their validation attributes, with no form library.
+- No manual memoization (`useMemo`, `useCallback`, `memo`). A form uses the elements of HTML and their validation attributes, with no form library.
+- `layers` checks it: a facade, a `logic` or a `data` file never imports React, and a file of `presentation` never imports `useEffect`, `useLayoutEffect`, `useMemo`, `useCallback` or `memo` (`lint/dependencies.json`).
 
 In a React `web`, a `.tsx` file only renders: no rule, no check and no conversion. These go into `.ts` files (`logic`, `shared`), which the unit tests prove. The coverage of the `web` includes only `.ts` files; the acceptance tests prove the `.tsx` files. Local state of a component stays in the component; state that pages share goes into a `*.store.ts` (`logic`), with no state library.
 

@@ -164,6 +164,19 @@
                 ],
                 "message": "presentation never uses data: only the registration (routes) creates it for logic. The direction is presentation → logic → data."
               }
+            ],
+            "paths": [
+              {
+                "name": "react",
+                "importNames": [
+                  "useEffect",
+                  "useLayoutEffect",
+                  "useMemo",
+                  "useCallback",
+                  "memo"
+                ],
+                "message": "A page gets its data from the loader of its route and changes it with its action: no effect to fetch data, and no manual memoization."
+              }
             ]
           }
         ]
@@ -218,6 +231,12 @@
                   "./*.client.tsx"
                 ],
                 "message": "The facade never uses presentation or data. The direction is facade → logic → data."
+              }
+            ],
+            "paths": [
+              {
+                "name": "react",
+                "message": "Only a .tsx file of presentation, core or shared uses React: facades, logic and data are plain TypeScript, which unit tests prove."
               }
             ]
           }
@@ -275,6 +294,12 @@
                   "./*.api.ts"
                 ],
                 "message": "logic never uses presentation or the facade. The direction is presentation → logic → data."
+              }
+            ],
+            "paths": [
+              {
+                "name": "react",
+                "message": "Only a .tsx file of presentation, core or shared uses React: facades, logic and data are plain TypeScript, which unit tests prove."
               }
             ]
           }
@@ -336,6 +361,12 @@
                   "./*.api.ts"
                 ],
                 "message": "data never uses presentation, logic or the facade. The direction is presentation → logic → data."
+              }
+            ],
+            "paths": [
+              {
+                "name": "react",
+                "message": "Only a .tsx file of presentation, core or shared uses React: facades, logic and data are plain TypeScript, which unit tests prove."
               }
             ]
           }

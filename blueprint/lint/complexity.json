@@ -39,7 +39,23 @@
   },
   "overrides": [
     {
-      "files": ["**/*.test.ts", "**/*.spec.ts"],
+      "files": [
+        "**/src/core/*.middleware.ts"
+      ],
+      "rules": {
+        "eslint/max-params": [
+          "error",
+          {
+            "max": 4
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "**/*.test.ts",
+        "**/*.spec.ts"
+      ],
       "rules": {
         "eslint/max-statements": [
           "error",
