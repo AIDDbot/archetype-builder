@@ -161,6 +161,16 @@ The `front/` archetype of Archetype Base sets the visual base. A new library wit
 
 A project has only the dependencies that this file, the `AGENTS.md` of its archetype or a spec names: the list is closed (Halloween D36). Never add one on your own judgment, such as a UI for the test runner, a second assertion library, or a library for a few lines of code. A need that no named dependency and no module of the platform covers is a decision of a spec: the spec names the dependency and why. A dependency that nobody names breaks a rule of the project: `medium` debt.
 
+The dependencies that this file names for JS / TS on Node:
+
+| Where | Dependencies |
+| --- | --- |
+| root `devDependencies` | `vite-plus`, `@vitest/coverage-v8`, `@types/node` (for `"types": ["node"]`), `npm-check-updates` (the `upgrade` slot) |
+| `web` | `@picocss/pico`, `@fontsource/roboto`, `@fontsource/audiowide`, `@fontsource/anonymous-pro` |
+| `e2e` with a `web` | `@playwright/test` |
+
+No `typescript`: Vite+ brings it. No `@vitest/ui`: the `start` of an `e2e` with Vitest is the watch mode. The framework of a project (such as Express) is in the `AGENTS.md` of its archetype.
+
 Add a dependency only with the package manager's add command, so it resolves the latest release; never write a version by hand. The `upgrade` slot raises every dependency to its latest release, majors included. Each package manager has its own commands: use the one the project uses, never a second one.
 
 | Ecosystem | Package manager | Add | `upgrade` |
