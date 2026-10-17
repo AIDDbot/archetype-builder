@@ -12,8 +12,9 @@ AIDDbot offers only the archetypes of its catalog. When no archetype fits a syst
 | --- | --- |
 | [`procedure.md`](./procedure.md) | How to build an archetype with AIDDbot, in a work system. |
 | [`seed.md`](./seed.md) | How to publish a complete work system to its archetype repository. |
+| [`scripts/seed-product.mjs`](./scripts/seed-product.mjs) | Writes `.product/` of an archetype: the foundation specs numbered with no gaps, the test tags, the model and `PRD.md`. |
 | [`archetypes/`](./archetypes/) | The manifest of each archetype: its `system.md`. |
-| [`blueprint/foundation/`](./blueprint/foundation/) | The generic foundation specs, with a variation for each project type. Each archetype has an instance of each one. |
+| [`blueprint/foundation/`](./blueprint/foundation/) | The generic foundation specs, with a variation for each project type. Each archetype ships one spec for each one, in `.product/specs/`. |
 | [`blueprint/project-types.md`](./blueprint/project-types.md) | The variations of each project type: its specs, its tooling slots and its layers. |
 | [`blueprint/foundation-0.3/`](./blueprint/foundation-0.3/) | The 8 foundation specs of Archetype Base 0.3. Reference until Archetype Web 0.4 ships. |
 | [`blueprint/project.AGENTS.template.md`](./blueprint/project.AGENTS.template.md) | The template of the `AGENTS.md` of one project. |
