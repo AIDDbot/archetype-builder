@@ -59,15 +59,15 @@ export default defineConfig({
 
 **Debt checks**
 
-- `projects/lint/`, next to the projects that use it: copy [`lint/complexity.json`](./lint/complexity.json) (the limits of code, with an override for `*.test.ts`) and [`lint/complexity.tests.json`](./lint/complexity.tests.json) (the limits of tests for all files). The `lint/low.json` of each project extends `../../lint/complexity.json`, or `../../lint/complexity.tests.json` in an `e2e` project. `projects/lint/` has no `package.json`, so the workspace and Vitest skip it.
-- Each project: copy [`lint/dependencies.json`](./lint/dependencies.json) (or [`lint/dependencies.e2e.json`](./lint/dependencies.e2e.json) for the `e2e`) to its `lint/`, and add `lint/medium.json` that extends it. Change the folder map if the project has a different one.
+- `projects/lint/`, next to the projects that use it: copy [`lint/complexity.json`](./lint/complexity.json) (the limits of code, with an override for `*.test.ts`) and [`lint/complexity.tests.json`](./lint/complexity.tests.json) (the limits of tests for all files). The `lint/crap.json` of each project extends `../../lint/complexity.json`, or `../../lint/complexity.tests.json` in an `e2e` project. `projects/lint/` has no `package.json`, so the workspace and Vitest skip it.
+- Each project: copy [`lint/dependencies.json`](./lint/dependencies.json) (or [`lint/dependencies.e2e.json`](./lint/dependencies.e2e.json) for the `e2e`) to its `lint/`, and add `lint/layers.json` that extends it. Change the folder map if the project has a different one.
 - Each rule is an `error`, so that a check fails with its findings. The configurations turn off the default `correctness` rules: a debt check never reports what the hook reports.
 - Oxlint reads the `files` of an override relative to the configuration file. Start each path with `**/` (`**/src/core/**/*.ts`): a path such as `src/core/*.ts` matches nothing from `lint/`, and the check passes with no warning.
 - A later override replaces the rule; it does not merge it. Thus each override repeats all of its groups.
 - The last override is for the tests: a test can import any layer, but no module of disk, database, network or process (`node:fs`, `node:sqlite`, `node:child_process`, …) and no `*.repository.ts` or `*.client.ts`. Thus "a unit test proves logic only" is a check, not a review.
 - Coverage: add `@vitest/coverage-v8` to the root `devDependencies`, next to `vite-plus` and at its Vitest version. In the `vite.config.ts` of the project, `coverage.include` is `src/**/*.ts` without the tests (else a file that no test loads does not count), and `coverage.thresholds` gives 80 for `statements`, `branches`, `functions` and `lines` to `src/core/**` and `src/shared/**`, with `perFile: true` (else a file with no test passes inside the mean of its folder).
 - A false alarm of a rule is turned off in the `lint/` configuration of the project, for its files, never with a comment in each place. An import of disk, network or process in a test is never a false alarm.
-- Do not write an own boundary checker: the overrides check the imports, and the `debt:medium` run of the core reports a subfolder in a feature.
+- Do not write an own boundary checker: the overrides check the imports, and the `layers` run of the core reports a subfolder in a feature.
 
 **Acceptance tests**
 
@@ -89,12 +89,12 @@ export default defineConfig({
 
 **Script names**
 
-- The slot names are the script names: `upgrade`, `test`, `test:spec`, `start`, `debt:medium`, `debt:low`. Use the standard npm names, which run without `run`: `test` and `start`.
+- The slot names are the script names: `upgrade`, `test`, `test:spec`, `start`, `layers`, `crap`. Use the standard npm names, which run without `run`: `test` and `start`.
 - Lint, format and the affected unit tests are no scripts: the hook runs them.
 - `test` runs all the tests of the project: `vp test run`. In an `e2e` project, `vp test run --passWithNoTests` (or `playwright test --pass-with-no-tests`), so that the scaffold passes before the first spec.
 - In an `e2e` project, `start` is for a human only: with Vitest, the watch mode `vp test --passWithNoTests`, with no UI package; with Playwright, `playwright test --ui`.
 - `test:spec` exists only in an `e2e` project. It ends in the filter flag of the runner, because the core adds only the tag (`@S0001-`): `vp test run --passWithNoTests -t` (or `playwright test --pass-with-no-tests --grep`).
-- Each debt slot has one script for each check, because the core runs each one also after a failure, and the project registers the list of the parts. `debt:medium:dependencies` is `vp lint -c lint/medium.json`; `debt:medium` runs it for a human. `debt:low:complexity` is `vp lint -c lint/low.json` and, in an `api`, a `web` or a `cli`, `debt:low:coverage` is `vp test run --coverage`; `debt:low` runs both for a human.
+- Each debt slot has one script for each check, because the core runs each one also after a failure, and the project registers the list of the parts. `layers` has one check: it is `vp lint -c lint/layers.json`. `crap:complexity` is `vp lint -c lint/crap.json` and, in an `api`, a `web` or a `cli`, `crap:coverage` is `vp test run --coverage`; `crap` runs both for a human.
 - `upgrade` raises `vite-plus` and `@vitest/coverage-v8` together: their Vitest must be the same.
 
 **Scaffold commands**
@@ -111,7 +111,7 @@ These commands were tested without a terminal (the input is closed). Run them fr
 
 Use these commands as they are. Test a different generator in a temporary folder before you write it in the proposal.
 
-| Ecosystem | Hook: lint, format, affected unit tests | Types | Unit tests (inside `test`) | Boundaries (`debt:medium`) | Complexity (`debt:low`) |
+| Ecosystem | Hook: lint, format, affected unit tests | Types | Unit tests (inside `test`) | Boundaries (`layers`) | Complexity and coverage (`crap`) |
 | --- | --- | --- | --- | --- | --- |
 | JS / TS on Node | `vp staged`: `vp check --fix`, `vp test related` | Oxlint `typeCheck` (TypeScript 7); no `tsc` | Vitest (`vp test`) | Oxlint `no-restricted-imports` with `overrides` per folder and file role | Oxlint with a configuration of complexity and size rules only |
 | Go | `go vet`, golangci-lint, `gofmt -w`, `go test` of the changed packages | compiler | `go test` | `internal/` + depguard | gocyclo, gocognit |

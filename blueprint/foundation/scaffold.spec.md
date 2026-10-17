@@ -62,12 +62,12 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
   - If a new major breaks a different tool of the stack, keep the last compatible major. Write the pin and its reason in the technology rules of that `AGENTS.md`.
   - Never pin a major that `ecosystems.md` requires. Replace the tool that breaks.
 - The ignore file never hides source. Anchor runtime data patterns to the project root.
-- Each tooling slot of that `AGENTS.md` operates. If a mandatory slot is missing (`test`, `start`, `debt:medium`, `debt:low`), install the usual tool of the stack.
+- Each tooling slot of that `AGENTS.md` operates. If a mandatory slot is missing (`test`, `start`, `layers`, `crap`), install the usual tool of the stack.
 - The pre-commit hook of the root runs the unit tests of the project that a commit affects.
 - For JS / TS, start the dependency rules from `.product/blueprint/lint/dependencies.json` (or `dependencies.e2e.json` for `e2e`), and extend the complexity limits of the root.
 - For a `web`, copy `.product/blueprint/theme/` as it is.
 - Register the type and the slots with `node .agents/aidd/aidd.mjs config set projects.{project} '{"type":"{type}",...}'`.
-- Prove the debt checks: add an import that the architecture forbids, make sure that `debt:medium` fails, then remove the import. Do the same with a function over the limits and `debt:low`.
+- Prove the debt checks: add an import that the architecture forbids, make sure that `layers` fails, then remove the import. Do the same with a function over the limits and `crap`.
 - Prove the hook: stage a unit test that fails, make sure that the commit fails, then repair it.
 
 ### e2e
