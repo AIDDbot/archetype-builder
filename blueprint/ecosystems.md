@@ -22,6 +22,7 @@ A repository has one pre-commit hook, so the root of the system is one Vite+ wor
 - The root has no `tsconfig.json`. Each project has its own `tsconfig.json`, with `"erasableSyntaxOnly": true`, `"allowImportingTsExtensions": true` and `"types": ["node"]`: Node.js runs the TypeScript files as they are, so a syntax that it cannot erase (such as a parameter property `constructor(public readonly kind)`) fails at run time, not at the type check.
 - Each project has its `package.json` with its scripts, its `vite.config.ts` with its Vitest project (`name`, `include`) and its coverage, its `lint/` folder, and a `.gitignore` that anchors its runtime data, such as `/data/`.
 - The root `.gitignore` does not anchor `node_modules/`, `.vite/` and `coverage/`: Vitest makes them in each project.
+- The root `.gitattributes` keeps LF on each platform, as Oxfmt writes it: `* text=auto eol=lf`, then `*.bat`, `*.cmd` and `*.ps1` with `text eol=crlf`, and `*.png`, `*.jpg` and `*.woff2` as `binary`. Write it first, before the first commit: on Windows, an agent writes CRLF, and a hook with CRLF does not run.
 
 The root `vite.config.ts`:
 
