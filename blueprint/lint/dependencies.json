@@ -447,6 +447,19 @@
               }
             ]
           }
+        ],
+        "eslint/no-restricted-properties": [
+          "error",
+          {
+            "object": "vi",
+            "property": "mock",
+            "message": "A unit test gets a fake as an argument: never vi.mock of a module."
+          },
+          {
+            "object": "vi",
+            "property": "doMock",
+            "message": "A unit test gets a fake as an argument: never vi.mock of a module."
+          }
         ]
       }
     }
