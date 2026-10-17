@@ -35,7 +35,7 @@ When a failure occurs, the operator must see what occurred, and each client must
 ### api
 
 - Logger in `core`, contract in `shared`: one line for each event, ` | ` for line breaks, `WARN` and `ERROR` to standard error. It never blocks a request, and writes each queued line before the stop.
-- Settings: `LOG_DIR` (`./logs`), `LOG_LEVEL` (`debug`, `info`, `warn`, `error`; `info`), `BODY_LIMIT_KB` (100). Checks: `LOG_DIR` is not empty; `LOG_LEVEL` is one of its four values; `BODY_LIMIT_KB` is a positive integer.
+- The logger reads `LOG_DIR` and `LOG_LEVEL`: `configuration` declares them, with their checks. New setting: `BODY_LIMIT_KB` (100), a positive integer.
 - The `source` column of a log line is the project name, such as `api` or `cli`.
 - The expected error of `shared`, a seed of the scaffold, gets a status for each kind and optional `fields`. The error handler of `core` is the only code that makes an error response; it logs any other error at `ERROR` with its cause.
 - Keep a received `X-Request-Id` only if it is a short text of letters, digits and `-`.
@@ -48,7 +48,7 @@ When a failure occurs, the operator must see what occurred, and each client must
 
 ### cli
 
-- Logger as the `api`, with the same settings except `BODY_LIMIT_KB`.
+- Logger as the `api`, with no `BODY_LIMIT_KB`.
 - The expected error of `shared`, a seed of the scaffold, gives each kind its exit code: `rule` (1), `usage` (2) or `unavailable` (3). In `config set`, an unknown setting is `usage` and an invalid value is `rule`; an invalid setting or a configuration file that does not open is `unavailable`.
 - `core` catches each failure at the top level and is the only code that makes an exit code. An unexpected failure writes `error: Unexpected failure`, exit code 1, and logs its cause. Never a stack trace on the console. No public command can cause an unexpected failure: a unit test of `core` proves it, never an acceptance test, and no test injects a failure into the `cli` process.
 - Results go to standard output; messages and errors go to standard error.
