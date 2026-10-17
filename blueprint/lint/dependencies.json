@@ -3,7 +3,8 @@
   "overrides": [
     {
       "files": [
-        "**/src/app.*.ts"
+        "**/src/app.*.ts",
+        "**/src/app.*.tsx"
       ],
       "rules": {
         "eslint/no-restricted-imports": [
@@ -13,7 +14,8 @@
               {
                 "group": [
                   "./features/**",
-                  "!./features/features.manifest.ts"
+                  "!./features/features.manifest.ts",
+                  "!./features/features.manifest.tsx"
                 ],
                 "message": "main uses the features only through the manifest."
               }
@@ -25,7 +27,7 @@
     {
       "files": [
         "**/src/core/**/*.ts",
-        "**/src/core/**/*.vue"
+        "**/src/core/**/*.tsx"
       ],
       "rules": {
         "eslint/no-restricted-imports": [
@@ -36,7 +38,9 @@
                 "group": [
                   "**/features/**",
                   "**/app.main.ts",
-                  "**/app.compose.ts"
+                  "**/app.main.tsx",
+                  "**/app.compose.ts",
+                  "**/app.compose.tsx"
                 ],
                 "message": "core never uses a feature, the manifest or main. The composition connects them."
               }
@@ -47,7 +51,8 @@
     },
     {
       "files": [
-        "**/src/features/features.manifest.ts"
+        "**/src/features/features.manifest.ts",
+        "**/src/features/features.manifest.tsx"
       ],
       "rules": {
         "eslint/no-restricted-imports": [
@@ -58,18 +63,19 @@
                 "group": [
                   "../core/**",
                   "../app.*.ts",
+                  "../app.*.tsx",
                   "./*/*.api.ts",
-                  "./*/*.api.vue",
+                  "./*/*.api.tsx",
                   "./*/*.service.ts",
-                  "./*/*.service.vue",
+                  "./*/*.service.tsx",
                   "./*/*.policy.ts",
-                  "./*/*.policy.vue",
+                  "./*/*.policy.tsx",
                   "./*/*.store.ts",
-                  "./*/*.store.vue",
+                  "./*/*.store.tsx",
                   "./*/*.repository.ts",
-                  "./*/*.repository.vue",
+                  "./*/*.repository.tsx",
                   "./*/*.client.ts",
-                  "./*/*.client.vue"
+                  "./*/*.client.tsx"
                 ],
                 "message": "The manifest uses only the presentation (the registration) of each feature."
               }
@@ -81,7 +87,7 @@
     {
       "files": [
         "**/src/features/*/*.ts",
-        "**/src/features/*/*.vue"
+        "**/src/features/*/*.tsx"
       ],
       "rules": {
         "eslint/no-restricted-imports": [
@@ -92,14 +98,16 @@
                 "group": [
                   "../../core/**",
                   "../../app.*.ts",
-                  "../features.manifest.ts"
+                  "../../app.*.tsx",
+                  "../features.manifest.ts",
+                  "../features.manifest.tsx"
                 ],
                 "message": "A feature never uses core, main or the manifest. The composition gives it the services of core through the contracts of shared."
               },
               {
                 "group": [
                   "../*/*.ts",
-                  "../*/*.vue",
+                  "../*/*.tsx",
                   "!../*/*.api.ts"
                 ],
                 "message": "A feature uses a different feature only through its facade ({feature}.api.ts)."
@@ -112,17 +120,17 @@
     {
       "files": [
         "**/src/features/*/*.controller.ts",
-        "**/src/features/*/*.controller.vue",
+        "**/src/features/*/*.controller.tsx",
         "**/src/features/*/*.request.ts",
-        "**/src/features/*/*.request.vue",
+        "**/src/features/*/*.request.tsx",
         "**/src/features/*/*.command.ts",
-        "**/src/features/*/*.command.vue",
+        "**/src/features/*/*.command.tsx",
         "**/src/features/*/*.page.ts",
-        "**/src/features/*/*.page.vue",
+        "**/src/features/*/*.page.tsx",
         "**/src/features/*/*.component.ts",
-        "**/src/features/*/*.component.vue",
+        "**/src/features/*/*.component.tsx",
         "**/src/features/*/*.card.ts",
-        "**/src/features/*/*.card.vue"
+        "**/src/features/*/*.card.tsx"
       ],
       "rules": {
         "eslint/no-restricted-imports": [
@@ -133,14 +141,16 @@
                 "group": [
                   "../../core/**",
                   "../../app.*.ts",
-                  "../features.manifest.ts"
+                  "../../app.*.tsx",
+                  "../features.manifest.ts",
+                  "../features.manifest.tsx"
                 ],
                 "message": "A feature never uses core, main or the manifest. The composition gives it the services of core through the contracts of shared."
               },
               {
                 "group": [
                   "../*/*.ts",
-                  "../*/*.vue",
+                  "../*/*.tsx",
                   "!../*/*.api.ts"
                 ],
                 "message": "A feature uses a different feature only through its facade ({feature}.api.ts)."
@@ -148,9 +158,9 @@
               {
                 "group": [
                   "./*.repository.ts",
-                  "./*.repository.vue",
+                  "./*.repository.tsx",
                   "./*.client.ts",
-                  "./*.client.vue"
+                  "./*.client.tsx"
                 ],
                 "message": "presentation never uses data: only the registration (routes) creates it for logic. The direction is presentation → logic → data."
               }
@@ -172,14 +182,16 @@
                 "group": [
                   "../../core/**",
                   "../../app.*.ts",
-                  "../features.manifest.ts"
+                  "../../app.*.tsx",
+                  "../features.manifest.ts",
+                  "../features.manifest.tsx"
                 ],
                 "message": "A feature never uses core, main or the manifest. The composition gives it the services of core through the contracts of shared."
               },
               {
                 "group": [
                   "../*/*.ts",
-                  "../*/*.vue",
+                  "../*/*.tsx",
                   "!../*/*.api.ts"
                 ],
                 "message": "A feature uses a different feature only through its facade ({feature}.api.ts)."
@@ -187,23 +199,23 @@
               {
                 "group": [
                   "./*.routes.ts",
-                  "./*.routes.vue",
+                  "./*.routes.tsx",
                   "./*.controller.ts",
-                  "./*.controller.vue",
+                  "./*.controller.tsx",
                   "./*.request.ts",
-                  "./*.request.vue",
+                  "./*.request.tsx",
                   "./*.command.ts",
-                  "./*.command.vue",
+                  "./*.command.tsx",
                   "./*.page.ts",
-                  "./*.page.vue",
+                  "./*.page.tsx",
                   "./*.component.ts",
-                  "./*.component.vue",
+                  "./*.component.tsx",
                   "./*.card.ts",
-                  "./*.card.vue",
+                  "./*.card.tsx",
                   "./*.repository.ts",
-                  "./*.repository.vue",
+                  "./*.repository.tsx",
                   "./*.client.ts",
-                  "./*.client.vue"
+                  "./*.client.tsx"
                 ],
                 "message": "The facade never uses presentation or data. The direction is facade → logic → data."
               }
@@ -215,11 +227,11 @@
     {
       "files": [
         "**/src/features/*/*.service.ts",
-        "**/src/features/*/*.service.vue",
+        "**/src/features/*/*.service.tsx",
         "**/src/features/*/*.policy.ts",
-        "**/src/features/*/*.policy.vue",
+        "**/src/features/*/*.policy.tsx",
         "**/src/features/*/*.store.ts",
-        "**/src/features/*/*.store.vue"
+        "**/src/features/*/*.store.tsx"
       ],
       "rules": {
         "eslint/no-restricted-imports": [
@@ -230,14 +242,16 @@
                 "group": [
                   "../../core/**",
                   "../../app.*.ts",
-                  "../features.manifest.ts"
+                  "../../app.*.tsx",
+                  "../features.manifest.ts",
+                  "../features.manifest.tsx"
                 ],
                 "message": "A feature never uses core, main or the manifest. The composition gives it the services of core through the contracts of shared."
               },
               {
                 "group": [
                   "../*/*.ts",
-                  "../*/*.vue",
+                  "../*/*.tsx",
                   "!../*/*.api.ts"
                 ],
                 "message": "A feature uses a different feature only through its facade ({feature}.api.ts)."
@@ -245,19 +259,19 @@
               {
                 "group": [
                   "./*.routes.ts",
-                  "./*.routes.vue",
+                  "./*.routes.tsx",
                   "./*.controller.ts",
-                  "./*.controller.vue",
+                  "./*.controller.tsx",
                   "./*.request.ts",
-                  "./*.request.vue",
+                  "./*.request.tsx",
                   "./*.command.ts",
-                  "./*.command.vue",
+                  "./*.command.tsx",
                   "./*.page.ts",
-                  "./*.page.vue",
+                  "./*.page.tsx",
                   "./*.component.ts",
-                  "./*.component.vue",
+                  "./*.component.tsx",
                   "./*.card.ts",
-                  "./*.card.vue",
+                  "./*.card.tsx",
                   "./*.api.ts"
                 ],
                 "message": "logic never uses presentation or the facade. The direction is presentation → logic → data."
@@ -270,9 +284,9 @@
     {
       "files": [
         "**/src/features/*/*.repository.ts",
-        "**/src/features/*/*.repository.vue",
+        "**/src/features/*/*.repository.tsx",
         "**/src/features/*/*.client.ts",
-        "**/src/features/*/*.client.vue"
+        "**/src/features/*/*.client.tsx"
       ],
       "rules": {
         "eslint/no-restricted-imports": [
@@ -283,14 +297,16 @@
                 "group": [
                   "../../core/**",
                   "../../app.*.ts",
-                  "../features.manifest.ts"
+                  "../../app.*.tsx",
+                  "../features.manifest.ts",
+                  "../features.manifest.tsx"
                 ],
                 "message": "A feature never uses core, main or the manifest. The composition gives it the services of core through the contracts of shared."
               },
               {
                 "group": [
                   "../*/*.ts",
-                  "../*/*.vue",
+                  "../*/*.tsx",
                   "!../*/*.api.ts"
                 ],
                 "message": "A feature uses a different feature only through its facade ({feature}.api.ts)."
@@ -298,25 +314,25 @@
               {
                 "group": [
                   "./*.routes.ts",
-                  "./*.routes.vue",
+                  "./*.routes.tsx",
                   "./*.controller.ts",
-                  "./*.controller.vue",
+                  "./*.controller.tsx",
                   "./*.request.ts",
-                  "./*.request.vue",
+                  "./*.request.tsx",
                   "./*.command.ts",
-                  "./*.command.vue",
+                  "./*.command.tsx",
                   "./*.page.ts",
-                  "./*.page.vue",
+                  "./*.page.tsx",
                   "./*.component.ts",
-                  "./*.component.vue",
+                  "./*.component.tsx",
                   "./*.card.ts",
-                  "./*.card.vue",
+                  "./*.card.tsx",
                   "./*.service.ts",
-                  "./*.service.vue",
+                  "./*.service.tsx",
                   "./*.policy.ts",
-                  "./*.policy.vue",
+                  "./*.policy.tsx",
                   "./*.store.ts",
-                  "./*.store.vue",
+                  "./*.store.tsx",
                   "./*.api.ts"
                 ],
                 "message": "data never uses presentation, logic or the facade. The direction is presentation → logic → data."
@@ -329,9 +345,9 @@
     {
       "files": [
         "**/src/shared/*.ts",
-        "**/src/shared/*.vue",
+        "**/src/shared/*.tsx",
         "**/src/shared/*/*.ts",
-        "**/src/shared/*/*.vue"
+        "**/src/shared/*/*.tsx"
       ],
       "rules": {
         "eslint/no-restricted-imports": [
@@ -343,9 +359,11 @@
                   "../core/**",
                   "../features/**",
                   "../app.*.ts",
+                  "../app.*.tsx",
                   "../../core/**",
                   "../../features/**",
-                  "../../app.*.ts"
+                  "../../app.*.ts",
+                  "../../app.*.tsx"
                 ],
                 "message": "shared uses no part of the application: no core, features or main."
               }

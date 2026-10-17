@@ -107,7 +107,7 @@ These commands were tested without a terminal (the input is closed). Run them fr
 | system root | `npm init -y --init-type=module && npm install -D vite-plus` | Then write the workspace files above, and run `npm install`: its `prepare` installs the hook. |
 | `api` | `mkdir -p projects/back && (cd projects/back && npm init -y --init-type=module)` | Writes only `package.json`. Not tested yet in a Vite+ workspace. |
 | `cli` | `mkdir -p projects/cli && (cd projects/cli && npm init -y --init-type=module)` | Writes only `package.json`. Add `bin`. |
-| `web` | `npm create vite@latest projects/front -- --template vanilla-ts --no-interactive --no-immediate` | Installs nothing; run `npm install` in the folder. Not tested yet in a Vite+ workspace. |
+| `web` | `npm create vite@latest projects/front -- --template react-ts --no-interactive --no-immediate` | Installs nothing. Remove what Vite+ replaces: the ESLint packages and `eslint.config.js`, `typescript`, and the `lint` script; keep `react`, `react-dom`, `@vitejs/plugin-react` and the React types. Then run `npm install` at the root. Not tested yet in a Vite+ workspace. |
 | `e2e` | `mkdir -p projects/e2e && (cd projects/e2e && npm init -y --init-type=module)` | With a `web`: `npm init playwright@latest projects/e2e -- --quiet --browser=chromium --lang=TypeScript --no-examples --no-browsers`, then `npx playwright install chromium` in the folder. |
 
 Use these commands as they are. Test a different generator in a temporary folder before you write it in the proposal.
@@ -130,7 +130,7 @@ Use the pattern `{business}.{role}.ts`. The role tells the layer. The boundary r
 | composition | `src/app.main.ts` (entry), `src/app.compose.ts` (`createApp()`) and `src/features/features.manifest.ts` |
 | `core` | `src/core/app.{service}.ts`, for example `app.config.ts`, `app.logger.ts`, `app.server.ts` |
 | facade | `src/features/{feature}/{feature}.api.ts`, only when other features use it |
-| `presentation` | `*.routes.ts` (the registration that the manifest imports), `*.controller.ts`, `*.request.ts`, `*.command.ts`, `*.page.ts`, `*.component.ts`, `*.card.ts` (or `.vue`) |
+| `presentation` | `*.routes.ts` (the registration that the manifest imports), `*.controller.ts`, `*.request.ts`, `*.command.ts`, `*.page.ts`, `*.component.ts`, `*.card.ts` (`.tsx` in a React `web`) |
 | `logic` | `*.service.ts`, `*.policy.ts`, `*.store.ts` |
 | `data` | `*.repository.ts`, `*.client.ts` |
 | types of a feature, no layer | `*.type.ts`; value objects in `*.value.ts` (only value objects) |
@@ -142,23 +142,25 @@ The concept is still the facade. Only the JS / TS file has the name `api`.
 
 The roles stay the same. The framework gives their place and how the composition gives the services of `core`. Write them in sections 4 and 5 of the project `AGENTS.md`.
 
-| Role | Express | NestJS | Angular |
-| --- | --- | --- | --- |
-| composition | `app.compose.ts` exports `createApp()` | `main.ts` and `AppModule` | `main.ts` and `app.config.ts` |
-| manifest | `features.manifest.ts` | the `imports` of `AppModule` | `app.routes.ts` (`loadComponent`, `loadChildren`) |
-| services of `core` | arguments of each registration | injection, with tokens in `shared` | `inject()`, with `InjectionToken` in `shared` and providers in `app.config.ts` |
-| registration | `{feature}.routes.ts` | the feature module | `{feature}.routes.ts` |
-| facade | `{feature}.api.ts` | the `exports` of the feature module | `{feature}.api.ts` |
+| Role | Express | React | NestJS | Angular |
+| --- | --- | --- | --- | --- |
+| composition | `app.compose.ts` exports `createApp()` | `app.main.tsx` renders the root; `app.compose.tsx` exports `createApp()`, which makes the router from the manifest and the providers of the services of `core` | `main.ts` and `AppModule` | `main.ts` and `app.config.ts` |
+| manifest | `features.manifest.ts` | `features.manifest.ts`: one explicit list of the route objects of react-router, with `lazy` for a page that loads on demand; never a file-based router (no Next.js) | the `imports` of `AppModule` | `app.routes.ts` (`loadComponent`, `loadChildren`) |
+| services of `core` | arguments of each registration | a React context for each contract, declared in `shared` with its hook (`use{Service}()`); `core` makes the value and the composition provides it | injection, with tokens in `shared` | `inject()`, with `InjectionToken` in `shared` and providers in `app.config.ts` |
+| registration | `{feature}.routes.ts` | `{feature}.routes.tsx`, with the route objects of the feature | the feature module | `{feature}.routes.ts` |
+| facade | `{feature}.api.ts` | `{feature}.api.ts` | the `exports` of the feature module | `{feature}.api.ts` |
+
+In a React `web`, a `.tsx` file only renders: no rule, no check and no conversion. These go into `.ts` files (`logic`, `shared`), which the unit tests prove. The coverage of the `web` includes only `.ts` files; the acceptance tests prove the `.tsx` files. Local state of a component stays in the component; state that pages share goes into a `*.store.ts` (`logic`), with no state library.
 
 ## `web`: the visual base
 
-The `front/` archetype of Archetype Base sets the visual base. A new archetype with a `web` copies it. For now it is the brand of the author of AIDDbot (Halloween D11).
+The `front` project of Archetype Web sets the visual base (Halloween D38). A new archetype with a `web` copies it. For now it is the brand of the author of AIDDbot (Halloween D11).
 
 - Pico CSS and the fonts are dependencies, added with the package manager: `@picocss/pico`, and `@fontsource/roboto` for the text, `@fontsource/audiowide` for the headings, `@fontsource/anonymous-pro` for code. The entry file imports them, and the bundler serves them from the project. No CDN, thus the application operates offline. Never copy their files into the project: the `upgrade` slot keeps them current.
 - Copy [`theme/theme.css`](./theme/theme.css) (typography and spacing on top of Pico), [`theme/colors.css`](./theme/colors.css) (the `--ab-*` brand tokens for the light and dark themes, mapped to the `--pico-*` variables) and [`theme/custom.css`](./theme/custom.css) (components) into the project as they are, with a copy command of the system (`cp`, `Copy-Item`), and import them after Pico. Never read them to write them again: a rewrite costs tokens and can change them. Never invent other colors: the owner changes the values only in these files.
-- Components render in the light DOM: no Shadow DOM, so Pico, the theme and the tokens reach every element. Use Shadow DOM only when the archetype says so.
+- Components write semantic HTML with the elements and classes of Pico, so Pico, the theme and the tokens reach every element. No CSS-in-JS, no CSS modules, no component library and no Shadow DOM.
 - The theme is in the `data-theme` attribute of the document. The first value comes from `prefers-color-scheme`. The user selection stays in `localStorage`.
-- Source of the three files: `front/src/core/styles/` of [`AIDDbot/archetype-base`](https://github.com/AIDDbot/archetype-base). Keep them equal.
+- Source of the three files: [`theme/`](./theme/) of this Blueprint. Archetype Web copies them to `projects/front/src/core/styles/`.
 
 ## Dependencies: add and upgrade
 
@@ -169,10 +171,12 @@ The dependencies that this file names for JS / TS on Node:
 | Where | Dependencies |
 | --- | --- |
 | root `devDependencies` | `vite-plus`, `@vitest/coverage-v8`, `@types/node` (for `"types": ["node"]`), `npm-check-updates` (the `upgrade` slot) |
+| `api` with Express | `express`, `@types/express` |
 | `web` | `@picocss/pico`, `@fontsource/roboto`, `@fontsource/audiowide`, `@fontsource/anonymous-pro` |
+| `web` with React | `react`, `react-dom`, `react-router`, `@vitejs/plugin-react`, `@types/react`, `@types/react-dom` |
 | `e2e` with a `web` | `@playwright/test` |
 
-No `typescript`: Vite+ brings it. No `@vitest/ui`: the `start` of an `e2e` with Vitest is the watch mode. The framework of a project (such as Express) is in the `AGENTS.md` of its archetype.
+No `typescript`: Vite+ brings it. No `@vitest/ui`: the `start` of an `e2e` with Vitest is the watch mode. No component test library and no DOM emulator: the `.tsx` files have no unit tests. The persistence of an `api` uses `node:sqlite`, a module of the platform. A different framework is in the `AGENTS.md` of its archetype.
 
 Add a dependency only with the package manager's add command, so it resolves the latest release; never write a version by hand. The `upgrade` slot raises every dependency to its latest release, majors included. Each package manager has its own commands: use the one the project uses, never a second one.
 

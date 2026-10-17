@@ -1,6 +1,6 @@
 # Procedure: build an archetype
 
-An **archetype** is a whole solution: projects that pass one acceptance suite together, with the instances of their foundation specs (`foundation/`) and their schema documents (`model/`) (Halloween D28). Archetype Base and Archetype CLI are archetypes. AIDDbot offers only the archetypes of its catalog.
+An **archetype** is a whole solution: projects that pass one acceptance suite together, with the instances of their foundation specs (`foundation/`) and their schema documents (`model/`) (Halloween D28). Archetype CLI and Archetype Web are archetypes (Archetype Web replaces Archetype Base, Halloween D38). AIDDbot offers only the archetypes of its catalog.
 
 You make an archetype with AIDDbot, as a normal system (Halloween D10). This repository gives the generic inputs in `blueprint/`. AIDDbot gives the process.
 
