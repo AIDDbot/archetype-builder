@@ -2,7 +2,7 @@
 
 The seed copies a complete work system (see [`procedure.md`](./procedure.md)) to its archetype repository `AIDDbot/archetype-{name}`. A maintainer does it, not the work system. The archetype is an AIDDbot system too: its records stay in `.product/`, so the specs and the tags of the tests read as in any system.
 
-- Copy the whole workspace of the work system: the root files (`package.json`, `package-lock.json`, `vite.config.ts`, `.vite-hooks/`, `.gitattributes`, `.gitignore`, `LICENSE`), the shared limits in `.lint/`, and `projects/`. Leave out `.aiddbot/`, `.product/`, `CHANGELOG.md` and the agent folders (`.agents/`, `.claude/`, `.codex/`, `.cursor/`, `.github/`).
+- Copy the whole workspace of the work system: the root files (`package.json`, `package-lock.json`, `vite.config.ts`, `.vite-hooks/`, `.gitattributes`, `.gitignore`, `LICENSE`), the shared limits (`complexity.json`, `complexity.tests.json`), and `projects/`. Leave out `.aiddbot/`, `.product/`, `CHANGELOG.md` and the agent folders (`.agents/`, `.claude/`, `.codex/`, `.cursor/`, `.github/`).
 - Run `node scripts/seed-product.mjs {work system} {archetype}`. It writes `.product/` of the archetype:
   - `system.md` and `model/` of the work system.
   - Only the foundation specs, the ones with a file in `blueprint/foundation/`, never the `fix` and `refactor` specs that repaired debt. Each one in `specs/{type}/`.
