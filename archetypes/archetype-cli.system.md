@@ -4,7 +4,7 @@
 
 ## Purpose
 
-A local command-line application and its acceptance suite. It is a library of archetypes: each system that starts from it copies its code, so it ships with zero debt.
+A local command-line application and its acceptance suite. It is an archetype: each system that starts from it copies its code, so it ships with zero debt.
 
 ## Users and needs
 

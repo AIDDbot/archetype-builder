@@ -8,7 +8,7 @@ Three levels, from the most generic to the most concrete. Each level only adds; 
 | --- | --- | --- | --- | --- |
 | Generic | the 6 capabilities | the slots and their contracts | the Blueprint | AIDDbot and [`foundation/`](./foundation/) |
 | By type | the row of each type | which slots apply, and why | layers and folders | this file |
-| By technology | the instance in `foundation/` | command and tool | technology rules | each library |
+| By technology | the instance in `foundation/` | command and tool | technology rules | each archetype |
 
 A cell that does not apply is `n/a` with its reason. An empty cell is an error.
 
@@ -28,7 +28,7 @@ The first one, `scaffold`, is a `chore`: it makes each project with its shape an
 | 5 | [`users`](./foundation/users.spec.md) — who uses it? Optional: the system has users. | register, login, session, account, logout | forms, session, menu by access, page guard | n/a: a local cli has no users (Columbus D67) | API client and page objects of the session |
 | 6 | [`presentation`](./foundation/presentation.spec.md) — how does it show and collect data? | `readFields`, ISO values | card, detail, table, form, states, readable values | text table, `{label}: {value}` | readers of tables and records, `recordForm` |
 
-A library delivers the instance of each spec with the rows of its types, and removes the rows of the types that it does not have.
+An archetype delivers the instance of each spec with the rows of its types, and removes the rows of the types that it does not have.
 
 ## 2 · Tooling slots
 
