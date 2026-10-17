@@ -1,5 +1,6 @@
 <!--
-Foundation spec 4 of 7: what is the system? (Halloween D12, D13; Columbus D53). It needs `shell`.
+Foundation spec 4 of 6: what is the system? (Halloween D12, D13, D35; Columbus D53). It needs `shell`.
+In the `web`, it is the tracer bullet: one feature through presentation → logic → data, and from the `web` to the `api`.
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat about "About" --domain foundation
 Instance: replace each role (`api`, `web`, `cli`, `e2e`) with the project name.
@@ -39,7 +40,9 @@ A person or a client that uses the system must see what it is, which version run
 
 ### web
 
-- Feature `about`: page `/about`, menu link `About`, access mark `everyone` when the system has `users`. No `logic` or `data`.
+- Feature `about`: page `/about`, menu link `About` and home card, access mark `everyone` when the system has `users`.
+- `data` calls `GET /api/about` through the HTTP client. `logic` keeps the state: loading, loaded or unavailable. The page and the card use the same `logic` and `data`.
+- A unit test checks the `logic` with a fake `data`.
 - The home header of `shell` shows the version from the identity file.
 - The website link has `target="_blank"` and `rel="noopener noreferrer"`.
 
@@ -50,7 +53,7 @@ A person or a client that uses the system must see what it is, which version run
 
 ### e2e
 
-- The page object of `/about` uses the shell page object.
+- The page objects of `/about` and of the about card use the shell page object.
 
 ## Verification
 
@@ -62,17 +65,21 @@ A person or a client that uses the system must see what it is, which version run
 - **R04**: WHEN a user opens `/about`, the `web` SHALL show the name of the author and a link to the website of the author.
 - **R05**: WHEN a user opens `/about`, the `web` SHALL show, for each project of the system, its name, its type and its main technologies.
 - **R06**: WHEN a user follows the link to the website of the author, the `web` SHALL open it in a new tab, with no access from that tab to the application. Test: check `target` and `rel`; do not follow the link.
-- **R07**: WHEN a user opens `/`, the home header SHALL show the version of the application.
-- **R08**: WHEN the `cli` runs with `--version`, it SHALL write only the version and one line break to its standard output, and stop with exit code 0.
-- **R09**: WHEN the `cli` runs `about`, it SHALL show the application name, its description, its version, the author, the website, and for each project of the system its name, its type and its main technologies, and stop with exit code 0.
-- **R10**: WHEN the `cli` runs `about --json`, it SHALL write the object of R01.
+- **R07**: IF the `api` does not answer, THEN the `/about` page SHALL show `About unavailable` and keep the menu. Test: block `/api/about` in the browser.
+- **R08**: WHEN a user opens `/`, the home header SHALL show the version of the application.
+- **R09**: WHEN a user opens `/`, the home page SHALL show an about card with the application name, its version and a link to `/about`.
+- **R10**: IF the `api` does not answer, THEN the about card SHALL show `About unavailable` and keep its link, the other cards and the menu.
+- **R11**: WHEN a user follows the link of the about card, the `web` SHALL show `/about` without a full reload of the document.
+- **R12**: WHEN the `cli` runs with `--version`, it SHALL write only the version and one line break to its standard output, and stop with exit code 0.
+- **R13**: WHEN the `cli` runs `about`, it SHALL show the application name, its description, its version, the author, the website, and for each project of the system its name, its type and its main technologies, and stop with exit code 0.
+- **R14**: WHEN the `cli` runs `about --json`, it SHALL write the object of R01.
 
 ### Expected URLs and APIs
 
 | Kind | Project | Address | Expected answer | Requirements |
 | --- | --- | --- | --- | --- |
 | api | api | `GET /api/about` | 200 identity and the technology of each project | R01 |
-| page | web | `/about` | Name, description, version, author with a link, technology of each project | R02–R06 |
-| page | web | `/` | The home header has the version | R07 |
-| command | cli | `--version` | Only the version. Exit code 0. | R08 |
-| command | cli | `about` | Identity and technology. Exit code 0. With `--json`, the object of R01. | R09, R10 |
+| page | web | `/about` | Name, description, version, author with a link, technology of each project, or `About unavailable` | R02–R07 |
+| page | web | `/` | The home header has the version. About card: name, version and a link to `/about`, or `About unavailable` | R08–R11 |
+| command | cli | `--version` | Only the version. Exit code 0. | R12 |
+| command | cli | `about` | Identity and technology. Exit code 0. With `--json`, the object of R01. | R13, R14 |

@@ -18,7 +18,7 @@ The system has no user accounts.
 
 | Project | Type | Folder | Archetype | Responsibility |
 | --- | --- | --- | --- | --- |
-| cli | cli | `projects/cli/` | Archetype CLI/cli | Run local commands and own the local store. |
+| cli | cli | `projects/cli/` | Archetype CLI/cli | Run local commands and keep the local settings. |
 | e2e | e2e | `projects/e2e/` | Archetype CLI/e2e | Prove each command through its public interface. |
 
 ## Technical decisions

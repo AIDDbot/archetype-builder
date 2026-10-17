@@ -1,5 +1,5 @@
 <!--
-Foundation spec 0 of 7: how is each project made? (Halloween cli-6). It comes before `configuration`.
+Foundation spec 0 of 6: how is each project made? (Halloween cli-6). It comes before `configuration`.
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new chore scaffold "Scaffold" --domain foundation
 Instance: one Solution subsection for each project of `.product/system.md`, with its type and its folder.

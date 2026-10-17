@@ -6,7 +6,7 @@ Three levels, from the most generic to the most concrete. Each level only adds; 
 
 | Level | Specs | Tooling | Rules | Where |
 | --- | --- | --- | --- | --- |
-| Generic | the 7 capabilities | the slots and their contracts | the Blueprint | AIDDbot and [`foundation/`](./foundation/) |
+| Generic | the 6 capabilities | the slots and their contracts | the Blueprint | AIDDbot and [`foundation/`](./foundation/) |
 | By type | the row of each type | which slots apply, and why | layers and folders | this file |
 | By technology | the instance in `foundation/` | command and tool | technology rules | each library |
 
@@ -14,20 +14,19 @@ A cell that does not apply is `n/a` with its reason. An empty cell is an error.
 
 ## 1 · Foundation specs
 
-Deliver them in this order (Halloween D12, D13). Only a property of the system makes a spec optional, never the project type. Today there is one: the system has users. The Solution of each spec has the details of each type.
+Deliver them in this order (Halloween D12, D13, D35). Only a property of the system makes a spec optional, never the project type. Today there is one: the system has users. The Solution of each spec has the details of each type.
 
 The first one, `scaffold`, is a `chore`: it makes each project with its shape and its tooling slots, with no functional code.
 
 | # | Spec (question) | `api` | `web` | `cli` | `e2e` |
 | --- | --- | --- | --- | --- | --- |
 | 0 | [`scaffold`](./foundation/scaffold.spec.md) — how is each project made? | generator, shape, slots | generator, shape, slots, theme | generator, shape, slots | generator, shape, slots; `test` passes with no test |
-| 1 | [`configuration`](./foundation/configuration.spec.md) — how does it start? | `PORT`, CORS, `DATABASE_URL`, migrations | `PORT`, `API_BASE_URL` | arguments, environment, JSON file with `config get\|set`, migrations | the settings of each project, start of the suite |
+| 1 | [`configuration`](./foundation/configuration.spec.md) — how does it start? | `PORT`, CORS, `DATABASE_URL`, migrations | `PORT`, `API_BASE_URL` | arguments, environment, JSON file with `config get\|set` | the settings of each project, start of the suite, preflight |
 | 2 | [`monitoring`](./foundation/monitoring.spec.md) — how do we observe it? | log file, error body, request identifier, security headers | listening line, console logger, errors of the HTTP client | log file, `error:` line, exit codes 0 / 1 / 2 / 3 | error helpers |
 | 3 | [`shell`](./foundation/shell.spec.md) — how do people use it? | API index, unknown path → 404 | layout: frame, menu, theme, home, not-found page | usage: help, unknown command → exit code 2, `--json` | shell page objects, `--json` helper |
-| 4 | [`about`](./foundation/about.spec.md) — what is it? | `GET /api/about` | page `/about`, version on the home page | `--version` and `about` | `/about` page object |
-| 5 | [`health`](./foundation/health.spec.md) — does it go through all its layers? | tracer bullet, `GET /api/health` | tracer bullet, page and card | tracer bullet, `health` | preflight |
-| 6 | [`users`](./foundation/users.spec.md) — who uses it? Optional: the system has users. | register, login, session, account, logout | forms, session, menu by access, page guard | n/a: a local cli has no users (Columbus D67) | API client and page objects of the session |
-| 7 | [`presentation`](./foundation/presentation.spec.md) — how does it show and collect data? | list shape and pages, `readFields`, ISO values | card, detail, table, form, states, readable values | text table, `{label}: {value}`, `readOptions` | readers of tables and records, `recordForm` |
+| 4 | [`about`](./foundation/about.spec.md) — what is it? | `GET /api/about` | tracer bullet: page `/about` and card from `GET /api/about`, version on the home page | `--version` and `about` | page objects of `/about` and the about card |
+| 5 | [`users`](./foundation/users.spec.md) — who uses it? Optional: the system has users. | register, login, session, account, logout | forms, session, menu by access, page guard | n/a: a local cli has no users (Columbus D67) | API client and page objects of the session |
+| 6 | [`presentation`](./foundation/presentation.spec.md) — how does it show and collect data? | `readFields`, ISO values | card, detail, table, form, states, readable values | text table, `{label}: {value}` | readers of tables and records, `recordForm` |
 
 A library delivers the instance of each spec with the rows of its types, and removes the rows of the types that it does not have.
 
@@ -40,7 +39,7 @@ The contract of each slot is in [`project.AGENTS.template.md`](./project.AGENTS.
 | `upgrade` | yes | yes | yes | yes |
 | `test` | all the unit tests | all the unit tests | all the unit tests | the full acceptance suite, headless; no unit tests, because each run proves its `core`; the core reads it as the acceptance evidence |
 | `test:spec` | n/a: no acceptance tests | n/a: no acceptance tests | n/a: no acceptance tests | the acceptance tests of one tag: the command ends in the filter flag of the runner, and the core adds the tag |
-| `start` | starts the server: reads `PORT`, answers on the health route | starts the server: reads `PORT`, answers on `/` | runs one invocation with the arguments that it gets; the `e2e` uses it as `CLI_START` | runs the runner for a human only (watch mode or its UI); an agent never runs it |
+| `start` | starts the server: reads `PORT`, answers on the API index `GET /api` | starts the server: reads `PORT`, answers on `/` | runs one invocation with the arguments that it gets; the `e2e` uses it as `CLI_START` | runs the runner for a human only (watch mode or its UI); an agent never runs it |
 | `debt:medium` | dependencies between layers | dependencies between layers | dependencies between layers | dependencies between its containers |
 | `debt:low` | complexity, limits of code, test coverage | complexity, limits of code, test coverage | complexity, limits of code, test coverage | complexity, limits of tests |
 
@@ -58,7 +57,7 @@ A project keeps only the column of its type in section 4 of its `AGENTS.md`.
 | `presentation` | route / controller and its registration | page / component and its registration | command and its registration | n/a: no layers |
 | `logic` | service | store / use case | service | n/a: no layers |
 | `data` | repository | API client | repository / file system / API client | n/a: no layers |
-| `shared` concerns | `http`, `database` | `components` | `output`, `database` | `page-objects/`, `test-data/`, `database`, `projects` |
+| `shared` concerns | `http`, `database` | `components` | `output` | `page-objects/`, `test-data/`, `database`, `projects` |
 
 ## 4 · Environment primitive
 

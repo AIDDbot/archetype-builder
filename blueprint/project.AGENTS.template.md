@@ -22,7 +22,7 @@ Obey the Blueprint of the root `AGENTS.md`. This file gives only the data of thi
 
 - **Language**: {language and version}
 - **Runtime / framework**: {runtime and framework}
-- **Main dependencies**: {library — role}
+- **Main dependencies**: {library — role}. The closed list: no other dependency, unless a spec names it
 - **Package manager**: {one package manager only}
 - **Pre-commit hook**: `{command}` — formats, lints and type-checks the staged files with safe fixes, and runs the unit tests that they affect
 
@@ -34,9 +34,9 @@ Each slot is a capability, not a tool. A slot that does not apply is `n/a` with 
 Contracts:
 - The pre-commit hook of the technology is no slot: at each commit, it formats, lints and type-checks the staged files with safe fixes (the strongest type check of the ecosystem), and runs the unit tests that they affect. A failure stops the commit.
 - upgrade: every dependency to its latest release, majors included, and the lockfile. A major that breaks a different tool: keep the last compatible one and write why in the technology rules. Runs at the foundation and on request, never for each delivery.
-- test: runs all the tests of the project. In an `api`, a `web` or a `cli`: the unit tests, fast and with no data access; the foundation adds a smoke test of the health logic. In an `e2e`: all the tests tagged @S{nnnn}-R{nn}, headless, and no unit tests, because each run proves its `core`.
+- test: runs all the tests of the project. In an `api`, a `web` or a `cli`: the unit tests, fast and with no data access. In an `e2e`: all the tests tagged @S{nnnn}-R{nn}, headless, and no unit tests, because each run proves its `core`.
 - test:spec: only in an `e2e`: the acceptance tests of one tag. The command ends in the filter flag of the runner, because the core adds only the tag (such as @S0001-). In an `api`, a `web` or a `cli`: n/a.
-- start: runs the project without a build. In an `api` or a `web`: starts the server; reads PORT; answers on the health route. In a `cli`: runs one invocation with the arguments that it gets. In an `e2e`: runs the runner for a human only, in watch mode or with its UI.
+- start: runs the project without a build. In an `api`: starts the server; reads PORT; answers on the API index `GET /api`. In a `web`: starts the server; reads PORT; answers on `/`. In a `cli`: runs one invocation with the arguments that it gets. In an `e2e`: runs the runner for a human only, in watch mode or with its UI.
 - debt:medium: a list of checks, one command each, so that each runs also after a failure: the dependency rules between layers; never the rules of the hook; never blocks; its findings go to the debt register as medium debt.
 - debt:low: a list of checks, one command each: the complexity and size limits of the Blueprint and, in an `api`, a `web` or a `cli`, the test coverage of `core` and `shared`; never the rules of the hook; never blocks; its findings go to the debt register as low debt, one item for each rule.
 -->
@@ -90,7 +90,7 @@ Contracts:
 ├── {compose_file}        # composition: starts core, registers the features
 ├── {core_folder}/        # platform, called one time at startup
 ├── {features_folder}/    # one flat folder for each feature, and the manifest
-│   └── health/
+│   └── about/
 └── {shared_folder}/      # primitives and service contracts at the root, folders by technical concern
 ```
 

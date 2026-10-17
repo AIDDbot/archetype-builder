@@ -1,5 +1,5 @@
 <!--
-Foundation spec 1 of 7: how does the system start? (Halloween D8, D12, D13; Columbus D17, D18, D39, D44, D48, D51).
+Foundation spec 1 of 6: how does the system start? (Halloween D8, D12, D13, D35; Columbus D17, D18, D39, D44, D48, D51).
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat configuration "Configuration" --domain foundation
 Instance: replace each role (`api`, `web`, `cli`, `e2e`) with the project name.
@@ -46,18 +46,18 @@ Each project must start in the same way in each environment, with its settings o
 
 ### cli
 
-- A local cli owns its store: no server; each invocation does one command and stops.
-- Settings: `CONFIG_FILE` (`./config.json`), `DATABASE_URL` (`./data/app.sqlite`) for a local store, `API_BASE_URL` (`http://localhost:3000`) for a cli with an `api`. One list of settings in `core` (name, default, check); a feature adds its settings there.
-- Sources: the option `--{name}` (such as `--database-url`), the variable `{NAME}`, the key `{NAME}` of the configuration file, the default. `CONFIG_FILE` never comes from the file.
+- A local cli: no server; each invocation does one command and stops. No database: a spec that stores data adds it.
+- Settings: `CONFIG_FILE` (`./config.json`), `API_BASE_URL` (`http://localhost:3000`) for a cli with an `api`. One list of settings in `core` (name, default, check); a feature adds its settings there.
+- Sources: the option `--{name}` (such as `--config-file`), the variable `{NAME}`, the key `{NAME}` of the configuration file, the default. `CONFIG_FILE` never comes from the file.
 - `core` parses the arguments one time, in one function, from options as data: each setting gives its option. A later spec adds its options to that parse, never a second parse.
 - Feature `config`, with the operations `get` and `set`, through the settings contract of `shared`. `set` checks the value before it writes.
-- Migrations as the `api`, before the command.
 
 ### e2e
 
 - `core` reads `{PROJECT}_DIRECTORY` (`../{folder}`, the sibling folder of the project), `{PROJECT}_PORT` (the default port of the project), `{PROJECT}_START` (the `start` slot of the project) and `E2E_STARTUP_TIMEOUT_MS` (15000); a `cli` has only `CLI_DIRECTORY` and `CLI_START`. An invalid value stops the suite.
 - The suite starts each server that does not answer, and stops it after the run, also after a failure. Checked by `review-implementation`, not by an acceptance test.
-- A helper in `shared` starts one project, or runs one `cli` invocation, with the environment and arguments of the test. It gives each test its own temporary database and configuration file, which all the invocations of that test share, and deletes them after the test. A test that needs a clean store makes a second helper. A test that copies the `cli` project to a temporary folder, such as for relative paths, also copies the root `package.json`: `shell` and `about` read the identity there.
+- A preflight, not a test: it checks `GET /api` and `/` before the first test, and stops the run with the name of a project that does not answer. A `cli` has no preflight.
+- A helper in `shared` starts one project, or runs one `cli` invocation, with the environment and arguments of the test. It gives each test its own temporary database (`api`) or configuration file (`cli`), which all the invocations of that test share, and deletes it after the test. A test that needs a clean one makes a second helper. A test that copies the `cli` project to a temporary folder, such as for relative paths, also copies the root `package.json`: `shell` and `about` read the identity there.
 - A test checks what its spec adds and the order that it needs, never that nothing else exists: later specs add settings, migrations and commands.
 
 ### All projects
@@ -70,7 +70,7 @@ Each project must start in the same way in each environment, with its settings o
 
 | Schema | Element | Change | Description |
 | --- | --- | --- | --- |
-| api.db, cli store | table of applied versions | new | `version`, `appliedAt`. One row for each applied migration. |
+| api.db | table of applied versions | new | `version`, `appliedAt`. One row for each applied migration. |
 
 ## Verification
 
@@ -84,8 +84,8 @@ Each project must start in the same way in each environment, with its settings o
 - **R06**: WHEN the `web` starts without `PORT`, it SHALL serve its application at `/` on port 4000. Test: use the instance that the suite started without `PORT`.
 - **R07**: WHEN the `web` starts with `API_BASE_URL` set, `GET /runtime-config.json` SHALL answer 200 with `{ "apiBaseUrl": "<that URL>" }`.
 - **R08**: WHEN a server starts with a `PORT` that is not an integer from 1 to 65535, it SHALL stop with a non-zero exit code and a message that contains `PORT`.
-- **R09**: WHEN a project with a database (the `api`, or a local `cli`) starts, it SHALL apply each migration that the database does not have, in order, and record the version of each one. Test: start two times on one temporary database; no version has two rows.
-- **R10**: IF the database has a schema version that the project does not know, THEN the project SHALL stop with a non-zero exit code and a message that contains that version. Test: record an unknown version before the start.
+- **R09**: WHEN the `api` starts, it SHALL apply each migration that the database does not have, in order, and record the version of each one. Test: start two times on one temporary database; no version has two rows.
+- **R10**: IF the database has a schema version that the `api` does not know, THEN the `api` SHALL stop with a non-zero exit code and a message that contains that version. Test: record an unknown version before the start.
 - **R11**: WHEN the `cli` runs `config set <name> <value>` with a known setting and a valid value, it SHALL write the value to its configuration file and stop with exit code 0. The next invocation SHALL use that value.
 - **R12**: IF `config set` gets an unknown setting or a value that is not valid for that setting, THEN the `cli` SHALL stop with a non-zero exit code and a message that contains the name of the setting, and SHALL not change the configuration file.
 - **R13**: WHEN the `cli` runs `config get`, it SHALL show each setting with its value and its source: `argument`, `environment`, `file` or `default`. Test: check each setting of this spec with its value and its source; never the whole list or its order, because later specs add settings.
@@ -101,7 +101,7 @@ Each project must start in the same way in each environment, with its settings o
 | page | web | `/` on `PORT` | The application document | R05, R06 |
 | api | web | `GET /runtime-config.json` | 200 `{ "apiBaseUrl": "..." }`. No error status. | R07 |
 | process | api, web | start with an incorrect `PORT` | Stops with a message that contains `PORT` | R08 |
-| process | api, cli | start on a database | Applies the missing migrations, or stops on an unknown version | R09, R10 |
+| process | api | start on a database | Applies the missing migrations, or stops on an unknown version | R09, R10 |
 | command | cli | `config set <name> <value>` | Writes the file. Exit code 0. An unknown name or an invalid value: the file does not change. | R11, R12 |
 | command | cli | `config get [<name>]` | Each setting with its value and source, or the value of one setting | R13–R15 |
 | process | cli | any command with an incorrect configuration file | Stops with a message that contains the path | R16 |

@@ -81,7 +81,7 @@ export default defineConfig({
 
 **Persistence**
 
-- Use `node:sqlite` (`DatabaseSync`) for the database of an `api` and the local store of a `cli`. It is part of Node.js: no dependency to add or upgrade.
+- Use `node:sqlite` (`DatabaseSync`) for the database of an `api`, and for the local store of a `cli` when a spec adds one: the foundation of a `cli` has no store (Halloween D35). It is part of Node.js: no dependency to add or upgrade.
 - `DATABASE_URL` is the path of the database file. Its default is `./data/app.sqlite`, relative to the project folder.
 - Write it in the main dependencies and in the technology rules of the project `AGENTS.md`: the specs never name it.
 
@@ -158,6 +158,8 @@ The `front/` archetype of Archetype Base sets the visual base. A new library wit
 - Source of the three files: `front/src/core/styles/` of [`AIDDbot/archetype-base`](https://github.com/AIDDbot/archetype-base). Keep them equal.
 
 ## Dependencies: add and upgrade
+
+A project has only the dependencies that this file, the `AGENTS.md` of its archetype or a spec names: the list is closed (Halloween D36). Never add one on your own judgment, such as a UI for the test runner, a second assertion library, or a library for a few lines of code. A need that no named dependency and no module of the platform covers is a decision of a spec: the spec names the dependency and why. A dependency that nobody names breaks a rule of the project: `medium` debt.
 
 Add a dependency only with the package manager's add command, so it resolves the latest release; never write a version by hand. The `upgrade` slot raises every dependency to its latest release, majors included. Each package manager has its own commands: use the one the project uses, never a second one.
 

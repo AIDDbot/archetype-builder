@@ -1,5 +1,5 @@
 <!--
-Foundation spec 2 of 7: how do we observe the system? (Halloween D7, D12, D13; Columbus D17, D18, D39, D51). It needs `configuration`.
+Foundation spec 2 of 6: how do we observe the system? (Halloween D7, D12, D13, D35; Columbus D17, D18, D39, D51). It needs `configuration`.
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat monitoring "Monitoring" --domain foundation
 Instance: replace each role (`api`, `web`, `cli`, `e2e`) with the project name.
@@ -49,7 +49,7 @@ When a failure occurs, the operator must see what occurred, and each client must
 ### cli
 
 - Logger as the `api`, with the same settings except `BODY_LIMIT_KB`.
-- The expected error of `shared`, a seed of the scaffold, gives each kind its exit code: `rule` (1), `usage` (2) or `unavailable` (3). In `config set`, an unknown setting is `usage` and an invalid value is `rule`; an invalid setting or an unknown schema version is `unavailable`.
+- The expected error of `shared`, a seed of the scaffold, gives each kind its exit code: `rule` (1), `usage` (2) or `unavailable` (3). In `config set`, an unknown setting is `usage` and an invalid value is `rule`; an invalid setting or a configuration file that does not open is `unavailable`.
 - `core` catches each failure at the top level and is the only code that makes an exit code. An unexpected failure writes `error: Unexpected failure`, exit code 1, and logs its cause. Never a stack trace on the console. No public command can cause an unexpected failure: a unit test of `core` proves it, never an acceptance test, and no test injects a failure into the `cli` process.
 - Results go to standard output; messages and errors go to standard error.
 
@@ -76,7 +76,7 @@ When a failure occurs, the operator must see what occurred, and each client must
 - **R13**: WHILE `LOG_LEVEL` is set, the `api` and the `cli` SHALL write no line below that level. Test: with `LOG_LEVEL=warn`, a success writes no line.
 - **R14**: IF a `cli` command rejects its input by a rule, THEN the `cli` SHALL write `error: <message>` to standard error and stop with exit code 1. Test: `config set LOG_LEVEL loud`.
 - **R15**: IF a `cli` invocation has an option that its command does not know, THEN the `cli` SHALL write `error: <message>` with the name of that option to standard error and stop with exit code 2.
-- **R16**: IF a setting of the `cli` is not valid, or the `cli` cannot open its store or reach the `api`, THEN the `cli` SHALL write `error: <message>` with the setting or the resource to standard error and stop with exit code 3. Test: give `DATABASE_URL` a path that is a folder.
+- **R16**: IF a setting of the `cli` is not valid, or the `cli` cannot open its configuration file or reach the `api`, THEN the `cli` SHALL write `error: <message>` with the setting or the resource to standard error and stop with exit code 3. Test: give `CONFIG_FILE` a path that is a folder.
 
 ### Expected URLs and APIs
 
@@ -89,4 +89,4 @@ When a failure occurs, the operator must see what occurred, and each client must
 | command | cli | any command | One log line for each invocation | R11, R12, R13 |
 | command | cli | `config set LOG_LEVEL {incorrect}` | `error: <message>`. Exit code 1. | R14 |
 | command | cli | `config get --no-such-option` | `error: <message>`. Exit code 2. | R15 |
-| command | cli | any command on a store that does not open | `error: <message>`. Exit code 3. | R16 |
+| command | cli | any command with a configuration file that does not open | `error: <message>`. Exit code 3. | R16 |

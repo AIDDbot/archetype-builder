@@ -1,5 +1,5 @@
 <!--
-Foundation spec 6 of 7: who uses the system? Optional (Halloween D12, D13; Columbus D3, D6, D13, D17, D18, D39, D45, D47, D51). It needs `configuration`, `monitoring`, `shell` and `health`.
+Foundation spec 5 of 6: who uses the system? Optional (Halloween D12, D13; Columbus D3, D6, D13, D17, D18, D39, D45, D47, D51). It needs `configuration`, `monitoring` and `shell`.
 Include it only if the system has users (actors, model.schema.md). Ask only if this is not clear. It is the only optional foundation spec: a property of the system decides it, never a project type.
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat users "Users" --domain foundation
@@ -23,7 +23,7 @@ A system with users must know who sends each request, before a feature needs thi
 ### Business rules
 
 - A password must never be stored or returned in a form that a person can read.
-- Each API route must have a valid session, unless a spec marks it as public (such as health, about, register and login).
+- Each API route must have a valid session, unless a spec marks it as public (such as the API index, about, register and login).
 - Each user must have the role `user`. A client must not select a different role.
 - Each page and each menu link must have one access mark: `everyone`, `anonymous` or `session`.
 

@@ -1,5 +1,5 @@
 <!--
-Foundation spec 3 of 7: how do people use the system? (Halloween D7, D12, D13; Columbus D17, D18, D37, D38, D39, D51). It needs `configuration` and `monitoring`.
+Foundation spec 3 of 6: how do people use the system? (Halloween D7, D12, D13; Columbus D17, D18, D37, D38, D39, D51). It needs `configuration` and `monitoring`.
 The common frame of each interface: the API index of the `api`, the layout of the `web`, the usage of the `cli`.
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat shell "Shell" --domain foundation
