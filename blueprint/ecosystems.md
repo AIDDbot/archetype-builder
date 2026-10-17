@@ -36,6 +36,8 @@ export default defineConfig({
   },
   fmt: { ignorePatterns: ["**/*.md"] },
   lint: {
+    plugins: ["typescript", "unicorn", "oxc", "import", "node", "promise", "vitest"],
+    categories: { correctness: "error", suspicious: "error" },
     options: { typeAware: true, typeCheck: true },
     rules: { "typescript/no-non-null-assertion": "error" },
   },
@@ -49,7 +51,8 @@ export default defineConfig({
 - `vp check` checks the types only with `typeAware` and `typeCheck`. Without them, a type error passes.
 - Formatting leaves Markdown out (`ignorePatterns`). A commit of specs or docs only runs no test.
 - `test.projects` names the folder of each Vitest project, so that `vp test related` uses the configuration of each project.
-- A value that can be missing is checked, never asserted with `!` (`typescript/no-non-null-assertion`).
+- The hook lints by packages, never rule by rule: the categories `correctness` and `suspicious`, with the plugins of the stack (add `react` and `jsx-a11y` in a `web` with React). Never turn on a rule or turn off a rule of a package one by one. A finding of a package is repaired in the code.
+- The one exception: a value that can be missing is checked, never asserted with `!` (`typescript/no-non-null-assertion`). It is in the category `restriction`, which is not a package: its rules contradict each other.
 
 **Unit tests**
 
@@ -59,9 +62,9 @@ export default defineConfig({
 
 **Debt checks**
 
-- `projects/lint/`, next to the projects that use it: copy [`lint/complexity.json`](./lint/complexity.json) (the limits of code, with an override for `*.test.ts`) and [`lint/complexity.tests.json`](./lint/complexity.tests.json) (the limits of tests for all files). The `lint/crap.json` of each project extends `../../lint/complexity.json`, or `../../lint/complexity.tests.json` in an `e2e` project. `projects/lint/` has no `package.json`, so the workspace and Vitest skip it.
+- The root, next to `vite.config.ts`: copy [`lint/complexity.json`](./lint/complexity.json) (the limits of code, with an override for `*.test.ts`) and [`lint/complexity.tests.json`](./lint/complexity.tests.json) (the limits of tests for all files). No folder for two files. Their `$schema` is `./node_modules/oxlint/configuration_schema.json`. The `lint/crap.json` of each project extends `../../../complexity.json`, or `../../../complexity.tests.json` in an `e2e` project.
 - Each project: copy [`lint/dependencies.json`](./lint/dependencies.json) (or [`lint/dependencies.e2e.json`](./lint/dependencies.e2e.json) for the `e2e`) to its `lint/`, and add `lint/layers.json` that extends it. Change the folder map if the project has a different one.
-- Each rule is an `error`, so that a check fails with its findings. The configurations turn off the default `correctness` rules: a debt check never reports what the hook reports.
+- Each rule is an `error`, so that a check fails with its findings. The configurations turn off the categories of the hook: a debt check never reports what the hook reports.
 - Oxlint reads the `files` of an override relative to the configuration file. Start each path with `**/` (`**/src/core/**/*.ts`): a path such as `src/core/*.ts` matches nothing from `lint/`, and the check passes with no warning.
 - A later override replaces the rule; it does not merge it. Thus each override repeats all of its groups.
 - The last override is for the tests: a test can import any layer, but no module of disk, database, network or process (`node:fs`, `node:sqlite`, `node:child_process`, …) and no `*.repository.ts` or `*.client.ts`; and no `vi.mock` or `vi.doMock` (`no-restricted-properties`). Thus "a unit test proves logic only" is a check, not a review.
@@ -71,7 +74,7 @@ export default defineConfig({
 
 **Acceptance tests**
 
-- The `e2e` project is a sibling folder. It starts each project with its `start` command and never imports its code: the `**/src/**` group of `lint/dependencies.e2e.json` checks it.
+- The `e2e` project is a sibling folder. It starts each project with the command of its `start` slot, run directly and never through npm (`node src/app.main.ts`): npm adds about half a second to each start, and a suite starts a `cli` tens of times. A value with npm ends in `--`. It never imports the code of a project: the `**/src/**` group of `lint/dependencies.e2e.json` checks it.
 - The settings of each project (its folder, its start command) and its client are in `shared/projects/`. A test gets them from there, never from `core`: `core` is only the life cycle of the suite.
 - A test keeps the tag of each requirement that it proves. A later spec adds its tag next to the others; it never replaces the tag of another spec.
 - A system with no `web`: Vitest. The `vite.config.ts` of the `e2e` includes `**/*.test.ts`. The requirement tag goes in the title of the test (`"@S0001-R01 …"`): Vitest has no tags.
@@ -90,12 +93,13 @@ export default defineConfig({
 
 **Script names**
 
-- The slot names are the script names: `upgrade`, `test`, `test:spec`, `start`, `layers`, `crap`. Use the standard npm names, which run without `run`: `test` and `start`.
+- The slot names are the script names: `test`, `test:spec`, `start`, `layers`, `crap`, and `upgrade` at the root. Use the standard npm names, which run without `run`: `test` and `start`. Keep the `package.json` of a project short: one script for each slot, never a script for a part.
 - Lint, format and the affected unit tests are no scripts: the hook runs them.
 - `test` runs all the tests of the project: `vp test run`. In an `e2e` project, `vp test run --passWithNoTests` (or `playwright test --pass-with-no-tests`), so that the scaffold passes before the first spec.
 - In an `e2e` project, `start` is for a human only: with Vitest, the watch mode `vp test --passWithNoTests`, with no UI package; with Playwright, `playwright test --ui`.
 - `test:spec` exists only in an `e2e` project. It ends in the filter flag of the runner, because the core adds only the tag (`@S0001-`): `vp test run --passWithNoTests -t` (or `playwright test --pass-with-no-tests --grep`).
-- Each debt slot has one script for each check, because the core runs each one also after a failure, and the project registers the list of the parts. `layers` has one check: it is `vp lint -c lint/layers.json`. `crap:complexity` is `vp lint -c lint/crap.json` and, in an `api`, a `web` or a `cli`, `crap:coverage` is `vp test run --coverage`; `crap` runs both for a human.
+- A debt slot runs each of its checks also after a failure, so the project registers the list of its direct commands, from its `AGENTS.md`. `layers` has one check: `vp lint -c lint/layers.json`. `crap` has `vp lint -c lint/crap.json` and, in an `api`, a `web` or a `cli`, `vp test run --coverage`. The `crap` script runs both for a human (`&&`).
+- The dependencies are in the root `package.json`, so one `upgrade` script at the root raises them all: `npx npm-check-updates@latest -u && npm install`. npm-check-updates runs with `npx` only when the slot runs: it is no dependency. Each project registers the slot as `npm --prefix ../.. run upgrade`. Vite+ has no upgrade command yet.
 - `upgrade` raises `vite-plus` and `@vitest/coverage-v8` together: their Vitest must be the same.
 
 **Scaffold commands**
@@ -188,7 +192,7 @@ The dependencies that this file names for JS / TS on Node:
 
 | Where | Dependencies |
 | --- | --- |
-| root `devDependencies` | `vite-plus`, `@vitest/coverage-v8`, `@types/node` (for `"types": ["node"]`), `npm-check-updates` (the `upgrade` slot) |
+| root `devDependencies` | `vite-plus`, `@vitest/coverage-v8`, `@types/node` (for `"types": ["node"]`) |
 | `api` with Express | `express`, `@types/express` |
 | `web` | `@picocss/pico`, `@fontsource/roboto`, `@fontsource/audiowide`, `@fontsource/anonymous-pro` |
 | `web` with React | `react`, `react-dom`, `react-router`, `@vitejs/plugin-react`, `@types/react`, `@types/react-dom` |
@@ -200,7 +204,7 @@ Add a dependency only with the package manager's add command, so it resolves the
 
 | Ecosystem | Package manager | Add | `upgrade` |
 | --- | --- | --- | --- |
-| JS / TS | npm | `npm install {pkg}` | `npx npm-check-updates -u && npm install` |
+| JS / TS | npm | `npm install {pkg}` | `npx npm-check-updates@latest -u && npm install`, at the root |
 | JS / TS | pnpm | `pnpm add {pkg}` | `pnpm update --latest` |
 | JS / TS | Yarn (Berry) | `yarn add {pkg}` | `yarn up "*"` |
 | JS / TS | Bun | `bun add {pkg}` | `bun update --latest` |
