@@ -20,8 +20,8 @@ A repository has one pre-commit hook, so the root of the system is one Vite+ wor
 - The root `package.json` has `"workspaces": ["projects/*"]`, the identity of the system, `vite-plus` in `devDependencies`, `"prepare": "vp config"` (it installs the hook) and `"test": "vp run -r test"`.
 - `.vite-hooks/pre-commit` contains `vp staged`. `vp config` installs the dispatcher, but not this file: write it.
 - The root has no `tsconfig.json`. Each project has its own `tsconfig.json`, with `"erasableSyntaxOnly": true`, `"allowImportingTsExtensions": true` and `"types": ["node"]`: Node.js runs the TypeScript files as they are, so a syntax that it cannot erase (such as a parameter property `constructor(public readonly kind)`) fails at run time, not at the type check.
-- Each project has its `package.json` with its scripts, its `vite.config.ts` with its Vitest project (`name`, `include`) and its coverage, its `lint/` folder, and a `.gitignore` that anchors its runtime data, such as `/data/`.
-- The root `.gitignore` does not anchor `node_modules/`, `.vite/` and `coverage/`: Vitest makes them in each project.
+- Each project has its `package.json` with its scripts, its `vite.config.ts` with its Vitest project (`name`, `include`) and its coverage, its `lint/` folder, and a `.gitignore` that anchors its runtime data: the default paths of its settings, such as `/data/`, `/logs/` or `/config.json`.
+- The root `.gitignore` comes from the AIDDbot overlay, with the secrets and `/.aiddbot/logs/`. Add lines to it; never write it again. It does not anchor `node_modules/`, `.vite/` and `coverage/`: Vitest makes them in each project.
 - The root `.gitattributes` keeps LF on each platform, as Oxfmt writes it: `* text=auto eol=lf`, then `*.bat`, `*.cmd` and `*.ps1` with `text eol=crlf`, and `*.png`, `*.jpg` and `*.woff2` as `binary`. Write it first, before the first commit: on Windows, an agent writes CRLF, and a hook with CRLF does not run.
 
 The root `vite.config.ts`:
@@ -73,6 +73,7 @@ export default defineConfig({
 
 - The `e2e` project is a sibling folder. It starts each project with its `start` command and never imports its code: the `**/src/**` group of `lint/dependencies.e2e.json` checks it.
 - The settings of each project (its folder, its start command) and its client are in `shared/projects/`. A test gets them from there, never from `core`: `core` is only the life cycle of the suite.
+- A test keeps the tag of each requirement that it proves. A later spec adds its tag next to the others; it never replaces the tag of another spec.
 - A system with no `web`: Vitest. The `vite.config.ts` of the `e2e` includes `**/*.test.ts`. The requirement tag goes in the title of the test (`"@S0001-R01 …"`): Vitest has no tags.
 - A system with a `web`: Playwright, with one browser engine (Chromium). Turn off `no-empty-pattern` for the Playwright fixtures and tests with no fixture (`({}, use)`, `({}, testInfo)`). Never add a false dependency to avoid the rule.
 

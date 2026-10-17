@@ -35,7 +35,7 @@ When a failure occurs, the operator must see what occurred, and each client must
 ### api
 
 - Logger in `core`, contract in `shared`: one line for each event, ` | ` for line breaks, `WARN` and `ERROR` to standard error. It never blocks a request, and writes each queued line before the stop.
-- The logger reads `LOG_DIR` and `LOG_LEVEL`: `configuration` declares them, with their checks. New setting: `BODY_LIMIT_KB` (100), a positive integer.
+- The logger reads `LOG_DIR` and `LOG_LEVEL` only through their definitions in `configuration`, also before the configuration loads, so that a failure at startup has a log line. An invalid `LOG_DIR` writes no file; an invalid `LOG_LEVEL` takes its fallback. Never read them by hand or parse the arguments a second time. New setting: `BODY_LIMIT_KB` (100), a positive integer.
 - The `source` column of a log line is the project name, such as `api` or `cli`.
 - The expected error of `shared`, a seed of the scaffold, gets a status for each kind and optional `fields`. The error handler of `core` is the only code that makes an error response; it logs any other error at `ERROR` with its cause.
 - Keep a received `X-Request-Id` only if it is a short text of letters, digits and `-`.
