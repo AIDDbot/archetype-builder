@@ -1,6 +1,6 @@
 <!--
 Archetype-Blueprint: the technical data of one project (Columbus principles 7, 8, 11; D16, D19, D50).
-The Blueprint (system, containers, layers, tests, code rules and limits) is in the root AGENTS.md, one time for the system. Never copy it here.
+The Blueprint of the root AGENTS.md has the system rules and the code rules, one time for the system. Never copy them here. The architecture of the project type (containers, layers, tests) is in section 4 of this file.
 Three levels fill this file: [Blueprint] this file, [Archetype] the AGENTS.md of the archetype repository, [Project] {project}/AGENTS.md. No level changes the structure.
 Keep the sections, their order and their headings. Write short lists and tables, not prose. Remove these comments at the project level.
 For implementation examples by ecosystem, see ecosystems.md. They are guidance, not rules.
@@ -70,6 +70,35 @@ Contracts:
 | `shared` concerns | {from project-types.md} |
 | `test` / `start` | {from project-types.md, section 2} |
 
+### Containers and layers
+
+<!-- [Blueprint] In an `api`, a `web` or a `cli`: copy this block as written. In an `e2e`: remove it and keep the block Suite. -->
+
+| Container | Is | Never |
+| --- | --- | --- |
+| `core` | The platform that the framework or the entry calls one time at startup: server or shell, router, connections, error handler, global styles. | Business rules. Imports of a feature. |
+| `shared` | Generic elements with no domain, and the contracts of the services that features need (such as the logger, the HTTP client or the error type). Primitives at the root, other elements in folders by technical concern (`http`, `database`). | Domain words. Imports of `core` or of a feature. Folders `utils`, `helpers`, `common`, `misc`. |
+| feature | One flat folder for one unit of business value. The role in each file name tells its layer. | Subfolders. Imports of `core`. Imports of a different feature, except its facade. |
+| composition | The entry. It starts `core`, registers each feature by name in one explicit list (the manifest), and gives the features the services of `core` through the contracts of `shared`. The only part that knows `core` and the features. | Automatic discovery: folder scans, global decorators, file-based routers. |
+
+- composition → `presentation` → `logic` → `data`. A different feature → `facade` → `logic`. A layer never skips the next one: only the registration creates `data` and gives it to `logic`.
+- `presentation`: input, output and the registration of the feature (route, page, command). No business rules. Only the composition imports it.
+- `facade`: the public functions and types for other features. Only other features import it. A feature that gives nothing has no facade.
+- `logic`: rules and decisions. It does not know how data is stored.
+- `data`: all that the project reads or writes outside itself (database, remote API, files).
+- Types are not a layer. Each layer can use types, `shared` and the facades of other features.
+- A broken boundary is `medium` debt.
+- A feature that the manifest loads on demand has no other import. Tests start the application through the composition, without a port.
+- Unit tests prove `logic`, at least one for each business rule, with a fake `data`. They also prove `shared` and `core`. They are fast and independent, and touch no disk, database, network or process: the acceptance tests prove `data`. The pre-commit hook runs the ones that a commit affects. A business rule without a unit test is debt.
+
+### Suite
+
+<!-- [Blueprint] In an `e2e`: copy this block as written. In other projects: remove it. -->
+
+- `e2e` has no layers, no manifest, no composition and no unit tests. The runner is the entry, and each run proves its `core`: the life cycle of the suite (setup, teardown, startup check of the projects).
+- An acceptance test proves one requirement. Its name contains the identifier of that requirement.
+- An e2e test uses only the API, the screens and the commands. It starts each project only with its start command, and never injects code into its process. It never uses `core` or a different feature. Only the migration tests of `configuration` open the database. Each test makes its own data with unique values. One browser engine (Chromium), unless the system asks for more.
+
 ## 5 · Folder structure
 
 <!-- [Archetype] Map each concept to a real path, and to the framework mechanism for it (`—` for plain code). [Project] Adds features when specs ship. D27. -->
@@ -120,7 +149,7 @@ The index of `shared`. Read it before you write a check or a conversion. Helpers
 
 ## 6 · Coding rules
 
-<!-- The code rules and limits are in the Blueprint of the root AGENTS.md. -->
+<!-- The code rules and the limits are in the Blueprint of the root AGENTS.md. -->
 
 ### Technology rules
 
