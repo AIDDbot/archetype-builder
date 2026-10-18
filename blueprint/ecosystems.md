@@ -52,13 +52,15 @@ export default defineConfig({
 - Formatting leaves Markdown out (`ignorePatterns`). A commit of specs or docs only runs no test.
 - `test.projects` names the folder of each Vitest project, so that `vp test related` uses the configuration of each project.
 - The hook lints by packages, never rule by rule: the categories `correctness` and `suspicious`, with the plugins of the stack (add `react` and `jsx-a11y` in a `web` with React). Never turn on a rule or turn off a rule of a package one by one. A finding of a package is repaired in the code.
-- The one exception: a value that can be missing is checked, never asserted with `!` (`typescript/no-non-null-assertion`). It is in the category `restriction`, which is not a package: its rules contradict each other.
+- The one rule turned on: a value that can be missing is checked, never asserted with `!` (`typescript/no-non-null-assertion`). It is in the category `restriction`, which is not a package: its rules contradict each other.
+- A false alarm of a package, in a `web` with React: `react/react-in-jsx-scope`. React 17 and later transforms JSX with no `React` in scope. Turn it off in the `rules` of the root `vite.config.ts`, next to the rule turned on; never in a file of its own.
 
 **Unit tests**
 
 - Vitest, through `vp test`. A test imports from `vite-plus/test`. The `vite.config.ts` of the project includes `src/**/*.test.ts`.
 - A unit test proves logic only. It is fast and touches no disk, database, network or process: the acceptance tests prove `data`.
 - To fake the disk, the network or the process, the code gets them as an argument (such as `files: { read, write }`), and the test gives a fake. Never `vi.mock` of a module, and never an exception for a test in `lint/`.
+- Each module has its test file next to it, with the same name (`numbers.parse.ts` and `numbers.parse.test.ts`), the seed primitives too: never one test file for several modules. Thus the hook runs only the tests of the changed files, and a missing test shows in the folder.
 
 **Debt checks**
 
@@ -78,6 +80,7 @@ export default defineConfig({
 - The settings of each project (its folder, its start command) and its client are in `shared/projects/`. A test gets them from there, never from `core`: `core` is only the life cycle of the suite.
 - A test keeps the tag of each requirement that it proves. A later spec adds its tag next to the others; it never replaces the tag of another spec.
 - A system with no `web`: Vitest. The `vite.config.ts` of the `e2e` includes `**/*.test.ts`. The requirement tag goes in the title of the test (`"@S0001-R01 …"`): Vitest has no tags.
+- A project that the suite starts can start children of its own (`vp dev` starts Vite). Stop it with `tree-kill` on the identifier of the started process: it stops the whole tree on each platform. `child.kill` alone leaves the server listening on Windows.
 - No script of an operating system in the suite (PowerShell, shell scripts) and no branch for a platform: a requirement that needs a signal of the operating system, such as a clean stop that writes the queued log lines, is proved by a unit test of `core` with the life cycle as an argument.
 - A system with a `web`: Playwright, with one browser engine (Chromium). Turn off `no-empty-pattern` for the Playwright fixtures and tests with no fixture (`({}, use)`, `({}, testInfo)`). Never add a false dependency to avoid the rule.
 
@@ -132,7 +135,7 @@ Use the pattern `{business}.{role}.ts`. The role tells the layer. The boundary r
 
 | Concept | File |
 | --- | --- |
-| composition | `src/app.main.ts` (entry), `src/app.compose.ts` (`createApp()`) and `src/features/features.manifest.ts` |
+| composition | `src/app.main.ts` (entry), `src/app.compose.ts` (`createApp()`) and `src/features/features.manifest.ts`; no other file at the root of `src`: an adapter of the platform (crypto, clock, files) is `core` |
 | `core` | `src/core/app.{service}.ts`, for example `app.config.ts`, `app.logger.ts`, `app.server.ts`; the middleware of an `api` in `src/core/{concern}.middleware.ts` |
 | facade | `src/features/{feature}/{feature}.api.ts`, only when other features use it |
 | `presentation` | `*.routes.ts` (the registration that the manifest imports), `*.controller.ts`, `*.request.ts`, `*.command.ts`, `*.page.ts`, `*.component.ts`, `*.card.ts` (`.tsx` in a React `web`) |
@@ -198,7 +201,7 @@ The dependencies that this file names for JS / TS on Node:
 | `api` with Express | `express`, `@types/express` |
 | `web` | `@picocss/pico`, `@fontsource/roboto`, `@fontsource/audiowide`, `@fontsource/anonymous-pro` |
 | `web` with React | `react`, `react-dom`, `react-router`, `@vitejs/plugin-react`, `@types/react`, `@types/react-dom` |
-| `e2e` with a `web` | `@playwright/test` |
+| `e2e` with a `web` | `@playwright/test`, `tree-kill` (stops a started project with its children) |
 
 No `typescript`: Vite+ brings it. No `@vitest/ui`: the `start` of an `e2e` with Vitest is the watch mode. No component test library and no DOM emulator: the `.tsx` files have no unit tests. The persistence of an `api` uses `node:sqlite`, a module of the platform. A different framework is in the `AGENTS.md` of its archetype.
 

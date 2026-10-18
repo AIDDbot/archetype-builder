@@ -42,6 +42,7 @@ Each project must start in the same way in each environment, with its settings o
 ### web
 
 - Settings: `PORT` (4000), `API_BASE_URL` (`http://localhost:3000`).
+- The development server listens on `PORT` with `strictPort` and on all interfaces (`host: true`), as the `api`. With the default `localhost`, Vite can listen on `::1` only, and the suite, which calls `127.0.0.1`, gets no answer.
 - `core` serves `GET /runtime-config.json`; the HTTP client is its only reader. No build for each environment.
 
 ### cli
