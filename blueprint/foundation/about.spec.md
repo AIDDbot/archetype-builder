@@ -20,7 +20,7 @@ A person or a client that uses the system must see what it is, which version run
 
 ### Business rules
 
-- The identity must come from the identity file of `shell`.
+- The identity must come from the identity function of `shell`.
 - No project must ask for the identity or the technology at runtime.
 
 ### Out of context
@@ -31,7 +31,7 @@ A person or a client that uses the system must see what it is, which version run
 
 ### All projects
 
-- With no author in the identity: `AIDDbot` and `https://aiddbot.com`.
+- With no author in the identity: `AIDDbot` and `https://aiddbot.com`. The identity function of `shell` gives this fallback, and its unit test proves it with data.
 - The technology summary is a constant of the `about` feature, made at the foundation from `.product/system.md` and the `AGENTS.md` of each project: project, type, language, framework, main libraries and test tools.
 
 ### api
@@ -43,7 +43,7 @@ A person or a client that uses the system must see what it is, which version run
 - Feature `about`: page `/about`, menu link `About` and home card, access mark `everyone` when the system has `users`.
 - `data` calls `GET /api/about` through the HTTP client. `logic` keeps the state: loading, loaded or unavailable. The page and the card use the same `logic` and `data`.
 - A unit test checks the `logic` with a fake `data`.
-- The home header of `shell` shows the version from the identity file.
+- The home header of `shell` shows the version of the identity.
 - The website link has `target="_blank"` and `rel="noopener noreferrer"`.
 
 ### cli

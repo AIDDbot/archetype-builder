@@ -19,7 +19,7 @@ AIDDbot offers only the archetypes of its catalog. When no archetype fits a syst
 | [`blueprint/foundation-0.3/`](./blueprint/foundation-0.3/) | The 8 foundation specs of Archetype Base 0.3. Reference until Archetype Web 0.4 ships. |
 | [`blueprint/project.AGENTS.template.md`](./blueprint/project.AGENTS.template.md) | The template of the `AGENTS.md` of one project. |
 | [`blueprint/ecosystems.md`](./blueprint/ecosystems.md) | Guidance for the tooling of each ecosystem. |
-| [`blueprint/lint/`](./blueprint/lint/) | Dependency and complexity rules for JS / TS, by debt level. |
+| [`blueprint/lint/`](./blueprint/lint/) | The debt checks for JS / TS, copied to `.lint/`: boundaries (`layers`) and complexity (`crap`). |
 | [`blueprint/theme/`](./blueprint/theme/) | The brand theme for a `web`. |
 
 ## Status

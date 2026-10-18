@@ -37,8 +37,8 @@ Contracts:
 - test: runs all the tests of the project. In an `api`, a `web` or a `cli`: the unit tests, fast and with no data access. In an `e2e`: all the tests tagged @S{nnnn}-R{nn}, headless, and no unit tests, because each run proves its `core`.
 - test:spec: only in an `e2e`: the acceptance tests of one tag. The command ends in the filter flag of the runner, because the core adds only the tag (such as @S0001-). In an `api`, a `web` or a `cli`: n/a.
 - start: runs the project without a build. In an `api`: starts the server; reads PORT; answers on the API index `GET /api`. In a `web`: starts the server; reads PORT; answers on `/`. In a `cli`: runs one invocation with the arguments that it gets. In an `e2e`: runs the runner for a human only, in watch mode or with its UI.
-- layers: a list of checks, one command each, so that each runs also after a failure: the dependency rules between layers; never the rules of the hook; never blocks; its findings go to the debt register as medium debt.
-- crap: a list of checks, one command each: the complexity and size limits of the Blueprint and, in an `api`, a `web` or a `cli`, the test coverage of `core` and `shared`. They are the inputs of CRAP (Change Risk Anti-Patterns) as separate thresholds: never compute the CRAP formula; never the rules of the hook; never blocks; its findings go to the debt register as low debt, one item for each rule.
+- layers: one command: the dependency rules between layers in `.lint/`; never the rules of the hook; never blocks; its findings go to the debt register as medium debt.
+- crap: one command: the complexity and size limits of `.lint/` and then, in an `api`, a `web` or a `cli`, the test coverage of `core` and `shared` (80). They are the inputs of CRAP (Change Risk Anti-Patterns) as separate thresholds: never compute the CRAP formula; never the rules of the hook; never blocks; its findings go to the debt register as low debt, one item for each rule.
 -->
 
 | Slot | Blocks | Command | Tool |

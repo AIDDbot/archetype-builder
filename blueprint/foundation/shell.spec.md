@@ -35,7 +35,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 ### All projects
 
-- One identity file in `shared` reads `displayName` (or `name`), `description`, `author`, `homepage` and `version` from the root `package.json`. Nothing copies them by hand.
+- One identity function in `shared` makes the identity (`displayName` or `name`, `description`, `author`, `homepage`, `version`, and the fallbacks of `about`) from the data of the root `package.json` that it gets as an argument. Only the composition reads that file, one time, and gives the identity to `core` and to the features. Thus a unit test gives the function its data: no test reads the file or mocks a module. Nothing copies the identity by hand.
 
 ### api
 

@@ -20,7 +20,7 @@ A repository has one pre-commit hook, so the root of the system is one Vite+ wor
 - The root `package.json` has `"workspaces": ["projects/*"]`, the identity of the system, `vite-plus` in `devDependencies`, `"prepare": "vp config"` (it installs the hook) and `"test": "vp run -r test"`.
 - `.vite-hooks/pre-commit` contains `vp staged`. `vp config` installs the dispatcher, but not this file: write it.
 - The root has no `tsconfig.json`. Each project has its own `tsconfig.json`, with `"erasableSyntaxOnly": true`, `"allowImportingTsExtensions": true` and `"types": ["node"]`: Node.js runs the TypeScript files as they are, so a syntax that it cannot erase (such as a parameter property `constructor(public readonly kind)`) fails at run time, not at the type check.
-- Each project has its `package.json` with its scripts, its `vite.config.ts` with its Vitest project (`name`, `include`) and its coverage, its `lint/` folder, and a `.gitignore` that anchors its runtime data: the default paths of its settings, such as `/data/`, `/logs/` or `/config.json`.
+- Each project has its `package.json` with its scripts, its `vite.config.ts` with its Vitest project (`name`, `include`) and its coverage, and a `.gitignore` that anchors its runtime data: the default paths of its settings, such as `/data/`, `/logs/` or `/config.json`.
 - The root `.gitignore` comes from the AIDDbot overlay, with the secrets and `/.aiddbot/logs/`. Add lines to it; never write it again. It does not anchor `node_modules/`, `.vite/` and `coverage/`: Vitest makes them in each project.
 - The root `.gitattributes` keeps LF on each platform, as Oxfmt writes it: `* text=auto eol=lf`, then `*.bat`, `*.cmd` and `*.ps1` with `text eol=crlf`, and `*.png`, `*.jpg` and `*.woff2` as `binary`. Write it first, before the first commit: on Windows, an agent writes CRLF, and a hook with CRLF does not run.
 
@@ -63,18 +63,18 @@ export default defineConfig({
 
 **Debt checks**
 
-- The root, next to `vite.config.ts`: copy [`lint/complexity.json`](./lint/complexity.json) (the limits of code, with an override for `*.test.ts`) and [`lint/complexity.tests.json`](./lint/complexity.tests.json) (the limits of tests for all files). No folder for two files. Their `$schema` is `./node_modules/oxlint/configuration_schema.json`. The `lint/crap.json` of each project extends `../../../complexity.json`, or `../../../complexity.tests.json` in an `e2e` project.
-- Each project: copy [`lint/dependencies.json`](./lint/dependencies.json) (or [`lint/dependencies.e2e.json`](./lint/dependencies.e2e.json) for the `e2e`) to its `lint/`, and add `lint/layers.json` that extends it. Change the folder map if the project has a different one.
+- All the debt checks are in `.lint/` at the root, named by what they check. Copy them as they are: [`boundaries.json`](./lint/boundaries.json) and [`boundaries.e2e.json`](./lint/boundaries.e2e.json) for `layers`, [`complexity.json`](./lint/complexity.json) (the limits of code, with an override for `*.test.ts`) and [`complexity.e2e.json`](./lint/complexity.e2e.json) (the limits of tests for all files) for `crap`. No project has a `lint/` folder: its scripts point to `../../.lint/`. A change for one project is an override by path in the file of `.lint/`.
+- The patterns use braces for each set of names and extensions (`*.{page,component,card}.{ts,tsx}`), in `files` and in each `group`.
 - Each rule is an `error`, so that a check fails with its findings. The configurations turn off the categories of the hook: a debt check never reports what the hook reports.
-- Oxlint reads the `files` of an override relative to the configuration file. Start each path with `**/` (`**/src/core/**/*.ts`): a path such as `src/core/*.ts` matches nothing from `lint/`, and the check passes with no warning.
-- A later override replaces the rule; it does not merge it. Thus each override repeats all of its groups.
-- Coverage: add `@vitest/coverage-v8` to the root `devDependencies`, next to `vite-plus` and at its Vitest version. In the `vite.config.ts` of the project, `coverage.include` is `src/**/*.ts` without the tests (else a file that no test loads does not count), and `coverage.thresholds` gives 80 for `statements`, `branches`, `functions` and `lines` to `src/core/**` and `src/shared/**`, with `perFile: true` (else a file with no test passes inside the mean of its folder).
-- A false alarm of a rule is turned off in the `lint/` configuration of the project, for its files, never with a comment in each place.
+- Oxlint reads the `files` of an override relative to the configuration file. Start each path with `**/` (`**/src/core/**/*.ts`): a path such as `src/core/*.ts` matches nothing from `.lint/`, and the check passes with no warning.
+- A later override replaces the rule; it does not merge it, and Oxlint has no rule of zones (`import/no-restricted-paths`). Thus each override repeats all of its groups.
+- Coverage: add `@vitest/coverage-v8` to the root `devDependencies`, next to `vite-plus` and at its Vitest version. In the `vite.config.ts` of the project, `coverage.include` is `src/**/*.ts` without the tests (else a file that no test loads does not count), and `coverage.thresholds` gives exactly 80, never more, for `statements`, `branches`, `functions` and `lines` to `src/core/**` and `src/shared/**`, with `perFile: true` (else a file with no test passes inside the mean of its folder).
+- A false alarm of a rule is turned off in its file of `.lint/`, by path, never with a comment in each place.
 - Do not write an own boundary checker: the overrides check the imports, and the `layers` run of the core reports a subfolder in a feature.
 
 **Acceptance tests**
 
-- The `e2e` project is a sibling folder. It starts each project with the command of its `start` slot, run directly and never through npm (`node src/app.main.ts`): npm adds about half a second to each start, and a suite starts a `cli` tens of times. A value with npm ends in `--`. It never imports the code of a project: the `**/src/**` group of `lint/dependencies.e2e.json` checks it.
+- The `e2e` project is a sibling folder. It starts each project with the command of its `start` slot, run directly and never through npm (`node src/app.main.ts`): npm adds about half a second to each start, and a suite starts a `cli` tens of times. A value with npm ends in `--`. It never imports the code of a project: the `**/src/**` group of `.lint/boundaries.e2e.json` checks it.
 - The settings of each project (its folder, its start command) and its client are in `shared/projects/`. A test gets them from there, never from `core`: `core` is only the life cycle of the suite.
 - A test keeps the tag of each requirement that it proves. A later spec adds its tag next to the others; it never replaces the tag of another spec.
 - A system with no `web`: Vitest. The `vite.config.ts` of the `e2e` includes `**/*.test.ts`. The requirement tag goes in the title of the test (`"@S0001-R01 …"`): Vitest has no tags.
@@ -95,13 +95,13 @@ export default defineConfig({
 
 **Script names**
 
-- The slot names are the script names: `test`, `test:spec`, `start`, `layers`, `crap`, and `upgrade` at the root. Use the standard npm names, which run without `run`: `test` and `start`. Keep the `package.json` of a project short: one script for each slot, never a script for a part.
+- The slot names are the script names: `test`, `test:spec`, `start`, `layers`, `crap`, and `upgrade` at the root. Use the standard npm names, which run without `run`: `test` and `start`. The scripts of a project are its slots and no more: `start`, `test`, `layers` and `crap`, and `test:spec` in an `e2e`. The root has `prepare`, `test` and `upgrade`.
 - Lint, format and the affected unit tests are no scripts: the hook runs them.
 - `test` runs all the tests of the project: `vp test run`. In an `e2e` project, `vp test run --passWithNoTests` (or `playwright test --pass-with-no-tests`), so that the scaffold passes before the first spec.
 - In an `e2e` project, `start` is for a human only: with Vitest, the watch mode `vp test --passWithNoTests`, with no UI package; with Playwright, `playwright test --ui`.
 - `test:spec` exists only in an `e2e` project. It ends in the filter flag of the runner, because the core adds only the tag (`@S0001-`): `vp test run --passWithNoTests -t` (or `playwright test --pass-with-no-tests --grep`).
-- A debt slot runs each of its checks also after a failure, so the project registers the list of its direct commands, from its `AGENTS.md`. `layers` has one check: `vp lint -c lint/layers.json`. `crap` has `vp lint -c lint/crap.json` and, in an `api`, a `web` or a `cli`, `vp test run --coverage`. The `crap` script runs both for a human (`&&`).
-- The dependencies are in the root `package.json`, so one `upgrade` script at the root raises them all: `npx npm-check-updates@latest -u && npm install`. npm-check-updates runs with `npx` only when the slot runs: it is no dependency. Each project registers the slot as `npm --prefix ../.. run upgrade`. Vite+ has no upgrade command yet.
+- `layers` is `vp lint -c ../../.lint/boundaries.json` (`boundaries.e2e.json` in an `e2e`). `crap` is one script: `vp lint -c ../../.lint/complexity.json && vp test run --coverage`, always in that order, so that a repair first simplifies and then proves; in an `e2e`, only `vp lint -c ../../.lint/complexity.e2e.json`. Each project registers `npm run layers` and `npm run crap`.
+- The dependencies are in the root `package.json`, so one `upgrade` script at the root raises them all: `npx npm-check-updates@latest -u && npm install`. npm-check-updates runs with `npx` only when the slot runs: it is no dependency. Each project registers the slot as the command `npm --prefix ../.. run upgrade`, with no script of its own. Vite+ has no upgrade command yet.
 - `upgrade` raises `vite-plus` and `@vitest/coverage-v8` together: their Vitest must be the same.
 
 **Scaffold commands**
@@ -164,7 +164,7 @@ Use the current major of each framework and its current idioms. Never write the 
 
 - ES modules and async handlers. Express 5 sends a rejected promise to the error handler of `core`: no `try`/`catch` in a handler only to call `next(error)`, and no wrapper package such as `express-async-errors`.
 - `express.json()` with the body limit of `configuration`; no `body-parser`. One `express.Router()` for each feature, in its `{feature}.routes.ts`.
-- `core` writes its own middleware for CORS, the security headers, the request identifier and the log line: no `cors`, `helmet`, `morgan` or similar package. Each one is in `src/core/{concern}.middleware.ts`, where the shared limits allow the signature of Express (`request, response, next`, and `error` first in the error handler): no lint comment and no exception in `lint/`. The composition registers the middleware of `core`; it never writes one.
+- `core` writes its own middleware for CORS, the security headers, the request identifier and the log line: no `cors`, `helmet`, `morgan` or similar package. Each one is in `src/core/{concern}.middleware.ts`, where the shared limits allow the signature of Express (`request, response, next`, and `error` first in the error handler): no lint comment and no exception in `.lint/`. The composition registers the middleware of `core`; it never writes one.
 - The platform first: `node:sqlite`, `node:crypto` (`scrypt` with a random salt for a password, `randomUUID`), global `fetch` and `AbortSignal.timeout`.
 
 **React (19 or later), with react-router (7 or later)**
@@ -173,7 +173,7 @@ Use the current major of each framework and its current idioms. Never write the 
 - The router in data mode: `createBrowserRouter` with the route objects of the manifest. A page gets its data from the `loader` of its route (`useLoaderData`), and changes data with the `action` of its route (`<Form>`, `useActionState`, `useNavigation`): never `useEffect` to fetch data, and no data library.
 - The error of a route goes to its `ErrorBoundary`; the not-found page is the route `*`.
 - No manual memoization (`useMemo`, `useCallback`, `memo`). A form uses the elements of HTML and their validation attributes, with no form library.
-- `layers` checks it: a facade, a `logic` or a `data` file never imports React, and a file of `presentation` never imports `useEffect`, `useLayoutEffect`, `useMemo`, `useCallback` or `memo` (`lint/dependencies.json`).
+- `layers` checks it: a facade, a `logic` or a `data` file never imports React, and a file of `presentation` never imports `useEffect`, `useLayoutEffect`, `useMemo`, `useCallback` or `memo` (`.lint/boundaries.json`).
 
 In a React `web`, a `.tsx` file only renders: no rule, no check and no conversion. These go into `.ts` files (`logic`, `shared`), which the unit tests prove. The coverage of the `web` includes only `.ts` files; the acceptance tests prove the `.tsx` files. Local state of a component stays in the component; state that pages share goes into a `*.store.ts` (`logic`), with no state library.
 
