@@ -3,7 +3,7 @@ Foundation spec 1 of 6: how does the system start? (Halloween D8, D12, D13, D35;
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat configuration "Configuration" --domain foundation
 Instance: replace each role (`api`, `web`, `cli`, `e2e`) with the project name.
-Remove the rows, requirements and Solution subsections of the roles that the system does not have. Then number the requirements again, with no gaps.
+Remove the user stories, rows, requirements and Solution subsections of the roles that the system does not have. Then number the requirements again, with no gaps.
 The technology is in the AGENTS.md of each project, never here.
 -->
 # {id}-configuration — Configuration
@@ -77,32 +77,26 @@ Each project must start in the same way in each environment, with its settings o
 
 ### Requirements
 
-- **R01**: WHEN the `api` starts with `PORT` set, it SHALL accept HTTP connections on that port.
-- **R02**: WHEN the `api` starts without `PORT`, it SHALL accept HTTP connections on port 3000. Test: use the instance that the suite started without `PORT`.
-- **R03**: WHEN a request to the `api` has an `Origin` header that `CORS_ORIGIN` contains, the `api` SHALL answer with `Access-Control-Allow-Origin` set to that origin.
-- **R04**: WHILE `CORS_ORIGIN` is not set, the `api` SHALL answer each request with `Access-Control-Allow-Origin: *`.
-- **R05**: WHEN the `web` starts with `PORT` set, it SHALL serve its application at `/` on that port.
-- **R06**: WHEN the `web` starts without `PORT`, it SHALL serve its application at `/` on port 4000. Test: use the instance that the suite started without `PORT`.
-- **R07**: WHEN the `web` starts with `API_BASE_URL` set, `GET /runtime-config.json` SHALL answer 200 with `{ "apiBaseUrl": "<that URL>" }`.
-- **R08**: WHEN a server starts with a `PORT` that is not an integer from 1 to 65535, it SHALL stop with a non-zero exit code and a message that contains `PORT`.
-- **R09**: WHEN the `api` starts, it SHALL apply each migration that the database does not have, in order, and record the version of each one. Test: start two times on one temporary database; no version has two rows.
-- **R10**: IF the database has a schema version that the `api` does not know, THEN the `api` SHALL stop with a non-zero exit code and a message that contains that version. Test: record an unknown version before the start.
-- **R11**: WHEN the `cli` runs `config set <name> <value>` with a known setting and a valid value, it SHALL write the value to its configuration file and stop with exit code 0. The next invocation SHALL use that value.
-- **R12**: IF `config set` gets an unknown setting or a value that is not valid for that setting, THEN the `cli` SHALL stop with a non-zero exit code and a message that contains the name of the setting, and SHALL not change the configuration file.
-- **R13**: WHEN the `cli` runs `config get`, it SHALL show each setting with its value and its source: `argument`, `environment`, `file` or `default`. Test: check each setting of this spec with its value and its source; never the whole list or its order, because later specs add settings.
-- **R14**: WHEN the `cli` runs `config get <name>` with a known setting, it SHALL show only the value of that setting.
-- **R15**: WHEN a setting has a value in more than one source, the `cli` SHALL use the value of the first source in this order: argument, environment, configuration file, default. Test: give three values, then remove the argument and then the variable.
-- **R16**: IF the configuration file is not a valid JSON object, THEN the `cli` SHALL stop with a non-zero exit code and a message that contains the path of the file.
+- **R01**: WHEN the `api` starts, it SHALL accept HTTP connections on `PORT`, or on port 3000 without it. Test: the default uses the instance that the suite started without `PORT`.
+- **R02**: WHEN a request to the `api` has an `Origin` header that `CORS_ORIGIN` contains, the `api` SHALL answer with `Access-Control-Allow-Origin` set to that origin. WHILE `CORS_ORIGIN` is not set, it SHALL answer `Access-Control-Allow-Origin: *`.
+- **R03**: WHEN the `web` starts, it SHALL serve its application at `/` on `PORT`, or on port 4000 without it. Test: the default uses the instance that the suite started without `PORT`.
+- **R04**: WHEN the `web` starts with `API_BASE_URL` set, `GET /runtime-config.json` SHALL answer 200 with `{ "apiBaseUrl": "<that URL>" }`.
+- **R05**: WHEN a server starts with a `PORT` that is not an integer from 1 to 65535, it SHALL stop with a non-zero exit code and a message that contains `PORT`.
+- **R06**: WHEN the `api` starts, it SHALL apply each migration that the database does not have, in order, and record the version of each one. IF the database has a version that the `api` does not know, THEN it SHALL stop with a non-zero exit code and a message that contains that version. Test: start two times on one temporary database, and no version has two rows; record an unknown version before a start.
+- **R07**: WHEN the `cli` runs `config set <name> <value>` with a known setting and a valid value, it SHALL write the value to its configuration file, stop with exit code 0, and the next invocation SHALL use it. IF the setting is unknown or the value is not valid, THEN it SHALL stop with a non-zero exit code and a message that contains the name, and not change the file.
+- **R08**: WHEN the `cli` runs `config get`, it SHALL show each setting with its value and its source (`argument`, `environment`, `file` or `default`), and with a name, only the value of that setting. Test: check each setting of this spec, never the whole list or its order, because later specs add settings.
+- **R09**: WHEN a setting has a value in more than one source, the `cli` SHALL use the first source in this order: argument, environment, configuration file, default. Test: give three values, then remove the argument and then the variable.
+- **R10**: IF the configuration file is not a valid JSON object, THEN the `cli` SHALL stop with a non-zero exit code and a message that contains the path of the file.
 
 ### Expected URLs and APIs
 
 | Kind | Project | Address | Expected answer | Requirements |
 | --- | --- | --- | --- | --- |
-| api | api | any path on `PORT` | An HTTP response with the CORS header | R01–R04 |
-| page | web | `/` on `PORT` | The application document | R05, R06 |
-| api | web | `GET /runtime-config.json` | 200 `{ "apiBaseUrl": "..." }`. No error status. | R07 |
-| process | api, web | start with an incorrect `PORT` | Stops with a message that contains `PORT` | R08 |
-| process | api | start on a database | Applies the missing migrations, or stops on an unknown version | R09, R10 |
-| command | cli | `config set <name> <value>` | Writes the file. Exit code 0. An unknown name or an invalid value: the file does not change. | R11, R12 |
-| command | cli | `config get [<name>]` | Each setting with its value and source, or the value of one setting | R13–R15 |
-| process | cli | any command with an incorrect configuration file | Stops with a message that contains the path | R16 |
+| api | api | any path on `PORT` | An HTTP response with the CORS header | R01, R02 |
+| page | web | `/` on `PORT` | The application document | R03 |
+| api | web | `GET /runtime-config.json` | 200 `{ "apiBaseUrl": "..." }`. No error status. | R04 |
+| process | api, web | start with an incorrect `PORT` | Stops with a message that contains `PORT` | R05 |
+| process | api | start on a database | Applies the missing migrations, or stops on an unknown version | R06 |
+| command | cli | `config set <name> <value>` | Writes the file. Exit code 0. An unknown name or an invalid value: the file does not change. | R07 |
+| command | cli | `config get [<name>]` | Each setting with its value and source, or the value of one setting | R08, R09 |
+| process | cli | any command with an incorrect configuration file | Stops with a message that contains the path | R10 |

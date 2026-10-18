@@ -4,7 +4,7 @@ The primitives of the presentation layer that each feature composes: list, recor
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat presentation "Presentation" --domain foundation
 Instance: replace each role (`api`, `web`, `cli`, `e2e`) with the project name.
-Remove the rows, requirements and Solution subsections of the roles that the system does not have, and the views of the features that the system does not have (`users`). Then number the requirements again, with no gaps.
+Remove the user stories, rows, requirements and Solution subsections of the roles that the system does not have, and the views of the features that the system does not have (`users`). Then number the requirements again, with no gaps.
 -->
 # {id}-presentation — Presentation
 
@@ -75,23 +75,21 @@ A record is one thing that the application shows, such as the application itself
 - **R01**: WHEN the `api` answers a date, it SHALL use the ISO 8601 format in UTC, such as `2026-10-13T08:30:00.000Z`. Test: the creation date of the account of `users`.
 - **R02**: WHEN a user opens `/`, each card SHALL show a header with its title as a heading, its facts as label and value pairs, and a footer with its main link or action. Test: check the roles, never the class names.
 - **R03**: WHEN a user opens a detail page (`/about`, `/users/{id}`), the `web` SHALL show a page header with the title of the record, and the facts of the record as label and value pairs, in one or more sections with a heading.
-- **R04**: WHILE a card or a detail page loads its data, it SHALL be marked as busy for assistive technology, and SHALL not show a fact. Test: delay the API answer in the browser.
-- **R05**: IF a card or a detail page cannot load its data, THEN it SHALL show the error message of its spec in the place of its facts, and SHALL keep its title and its footer link.
-- **R06**: WHEN a fact is a date, a duration or a number, the `web` SHALL show it in a form that a person reads, in the language of the browser. Test: check the shape, never an exact value.
-- **R07**: WHEN a user opens `/` on a screen 375 CSS pixels wide, the cards SHALL be in one column with no horizontal scroll. WHEN the screen is 1024 CSS pixels wide, the cards SHALL be in two or more columns.
-- **R08**: WHILE the light theme or the dark theme is active, the text of each label and each value SHALL have a contrast ratio of 4.5:1 or more with its background. Test: the computed text color and the first background that is not transparent, in each theme.
-- **R09**: WHEN a view shows a list of records of one kind, the `web` SHALL show a table with a caption, one header row with a column header for each field, and one row for each record.
-- **R10**: WHEN a user opens a page with a table on a screen 375 CSS pixels wide, the page SHALL have no horizontal scroll. The table SHALL scroll in its own area.
-- **R11**: WHEN the `cli` shows one record (`about`), it SHALL write one line for each fact, as `{label}: {value}`, with each value in the same column.
-- **R12**: WHEN the `cli` runs `config get`, it SHALL show the settings as a table with the columns `Setting`, `Value` and `Source`.
+- **R04**: WHILE a card or a detail page loads its data, it SHALL be marked as busy for assistive technology and show no fact. IF it cannot load its data, THEN it SHALL show the error message of its spec in the place of its facts, and keep its title and its footer link. Test: delay the API answer in the browser.
+- **R05**: WHEN a fact is a date, a duration or a number, the `web` SHALL show it in a form that a person reads, in the language of the browser. Test: check the shape, never an exact value.
+- **R06**: WHEN a user opens `/` on a screen 375 CSS pixels wide, the cards SHALL be in one column with no horizontal scroll. WHEN the screen is 1024 CSS pixels wide, the cards SHALL be in two or more columns.
+- **R07**: WHILE the light theme or the dark theme is active, the text of each label and each value SHALL have a contrast ratio of 4.5:1 or more with its background. Test: the computed text color and the first background that is not transparent, in each theme.
+- **R08**: WHEN a view shows a list of records of one kind, the `web` SHALL show a table with a caption, one header row with a column header for each field, and one row for each record. On a screen 375 CSS pixels wide, the table SHALL scroll in its own area, and the page SHALL have no horizontal scroll.
+- **R09**: WHEN the `cli` shows one record (`about`), it SHALL write one line for each fact, as `{label}: {value}`, with each value in the same column.
+- **R10**: WHEN the `cli` runs `config get`, it SHALL show the settings as a table with the columns `Setting`, `Value` and `Source`.
 
 ### Expected URLs and APIs
 
 | Kind | Project | Address | Expected answer | Requirements |
 | --- | --- | --- | --- | --- |
 | api | api | a date in an answer | ISO 8601 in UTC | R01 |
-| page | web | `/` | Card grid. Each card: header with a heading, label and value pairs, footer link. | R02, R04–R08 |
-| page | web | `/about` | Page header, a section for the application, a table of the technology of each project | R03–R06, R08–R10 |
-| page | web | `/users/{id}` | Page header with the name of the user, facts | R03–R06, R08 |
-| command | cli | `about` | One `{label}: {value}` line for each fact | R11 |
-| command | cli | `config get` | Table `Setting`, `Value`, `Source` | R12 |
+| page | web | `/` | Card grid. Each card: header with a heading, label and value pairs, footer link. | R02, R04–R07 |
+| page | web | `/about` | Page header, a section for the application, a table of the technology of each project | R03–R05, R07, R08 |
+| page | web | `/users/{id}` | Page header with the name of the user, facts | R03–R05, R07 |
+| command | cli | `about` | One `{label}: {value}` line for each fact | R09 |
+| command | cli | `config get` | Table `Setting`, `Value`, `Source` | R10 |

@@ -4,7 +4,7 @@ Include it only if the system has users (actors, model.schema.md). Ask only if t
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat users "Users" --domain foundation
 Instance: replace each role (`api`, `web`, `e2e`) with the project name.
-Remove the rows, requirements and Solution subsections of the roles that the system does not have. Then number the requirements again, with no gaps.
+Remove the user stories, rows, requirements and Solution subsections of the roles that the system does not have. Then number the requirements again, with no gaps.
 -->
 # {id}-users — Users
 
@@ -14,10 +14,8 @@ A system with users must know who sends each request, before a feature needs thi
 
 ### User Stories
 
-- As a visitor, I want **to register with my email, name and password** so that I get an account.
-- As a user, I want **to log in and stay logged in after a reload** so that I can use the protected features.
-- As a visitor, I want **to log in and go back to the page that I asked for** so that I do not look for it again.
-- As a user, I want **to see my account** so that I know which data the application keeps about me.
+- As a visitor, I want **to register, log in, and go back to the page that I asked for** so that I use the protected features without a search.
+- As a user, I want **to stay logged in after a reload and to see my account** so that I know which data the application keeps about me.
 - As a user, I want **to log out** so that nobody else can use my session on this device.
 
 ### Business rules
@@ -70,45 +68,24 @@ A system with users must know who sends each request, before a feature needs thi
 
 ### Requirements
 
-- **R01**: WHEN a visitor registers with a new email, a name and a password, the `api` SHALL answer 201 with the public user `{ id, email, name, role: "user", createdAt }`.
-- **R02**: IF the email, name or password is missing or is not a non-empty string, THEN the `api` SHALL answer 400 with one `fields` entry for each incorrect field, and make no user. Test: a login with the rejected values also fails.
-- **R03**: IF the email is already registered, in upper case or lower case, THEN the `api` SHALL answer 409 and keep the first account without changes. Test: after the 409, the first password still logs in.
-- **R04**: WHEN a user logs in with valid credentials, the `api` SHALL answer 200 with `{ token, user }`. The `token` is a non-empty opaque string.
-- **R05**: IF the password is incorrect or the email is unknown, THEN the `api` SHALL answer 401 with the same body `{ "error": "Invalid credentials" }`.
-- **R06**: WHEN a request has `Authorization: Bearer <token>` of a valid session, `GET /api/auth/me` SHALL answer 200 with the public user.
-- **R07**: IF a request to a protected route has no token or an invalid token, THEN the `api` SHALL answer 401 with the uniform error body.
-- **R08**: WHEN a valid session requests `GET /api/users/:id` with the identifier of its own user, the `api` SHALL answer 200 with `{ name, email, createdAt }`.
-- **R09**: IF a valid session requests `GET /api/users/:id` with a different identifier, THEN the `api` SHALL answer 404 with `{ "error": "Not found" }`, for an identifier that exists and for one that does not exist.
-- **R10**: WHEN a valid session sends `POST /api/auth/logout`, the `api` SHALL answer 204 with no body and make that token invalid. The other sessions of the user SHALL stay valid. Test: log in two times, log out with the first token, `GET /api/auth/me` with each.
-- **R11**: WHEN a visitor sends the register form, the `web` SHALL confirm the registration. IF the email is already registered, THEN it SHALL show the error and let the visitor try again.
-- **R12**: WHEN a user sends valid credentials on the login page, the `web` SHALL show the name of the user in the menu. IF the credentials are incorrect, THEN it SHALL show the error and let the user try again.
-- **R13**: WHILE a user is logged in, the `web` SHALL keep the session after a reload of the page.
-- **R14**: WHEN a user sends a form two times quickly, the `web` SHALL send one request. Test: two `click()` calls in one page script, because a tool click waits for the enabled button; count the requests.
-- **R15**: WHEN a user moves between `/register` and `/login` without a reload of the page, the form SHALL send the operation of the page that it shows.
-- **R16**: IF the `api` answers the register form with `fields`, THEN the `web` SHALL show each message next to its field. Test: send a name that has only spaces.
-- **R17**: WHEN a user sends the register form or the login form and the browser accepts its fields, the `web` SHALL write one console line with the name of the operation, before the answer comes. The line SHALL not contain a form value, a password or a token.
-- **R18**: WHILE a user is logged in, the home page SHALL show an auth card with `Hello, {name}` as a link to their account, and SHALL not show the links to `/login` and `/register`. WHILE no user is logged in, the auth card SHALL show links to `/login` and `/register`.
-- **R19**: WHEN a user with a session opens `/users/{id}` with their own identifier, the `web` SHALL show their name, their email and their creation date as a date that a person reads (such as `5 Oct 2026, 16:40`).
-- **R20**: IF the account API answers 404, THEN the account page SHALL show `Account not found` and keep the menu.
-- **R21**: WHILE no user is logged in, the menu SHALL show the links for `everyone` and for `anonymous`, such as `Login` and `Register`, and SHALL not show the account link or `Logout`.
-- **R22**: WHILE a user is logged in, the menu SHALL show the name of the user as a link to their account and a `Logout` control, and SHALL not show the links for `anonymous`.
-- **R23**: WHEN a visitor with no session opens a page with the mark `session`, the `web` SHALL show `/login`, keep the requested path, query and fragment, and not show the requested page. Test: open `/users/{id}?a=1#b`.
-- **R24**: WHEN the login succeeds after R23, the `web` SHALL show the requested page without a full reload of the document.
-- **R25**: IF the kept target is not a page of the application on the same origin, THEN the `web` SHALL show `/` after the login. Test: `returnTo` values `https://example.com/`, `//example.com` and `/no-such-page`.
-- **R26**: WHEN a user selects `Logout` and the `api` answers 204 or 401, the `web` SHALL remove the token and the user, show `/` and show the menu for no session.
-- **R27**: IF the logout fails because the `api` does not answer or answers 500, THEN the `web` SHALL show an error, keep the session, and let the user try again.
+- **R01**: WHEN a visitor registers with a new email, a name and a password, the `api` SHALL answer 201 with the public user `{ id, email, name, role: "user", createdAt }`. IF a field is missing or is not a non-empty string, THEN it SHALL answer 400 with one `fields` entry for each incorrect field and make no user. IF the email is already registered, in any case, THEN it SHALL answer 409 and keep the first account. Test: a login with rejected values fails; after the 409, the first password still logs in.
+- **R02**: WHEN a user logs in with valid credentials, the `api` SHALL answer 200 with `{ token, user }`, with a non-empty opaque `token`. IF the password is incorrect or the email is unknown, THEN it SHALL answer 401 with the same body `{ "error": "Invalid credentials" }`.
+- **R03**: WHEN a request has `Authorization: Bearer <token>` of a valid session, `GET /api/auth/me` SHALL answer 200 with the public user. IF a request to a protected route has no token or an invalid token, THEN the `api` SHALL answer 401 with the uniform error body.
+- **R04**: WHEN a user with a session opens `/users/{id}` with their own identifier, the `web` SHALL show their name, their email and their creation date as a date that a person reads (such as `5 Oct 2026, 16:40`), from `GET /api/users/:id` (200 `{ name, email, createdAt }`). IF the identifier is a different one, existing or not, THEN the `api` SHALL answer 404 with `{ "error": "Not found" }`, and the page SHALL show `Account not found` and keep the menu.
+- **R05**: WHEN a user selects `Logout`, the `api` SHALL answer 204 with no body and make that token invalid, and keep the other sessions of the user. WHEN it answers 204 or 401, the `web` SHALL remove the token and the user, show `/` and show the menu for no session. IF it does not answer or answers 500, THEN the `web` SHALL show an error and keep the session. Test: log in two times, log out with the first token, `GET /api/auth/me` with each.
+- **R06**: WHEN a visitor sends the register form or the login form, the `web` SHALL send one request for the operation of the page that it shows, and write one console line with the name of the operation, with no form value, password or token. It SHALL confirm the registration, or show the name of the user in the menu after a login. IF the `api` rejects it, THEN it SHALL show the error, each `fields` message next to its field, and let the visitor try again. Test: two `click()` calls in one page script, and count the requests; move between `/register` and `/login` with no reload; a name with only spaces.
+- **R07**: WHILE a user is logged in, the `web` SHALL keep the session after a reload, the menu SHALL show the name of the user as a link to their account and a `Logout` control, and the home auth card SHALL show `Hello, {name}` as a link to their account, with no links for `anonymous`. WHILE no user is logged in, the menu and the auth card SHALL show the links for `everyone` and `anonymous`, such as `Login` and `Register`, and no account link or `Logout`.
+- **R08**: WHEN a visitor with no session opens a page with the mark `session`, the `web` SHALL show `/login`, keep the requested path, query and fragment, and after the login show the requested page without a full reload of the document. IF the kept target is not a page of the application on the same origin, THEN it SHALL show `/` after the login. Test: open `/users/{id}?a=1#b`; `returnTo` values `https://example.com/`, `//example.com` and `/no-such-page`.
 
 ### Expected URLs and APIs
 
 | Kind | Project | Address | Expected answer | Requirements |
 | --- | --- | --- | --- | --- |
-| api | api | `POST /api/auth/register` | 201 public user. 400 invalid input with `fields`. 409 email already registered. | R01, R02, R03 |
-| api | api | `POST /api/auth/login` | 200 `{ token, user }`. 400 invalid input. 401 invalid credentials. | R04, R05 |
-| api | api | `GET /api/auth/me` | 200 public user. 401 without a valid session. | R06, R07 |
-| api | api | `GET /api/users/:id` | 200 `{ name, email, createdAt }` for the own user. 404 for a different identifier. 401 without a valid session. | R07, R08, R09 |
-| api | api | `POST /api/auth/logout` | 204 with no body. 401 without a valid session. | R07, R10 |
-| page | web | `/register` | Form with email, name and password. No role field. | R11, R14–R17 |
-| page | web | `/login` | Form with email and password; the return to a guarded page | R12–R15, R17, R23–R25 |
-| page | web | `/users/{id}` | Name, email and creation date, or `Account not found` | R19, R20 |
-| page | web | `/` | Auth card | R18 |
-| page | web | any page | Menu by access mark, and logout | R21, R22, R26, R27 |
+| api | api | `POST /api/auth/register` | 201 public user. 400 invalid input with `fields`. 409 email already registered. | R01 |
+| api | api | `POST /api/auth/login` | 200 `{ token, user }`. 400 invalid input. 401 invalid credentials. | R02 |
+| api | api | `GET /api/auth/me` | 200 public user. 401 without a valid session. | R03 |
+| api | api | `GET /api/users/:id` | 200 `{ name, email, createdAt }` for the own user. 404 for a different identifier. 401 without a valid session. | R03, R04 |
+| api | api | `POST /api/auth/logout` | 204 with no body. 401 without a valid session. | R03, R05 |
+| page | web | `/register`, `/login` | Forms; no role field; the return to a guarded page | R06, R08 |
+| page | web | `/users/{id}` | Name, email and creation date, or `Account not found` | R04 |
+| page | web | `/`, any page | Auth card; menu by access mark, and logout | R05, R07 |

@@ -3,7 +3,7 @@ Foundation spec 2 of 6: how do we observe the system? (Halloween D7, D12, D13, D
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat monitoring "Monitoring" --domain foundation
 Instance: replace each role (`api`, `web`, `cli`, `e2e`) with the project name.
-Remove the rows, requirements and Solution subsections of the roles that the system does not have. Then number the requirements again, with no gaps.
+Remove the user stories, rows, requirements and Solution subsections of the roles that the system does not have. Then number the requirements again, with no gaps.
 -->
 # {id}-monitoring — Monitoring
 
@@ -16,7 +16,7 @@ When a failure occurs, the operator must see what occurred, and each client must
 - As an operator, I want **one short log line for each request, each command and each error, in a daily file** so that I can find the cause of a failure.
 - As a client developer, I want **each API error in one body shape** so that I handle failures in one location.
 - As a script author, I want **each `cli` failure on standard error with an exit code that tells its kind** so that a script can react to it.
-- As a developer, I want **each server to show its address when it starts** so that I can open it.
+- As a developer, I want **each server (`api`, `web`) to show its address when it starts** so that I can open it.
 
 ### Business rules
 
@@ -61,32 +61,19 @@ When a failure occurs, the operator must see what occurred, and each client must
 
 ### Requirements
 
-- **R01**: WHEN the `api` completes a request, it SHALL add one plain-text line to `{LOG_DIR}/{yyyy-mm-dd}.log` with the columns `time source LEVEL message`, separated by spaces. The `time` SHALL be the local time of day `HH:MM:SS.mmm`. The message SHALL contain the method, path, status and duration in milliseconds, and no request identifier. Test: send a known `X-Request-Id`; the line does not contain it.
-- **R02**: WHEN a request completes, the `api` SHALL log it at level `ERROR` if the status is 500 or more, at `WARN` if the status is from 400 to 499, and at `INFO` for other statuses.
-- **R03**: WHEN a request body is not valid JSON, the `api` SHALL answer 400 with `{ "error": "<message>" }`.
-- **R04**: IF a request body is larger than `BODY_LIMIT_KB` kilobytes, THEN the `api` SHALL answer 413 with `{ "error": "<message>" }`.
-- **R05**: WHEN a request has an `X-Request-Id` header, the `api` SHALL answer with the same `X-Request-Id`.
-- **R06**: WHEN a request has no `X-Request-Id` header, the `api` SHALL make a new unique identifier and answer with it in `X-Request-Id`.
-- **R07**: WHEN the `api` answers a request, the answer SHALL have the headers `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` and `Referrer-Policy: no-referrer`.
-- **R08**: WHEN the `api` starts to listen, it SHALL write one console line with a URL that a browser can open: the configured host, or `localhost` when it listens on all interfaces. Test: start on a free port; that URL answers.
-- **R09**: WHEN the `web` server starts to listen, it SHALL write one console line with a URL that a browser can open.
-- **R10**: IF a server cannot start, THEN it SHALL write no listening line. Test: start with an incorrect `PORT`.
-- **R11**: WHEN a `cli` invocation completes, the `cli` SHALL add one line with the columns of R01 to `{LOG_DIR}/{yyyy-mm-dd}.log`. The message SHALL contain the command, the exit code and the duration in milliseconds, and no argument value. Test: give a setting as an argument; the line does not contain its value.
-- **R12**: WHEN an invocation completes, the `cli` SHALL log it at level `ERROR` for exit code 3, at `WARN` for exit codes 1 and 2, and at `INFO` for exit code 0.
-- **R13**: WHILE `LOG_LEVEL` is set, the `api` and the `cli` SHALL write no line below that level. Test: with `LOG_LEVEL=warn`, a success writes no line.
-- **R14**: IF a `cli` command rejects its input by a rule, THEN the `cli` SHALL write `error: <message>` to standard error and stop with exit code 1. Test: `config set LOG_LEVEL loud`.
-- **R15**: IF a `cli` invocation has an option that its command does not know, THEN the `cli` SHALL write `error: <message>` with the name of that option to standard error and stop with exit code 2.
-- **R16**: IF a setting of the `cli` is not valid, or the `cli` cannot open its configuration file or reach the `api`, THEN the `cli` SHALL write `error: <message>` with the setting or the resource to standard error and stop with exit code 3. Test: give `CONFIG_FILE` a path that is a folder.
+- **R01**: WHEN the `api` completes a request, it SHALL add one plain-text line to `{LOG_DIR}/{yyyy-mm-dd}.log` with the columns `time source LEVEL message`: the local time `HH:MM:SS.mmm`, and the method, path, status and duration in milliseconds, with no request identifier. The level SHALL be `ERROR` for a status of 500 or more, `WARN` from 400 to 499, and `INFO` otherwise. WHILE `LOG_LEVEL` is set, it SHALL write no line below that level. Test: send a known `X-Request-Id`, and the line does not contain it; with `LOG_LEVEL=warn`, a success writes no line.
+- **R02**: IF a request body is not valid JSON or is larger than `BODY_LIMIT_KB` kilobytes, THEN the `api` SHALL answer 400 or 413 with `{ "error": "<message>" }`.
+- **R03**: WHEN the `api` answers a request, the answer SHALL have the received `X-Request-Id`, or a new unique one, and the headers `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` and `Referrer-Policy: no-referrer`.
+- **R04**: WHEN a server starts to listen, it SHALL write one console line with a URL that a browser can open: the configured host, or `localhost` when it listens on all interfaces. IF it cannot start, THEN it SHALL write no listening line. Test: start on a free port, and that URL answers; start with an incorrect `PORT`.
+- **R05**: WHEN a `cli` invocation completes, the `cli` SHALL add one line with the columns of R01 to `{LOG_DIR}/{yyyy-mm-dd}.log`: the command, the exit code and the duration in milliseconds, with no argument value. The level SHALL be `ERROR` for exit code 3, `WARN` for 1 and 2, and `INFO` for 0, and `LOG_LEVEL` SHALL filter it as in R01. Test: give a setting as an argument, and the line does not contain its value.
+- **R06**: IF a `cli` invocation fails, THEN the `cli` SHALL write `error: <message>` to standard error and stop with the exit code of its kind: 1 for a rule that rejects the input, 2 for an option that its command does not know (with its name), and 3 for an invalid setting, a configuration file that does not open or an `api` that does not answer (with the setting or the resource). Test: `config set LOG_LEVEL loud`; `config get --no-such-option`; `CONFIG_FILE` set to a folder.
 
 ### Expected URLs and APIs
 
 | Kind | Project | Address | Expected answer | Requirements |
 | --- | --- | --- | --- | --- |
-| api | api | `POST /api/{any}` with an incorrect body | 400 `{ "error": "<message>" }`, with `fields` for an input error | R01, R02, R03 |
-| api | api | `POST /api/{any}` with a body larger than the limit | 413 `{ "error": "<message>" }` | R04 |
-| api | api | any path | `X-Request-Id` and the security headers, also on an error. An unexpected failure: 500 `{ "error": "Internal server error" }` | R05, R06, R07 |
-| process | api, web | start | One console line with an openable URL | R08, R09, R10 |
-| command | cli | any command | One log line for each invocation | R11, R12, R13 |
-| command | cli | `config set LOG_LEVEL {incorrect}` | `error: <message>`. Exit code 1. | R14 |
-| command | cli | `config get --no-such-option` | `error: <message>`. Exit code 2. | R15 |
-| command | cli | any command with a configuration file that does not open | `error: <message>`. Exit code 3. | R16 |
+| api | api | `POST /api/{any}` with an incorrect body | 400 `{ "error": "<message>" }`, with `fields` for an input error; 413 for a body larger than the limit | R01, R02 |
+| api | api | any path | `X-Request-Id` and the security headers, also on an error. An unexpected failure: 500 `{ "error": "Internal server error" }` | R03 |
+| process | api, web | start | One console line with an openable URL | R04 |
+| command | cli | any command | One log line for each invocation | R05 |
+| command | cli | `config set LOG_LEVEL {incorrect}`, `config get --no-such-option`, a configuration file that does not open | `error: <message>`. Exit code 1, 2 or 3. | R06 |

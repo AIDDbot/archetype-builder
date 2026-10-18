@@ -4,7 +4,7 @@ The common frame of each interface: the API index of the `api`, the layout of th
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat shell "Shell" --domain foundation
 Instance: replace each role (`api`, `web`, `cli`, `e2e`) with the project name.
-Remove the rows, requirements and Solution subsections of the roles that the system does not have. Then number the requirements again, with no gaps.
+Remove the user stories, rows, requirements and Solution subsections of the roles that the system does not have. Then number the requirements again, with no gaps.
 The technology and the visual base (style sheet, fonts, colors) are in the AGENTS.md of the project, never here.
 -->
 # {id}-shell — Shell
@@ -70,25 +70,16 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 - **R01**: WHEN a client requests `GET /api`, the `api` SHALL answer 200 with `{ "routes": [ { "method": "<method>", "path": "<path>" } ] }`, with one entry for each route of the registrations.
 - **R02**: WHEN a request goes to an API path that does not exist, the `api` SHALL answer 404 with `{ "error": "Not found" }`.
-- **R03**: WHEN a user opens `/`, the `web` SHALL show the shell header with the application name, the menu, and the home page: a header with the application name and description, and a grid for the cards of the features.
-- **R04**: WHILE the `web` shows a page, the menu SHALL contain a link to `/`.
-- **R05**: WHILE the `web` shows a page, the menu SHALL mark the link of that page as the current page.
-- **R06**: WHEN a user follows a menu link, the `web` SHALL change the page without a full reload of the document. Test: put a mark on the document before the link; the mark is still there.
-- **R07**: WHEN a user opens an unknown path directly, the `web` SHALL show a not-found page with the requested path and a link to `/`.
-- **R08**: WHEN a user opens the `web` and has not selected a theme, the theme SHALL agree with the color preference of the system. Test: set the preference of the browser, in a new context for each one.
-- **R09**: WHEN a user selects the theme control, the `web` SHALL change between the light and the dark theme.
-- **R10**: WHEN a user reloads the page after a theme selection, the `web` SHALL show the theme that the user selected.
-- **R11**: WHILE the `web` shows a page, the title of the document SHALL be the application name.
-- **R12**: WHEN the `web` shows a page after the first load or after a navigation, it SHALL write one console line with the path of that page.
-- **R13**: WHEN a user changes the theme, the `web` SHALL write one console line with the selected theme.
-- **R14**: WHEN a user opens a page on a screen 375 CSS pixels wide, the menu SHALL wrap its links, also when the features add links, and the page SHALL have no horizontal scroll. Test: add links to the menu in the page.
-- **R15**: WHEN the `cli` runs with `--help`, with `help`, or with no command, it SHALL show the application name, the usage line, and each command with its one-line summary, and stop with exit code 0.
-- **R16**: WHEN the `cli` runs `help <command>` or `<command> --help`, it SHALL show the usage of that command, with each operation and option and its summary, and stop with exit code 0.
-- **R17**: WHEN the `cli` runs a command that does not exist, it SHALL write `error: Unknown command: <name>` and the help of R15 to standard error, write nothing to standard output, and stop with exit code 2.
-- **R18**: WHEN the `cli` runs a command with `--json`, it SHALL write one JSON object, and nothing else, to its standard output. Test: each command of the foundation.
-- **R19**: IF a command with `--json` fails, THEN the `cli` SHALL write `{ "error": "<message>" }` to standard output, nothing to standard error, and stop with the exit code of that failure.
-- **R20**: WHEN the `cli` runs `help --json`, it SHALL write `{ "name": "<name>", "commands": [ { "name": "<command>", "summary": "<summary>", "usage": "<usage>" } ] }`.
-- **R21**: IF a command gets an option that it does not declare or an argument that it does not take, THEN the `cli` SHALL write `error: <message>` and the usage of that command to standard error, and stop with exit code 2. Test: one extra argument and one unknown option of a foundation command.
+- **R03**: WHEN a user opens `/`, the `web` SHALL show the shell header with the application name, the menu, and the home page: a header with the application name and description, and a grid for the cards of the features. The title of each document SHALL be the application name.
+- **R04**: WHILE the `web` shows a page, the menu SHALL contain a link to `/` and mark the link of that page as the current page. WHEN a user follows a menu link, the `web` SHALL change the page without a full reload of the document. Test: put a mark on the document before the link; the mark is still there.
+- **R05**: WHEN a user opens an unknown path directly, the `web` SHALL show a not-found page with the requested path and a link to `/`.
+- **R06**: WHEN a user opens the `web` with no selected theme, the theme SHALL agree with the color preference of the system. WHEN the user selects the theme control, the `web` SHALL change between the light and the dark theme, and keep that theme after a reload. Test: set the preference of the browser, in a new context for each one.
+- **R07**: WHEN the `web` shows a page, after the first load or a navigation, or the user changes the theme, it SHALL write one console line with the path of that page or the selected theme.
+- **R08**: WHEN a user opens a page on a screen 375 CSS pixels wide, the menu SHALL wrap its links, also when the features add links, and the page SHALL have no horizontal scroll. Test: add links to the menu in the page.
+- **R09**: WHEN the `cli` runs with `--help`, with `help`, or with no command, it SHALL show the application name, the usage line, and each command with its one-line summary; with `help <command>` or `<command> --help`, the usage of that command with each operation and option and its summary. It SHALL stop with exit code 0.
+- **R10**: WHEN the `cli` runs a command that does not exist, it SHALL write `error: Unknown command: <name>` and the help of R09 to standard error, write nothing to standard output, and stop with exit code 2.
+- **R11**: WHEN the `cli` runs a command with `--json`, it SHALL write one JSON object, and nothing else, to its standard output: for `help --json`, `{ "name": "<name>", "commands": [ { "name", "summary", "usage" } ] }`. IF the command fails, THEN it SHALL write `{ "error": "<message>" }` to standard output, nothing to standard error, and stop with the exit code of that failure. Test: each command of the foundation.
+- **R12**: IF a command gets an option that it does not declare or an argument that it does not take, THEN the `cli` SHALL write `error: <message>` and the usage of that command to standard error, and stop with exit code 2. Test: one extra argument and one unknown option of a foundation command.
 
 ### Expected URLs and APIs
 
@@ -96,9 +87,8 @@ Each interface of the system must have one frame that each feature uses: the sam
 | --- | --- | --- | --- | --- |
 | api | api | `GET /api` | 200 `{ "routes": [ { "method", "path" } ] }` | R01 |
 | api | api | `GET /api/{unknown}` | 404 `{ "error": "Not found" }` | R02 |
-| page | web | `/` | Shell header with the name, menu, theme control; home header and card grid | R03–R06, R08–R14 |
-| page | web | `/{unknown}` | Not-found page with the path and a link to `/` | R07, R11 |
-| command | cli | `--help`, `help`, no command | Name, usage line, commands with summaries. Exit code 0. | R15 |
-| command | cli | `help <command>`, `<command> --help` | Usage of the command. Exit code 0. | R16 |
-| command | cli | `{unknown}` | `error: Unknown command: {unknown}` and the help. Exit code 2. | R17 |
-| command | cli | `<command> --json` | One JSON object; on a failure, `{ "error": "<message>" }` with its exit code | R18–R20 |
+| page | web | `/` | Shell header with the name, menu, theme control; home header and card grid | R03, R04, R06–R08 |
+| page | web | `/{unknown}` | Not-found page with the path and a link to `/` | R05 |
+| command | cli | `--help`, `help`, no command, `help <command>`, `<command> --help` | Name, usage line, commands with summaries, or the usage of one command. Exit code 0. | R09 |
+| command | cli | `{unknown}` | `error: Unknown command: {unknown}` and the help. Exit code 2. | R10 |
+| command | cli | `<command> --json` | One JSON object; on a failure, `{ "error": "<message>" }` with its exit code | R11 |
