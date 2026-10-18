@@ -7,7 +7,7 @@ For implementation examples by ecosystem, see ecosystems.md. They are guidance, 
 -->
 # {Project_Name} — {project_type}
 
-Obey the Blueprint of the root `AGENTS.md`. This file gives only the data of this project. Do not explore the code to learn the setup.
+Obey the Blueprint of the root `AGENTS.md`. This file gives the architecture and the data of this project. Do not explore the code to learn the setup.
 
 ## 1 · Purpose and boundary
 
