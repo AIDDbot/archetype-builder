@@ -2,7 +2,7 @@
 Archetype-Blueprint: the technical data of one project (Columbus principles 7, 8, 11; D16, D19, D50).
 The Blueprint of the root AGENTS.md has the system rules and the code rules, one time for the system. Never copy them here. The architecture of the project type (containers, layers, tests) is in section 4 of this file.
 Three levels fill this file: [Blueprint] this file, [Archetype] the AGENTS.md of the archetype repository, [Project] {project}/AGENTS.md. No level changes the structure.
-Keep the sections, their order and their headings. Write short lists and tables, not prose. Remove these comments at the project level.
+Keep the sections, their order and their headings. Write short lists and tables, not prose. The file has fewer than 100 lines. Remove these comments at the project level.
 For implementation examples by ecosystem, see ecosystems.md. They are guidance, not rules.
 -->
 # {Project_Name} — {project_type}
@@ -57,10 +57,9 @@ Contracts:
 [Archetype] Write how the composition gives the services of `core` to the features: by the framework injector, or as arguments of the registration. The contracts are in `shared`; a feature never imports `core`. Section 5 gives where the composition, the manifest and the facade are.
 -->
 
-**Services of `core`**: {framework injector | registration arguments}, contracts in `{shared_folder}/{contracts_location}`
-
 | Item | `{project_type}` |
 | --- | --- |
+| services of `core` | {framework injector | registration arguments}, contracts in `{shared_folder}/{contracts_location}` |
 | composition | {from project-types.md} |
 | `core` | {from project-types.md} |
 | features | {from project-types.md} |
@@ -81,15 +80,13 @@ Contracts:
 | feature | One flat folder for one unit of business value. The role in each file name tells its layer. | Subfolders. Imports of `core`. Imports of a different feature, except its facade. |
 | composition | The entry. It starts `core`, registers each feature by name in one explicit list (the manifest), and gives the features the services of `core` through the contracts of `shared`. The only part that knows `core` and the features. | Automatic discovery: folder scans, global decorators, file-based routers. |
 
-- composition → `presentation` → `logic` → `data`. A different feature → `facade` → `logic`. A layer never skips the next one: only the registration creates `data` and gives it to `logic`.
+- composition → `presentation` → `logic` → `data`. A different feature → `facade` → `logic`. A layer never skips the next one: only the registration creates `data` and gives it to `logic`. Types are not a layer: each layer can use types, `shared` and the facades of other features.
 - `presentation`: input, output and the registration of the feature (route, page, command). No business rules. Only the composition imports it.
 - `facade`: the public functions and types for other features. Only other features import it. A feature that gives nothing has no facade.
 - `logic`: rules and decisions. It does not know how data is stored.
 - `data`: all that the project reads or writes outside itself (database, remote API, files).
-- Types are not a layer. Each layer can use types, `shared` and the facades of other features.
-- A broken boundary is `medium` debt.
 - A feature that the manifest loads on demand has no other import. Tests start the application through the composition, without a port.
-- Unit tests prove `logic`, at least one for each business rule, with a fake `data`. They also prove `shared` and `core`. They are fast and independent, and touch no disk, database, network or process: the acceptance tests prove `data`. The pre-commit hook runs the ones that a commit affects. A business rule without a unit test is debt.
+- Unit tests prove `logic`, at least one for each business rule, with a fake `data`. They also prove `shared` and `core`. They are fast and independent, and touch no disk, database, network or process: the acceptance tests prove `data`. Each one sits beside its module, with the same name. The pre-commit hook runs the ones that a commit affects. A business rule without a unit test is debt.
 
 ### Suite
 
