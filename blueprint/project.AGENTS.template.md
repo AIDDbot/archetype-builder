@@ -66,7 +66,7 @@ Contracts:
 | `presentation` | {from project-types.md} |
 | `logic` | {from project-types.md} |
 | `data` | {from project-types.md} |
-| `shared` concerns | {from project-types.md} |
+| `shared` folders | {from project-types.md} |
 | `test` / `start` | {from project-types.md, section 2} |
 
 ### Containers and layers
@@ -76,7 +76,7 @@ Contracts:
 | Container | Is | Never |
 | --- | --- | --- |
 | `core` | The platform that the framework or the entry calls one time at startup: server or shell, router, connections, error handler, global styles. Files at the root, other elements in folders by technical concern (`logging`, `database`) when the folder is full. | Business rules. Imports of a feature. Folders `utils`, `helpers`, `common`, `misc`. |
-| `shared` | Generic elements with no domain, and the contracts of the services that features need (such as the logger, the HTTP client or the error type). Primitives at the root, other elements in folders by technical concern (`http`, `database`). | Domain words. Imports of `core` or of a feature. Folders `utils`, `helpers`, `common`, `misc`. |
+| `shared` | Generic elements with no domain, and the contracts of the services that features need (such as the logger, the HTTP client or the error type). At the root, only the expected error and the identity function; each other file in the folder of its concern, from the closed list of `shared` folders of `project-types.md` (section 3). | Domain words. Imports of `core` or of a feature. Folders `utils`, `helpers`, `common`, `misc`. |
 | feature | One flat folder for one unit of business value. The role in each file name tells its layer. | Subfolders. Imports of `core`. Imports of a different feature, except its facade. |
 | composition | The entry. It starts `core`, registers each feature by name in one explicit list (the manifest), and gives the features the services of `core` through the contracts of `shared`. The only part that knows `core` and the features. | Automatic discovery: folder scans, global decorators, file-based routers. |
 
@@ -118,7 +118,7 @@ Contracts:
 ├── {core_folder}/        # platform, called one time at startup; folders by technical concern
 ├── {features_folder}/    # one flat folder for each feature, and the manifest
 │   └── about/
-└── {shared_folder}/      # primitives and service contracts at the root, folders by technical concern
+└── {shared_folder}/      # errors and identity at the root; the closed list of folders by technical concern
 ```
 
 ### Shared primitives
@@ -129,16 +129,16 @@ The index of `shared`. Read it before you write a check or a conversion. Helpers
 
 | Primitive | Contract | Path |
 | --- | --- | --- |
-| `isRecord(value)` | True for a key-value object. Other type guards use it. | `{shared_folder}/{checks_file}` |
-| `isText(value)` | True for a text with a character that is not a space. | `{shared_folder}/{checks_file}` |
-| `isOneOf(value, options)` | True for one of a closed list of values; narrows the type. | `{shared_folder}/{checks_file}` |
-| `findByName(items, name)` | The item with that `name`, or nothing. | `{shared_folder}/{checks_file}` |
-| `requireByName(items, { name, kind })` | The item with that `name`, or an expected error that names the kind and the name. | `{shared_folder}/{checks_file}` |
-| `requireText(value, field)` | Text without end spaces, or an expected error with the field. | `{shared_folder}/{text_file}` |
-| `parseInteger(value, { field, min, max })` | Integer from `min` to `max`, or an expected error with the field and the range. | `{shared_folder}/{numbers_file}` |
-| `formatDate(date)` | `YYYY-MM-DD` in local time. | `{shared_folder}/{dates_file}` |
-| `formatTime(date)` | `HH:MM:SS.mmm` in local time. | `{shared_folder}/{dates_file}` |
-| `formatDateTime(date)` | `YYYY-MM-DD HH:MM:SS` in local time, for a person. | `{shared_folder}/{dates_file}` |
+| `isRecord(value)` | True for a key-value object. Other type guards use it. | `{shared_folder}/values/{checks_file}` |
+| `isText(value)` | True for a text with a character that is not a space. | `{shared_folder}/values/{checks_file}` |
+| `isOneOf(value, options)` | True for one of a closed list of values; narrows the type. | `{shared_folder}/values/{checks_file}` |
+| `findByName(items, name)` | The item with that `name`, or nothing. | `{shared_folder}/values/{checks_file}` |
+| `requireByName(items, { name, kind })` | The item with that `name`, or an expected error that names the kind and the name. | `{shared_folder}/values/{checks_file}` |
+| `requireText(value, field)` | Text without end spaces, or an expected error with the field. | `{shared_folder}/values/{text_file}` |
+| `parseInteger(value, { field, min, max })` | Integer from `min` to `max`, or an expected error with the field and the range. | `{shared_folder}/values/{numbers_file}` |
+| `formatDate(date)` | `YYYY-MM-DD` in local time. | `{shared_folder}/values/{dates_file}` |
+| `formatTime(date)` | `HH:MM:SS.mmm` in local time. | `{shared_folder}/values/{dates_file}` |
+| `formatDateTime(date)` | `YYYY-MM-DD HH:MM:SS` in local time, for a person. | `{shared_folder}/values/{dates_file}` |
 | `ExpectedError(kind, message)` | The expected error, with its kind: `rule`, `usage` or `unavailable`. Each failed check raises it; `monitoring` gives each kind its exit code or status. | `{shared_folder}/{errors_file}` |
 | `attempt(action, message)` | The result of `action`, or the expected error `unavailable` with `message` when an external resource fails. Only `data` and `core` use it. | `{shared_folder}/{errors_file}` |
 | {environment primitive} | {contract} | {path} |

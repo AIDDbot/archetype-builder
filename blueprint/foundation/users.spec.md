@@ -34,7 +34,7 @@ A system with users must know who sends each request, before a feature needs thi
 
 ### api
 
-- Feature `auth`: register, login, me and logout. `Email` is a value object in `shared` (lower case), used at the edge and inside.
+- Feature `auth`: register, login, me and logout. `Email` is a value object in `shared/values/` (lower case), used at the edge and inside. The contracts of the session and the passwords are in `shared/session/`.
 - Passwords: a slow, salted algorithm that OWASP recommends, with explicit cost parameters stored with each hash. An unknown email still does one verification.
 - Sessions: a random opaque token; the database stores only its hash. `SESSION_TTL_HOURS` (1–720, default 24) is a new setting.
 - Session guard in `core`, with a resolver from the `auth` registration. Each registration is protected unless it is marked public; `core` mounts the public ones first. No separate list of paths.
@@ -42,7 +42,7 @@ A system with users must know who sends each request, before a feature needs thi
 
 ### web
 
-- `logic` of `auth` keeps the session; the token stays in the browser storage, and the HTTP client sends it.
+- `logic` of `auth` keeps the session, with its contract in `shared/session/`; the token stays in the browser storage, and the HTTP client sends it.
 - One access mark on each page and menu link. `core` builds the menu and guards the pages from the marks and the session state, through the `auth` registration; it never imports `auth`.
 - After a login, `core` goes back to `returnTo` only for a registered page on the same origin; otherwise `/`.
 - Feature `users`: page `/users/:id`, mark `session`, no menu link.

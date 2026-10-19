@@ -35,18 +35,18 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 ### All projects
 
-- One identity function in `shared` makes the identity (`displayName` or `name`, `description`, `author`, `homepage`, `version`, and the fallbacks of `about`) from the data of the `package.json` of the project that it gets as an argument. Only the composition imports that file (`#package`), and gives the identity to `core` and to the features. Thus a unit test gives the function its data: no test reads the file or mocks a module. Nothing copies the identity by hand: the scaffold writes the copy, and `aidd release` writes each version.
+- One identity function at the root of `shared` makes the identity (`displayName` or `name`, `description`, `author`, `homepage`, `version`, and the fallbacks of `about`) from the data of the `package.json` of the project that it gets as an argument. Only the composition imports that file (`#package`), and gives the identity to `core` and to the features. Thus a unit test gives the function its data: no test reads the file or mocks a module. Nothing copies the identity by hand: the scaffold writes the copy, and `aidd release` writes each version.
 
 ### api
 
-- `core` mounts the registrations of the manifest under `/api`, and makes the index from them. No feature writes its route in a second list.
+- `core` mounts the registrations of the manifest under `/api`, and makes the index from them. No feature writes its route in a second list. The registration contract is in `shared/http/`.
 - The error handler of `core` answers each unknown path under `/api` with the 404.
 
 ### web
 
 - Shell in `core`: header (name, menu, theme control), main area, router, not-found page. The server answers each unknown path with the shell.
 - The composition gives the pages and the menu links of the manifest to `core`, and the cards to the `home` registration. `core` never imports a page.
-- Each page gets the same required services (HTTP client, logger, navigation) through contracts in `shared`, and its path parameters as a typed argument.
+- Each page gets the same required services (HTTP client, logger, navigation) through contracts in `shared/http/`, `shared/logging/` and `shared/components/`, and its path parameters as a typed argument.
 - Feature `home`: page `/`, menu link `Home`, header and card grid.
 - Theme: an attribute on the root element, from the system preference, then from the browser storage; set before the first paint. Brand theme files copied as they are.
 
@@ -54,7 +54,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 - Each command registration gives its name, summary, usage, operations and options. An option is typed data (name, value placeholder, summary, default), never a help text that code parses again. The help comes from the registrations, in the order of the manifest, and from the setting definitions of `configuration`: nothing copies them by hand.
 - `core` adds the options of each registration to the one parse of `configuration`, never a second parse, then runs one pipeline: parse, run, render, report, each in its own function. It reads `--help`, `--json` and the setting options before the command. An option that the command does not declare, or an argument that it does not take, is a `usage` error. A `usage` error of a command shows its declared usage.
-- Output contract in `shared`: a command gives its result as data; `core` writes it as text, or as one JSON object with `--json`. A command never writes to the standard output itself.
+- Output contract in `shared/output/`: a command gives its result as data; `core` writes it as text, or as one JSON object with `--json`. A command never writes to the standard output itself.
 - `config get` uses this contract: `{ "settings": [ { "name", "value", "source" } ] }`, or one `{ "name", "value", "source" }`.
 
 ### e2e

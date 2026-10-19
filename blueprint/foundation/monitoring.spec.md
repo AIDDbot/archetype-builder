@@ -34,7 +34,7 @@ When a failure occurs, the operator must see what occurred, and each client must
 
 ### api
 
-- Logger in `core`, contract in `shared`: one line for each event, ` | ` for line breaks, `WARN` and `ERROR` to standard error. It never blocks a request, and writes each queued line before the stop. A unit test of `core` proves the stop, with the life cycle as an argument: the acceptance suite sends no signal of the operating system.
+- Logger in `core`, contract in `shared/logging/`: one line for each event, ` | ` for line breaks, `WARN` and `ERROR` to standard error. It never blocks a request, and writes each queued line before the stop. A unit test of `core` proves the stop, with the life cycle as an argument: the acceptance suite sends no signal of the operating system.
 - The logger reads `LOG_DIR` and `LOG_LEVEL` only through their definitions in `configuration`, also before the configuration loads, so that a failure at startup has a log line. An invalid `LOG_DIR` writes no file; an invalid `LOG_LEVEL` takes its fallback. Never read them by hand or parse the arguments a second time. New setting: `BODY_LIMIT_KB` (100), a positive integer.
 - The `source` column of a log line is the project name, such as `api` or `cli`.
 - The expected error of `shared`, a seed of the scaffold, gets a status for each kind and optional `fields`. The error handler of `core` is the only code that makes an error response; it logs any other error at `ERROR` with its cause.
@@ -43,7 +43,7 @@ When a failure occurs, the operator must see what occurred, and each client must
 ### web
 
 - The listening line comes only after the server listens.
-- Console logger in `core`, contract in `shared`: one line for each user action, with no words of a feature and no form value.
+- Console logger in `core`, contract in `shared/logging/`: one line for each user action, with no words of a feature and no form value.
 - The HTTP client of `core` changes each error answer into the expected error, with its `fields`.
 
 ### cli

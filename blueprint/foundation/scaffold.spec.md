@@ -53,7 +53,7 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
   - Keep the mechanisms of the framework (injector, router, store, file names) and map them to the concepts.
   - Move folders by technical layer (such as `components/`, `views/`, `stores/`) into `shared` as primitives, or into features.
 - Remove each sample of the generator (demo pages, images, icons).
-- Make the seed primitives of the shared primitives table in `shared`, with their unit tests. An `e2e` makes only the ones that it uses, with no unit tests. Each primitive keeps its row.
+- Make the seed primitives of the shared primitives table, with their unit tests: the expected error at the root of `shared`, the others in `shared/values/` (section 3 of `project-types.md`). An `e2e` makes only the ones that it uses, with no unit tests. Each primitive keeps its row.
 - Keep only the package manager of that `AGENTS.md`. Remove the files of all other package managers.
 
 **Step 3: register tooling**

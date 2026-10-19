@@ -36,14 +36,14 @@ Each project must start in the same way in each environment, with its settings o
 
 - Settings: `PORT` (3000), `HOST` (all interfaces), `DATABASE_URL` (`./data/app.sqlite`), `CORS_ORIGIN` (comma list, `*`), and the settings of the logger of `monitoring`: `LOG_DIR` (`./logs`), `LOG_LEVEL` (`debug`, `info`, `warn`, `error`; `info`).
 - `core` checks each setting one time, before the port opens, with `readSetting` and `parseInteger`; the error names the variable.
-- `core` opens the database and applies the migrations of the features (`0001-{name}`, one transaction each). No feature creates a table.
+- `core` opens the database and applies the migrations of the features (`0001-{name}`, one transaction each). No feature creates a table. The database contract is in `shared/database/`.
 - Clean stop on a stop signal, checked by `review-implementation`: finish the requests, write the log, close the database.
 
 ### web
 
 - Settings: `PORT` (4000), `API_BASE_URL` (`http://localhost:3000`).
 - The development server listens on `PORT` with `strictPort` and on all interfaces (`host: true`), as the `api`. With the default `localhost`, Vite can listen on `::1` only, and the suite, which calls `127.0.0.1`, gets no answer.
-- `core` serves `GET /runtime-config.json`; the HTTP client is its only reader. No build for each environment.
+- `core` serves `GET /runtime-config.json`; the HTTP client is its only reader. The contract of the HTTP client is in `shared/http/`. No build for each environment.
 
 ### cli
 
@@ -51,7 +51,7 @@ Each project must start in the same way in each environment, with its settings o
 - Settings: `CONFIG_FILE` (`./config.json`), `LOG_DIR` and `LOG_LEVEL` as the `api`, `API_BASE_URL` (`http://localhost:3000`) for a cli with an `api`. One list of settings in `core` (name, default, check); a feature adds its settings there.
 - Sources: the option `--{name}` (such as `--config-file`), the variable `{NAME}`, the key `{NAME}` of the configuration file, the default. `CONFIG_FILE` never comes from the file.
 - `core` parses the arguments one time, in one function, from options as data: each setting gives its option. A later spec adds its options to that parse, never a second parse.
-- Feature `config`, with the operations `get` and `set`, through the settings contract of `shared`. `set` checks the value before it writes.
+- Feature `config`, with the operations `get` and `set`, through the settings contract of `shared/settings/`, with `readSetting`. `set` checks the value before it writes.
 
 ### e2e
 
