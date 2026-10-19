@@ -83,7 +83,7 @@ export default defineConfig({
 - A test keeps the tag of each requirement that it proves. A later spec adds its tag next to the others; it never replaces the tag of another spec.
 - A system with no `web`: Vitest. The `vite.config.ts` of the `e2e` includes `**/*.test.ts`. The requirement tag goes in the title of the test (`"@S0001-R01 …"`): Vitest has no tags.
 - A project that the suite starts can start children of its own (`vp dev` starts Vite). Stop it with `tree-kill` on the identifier of the started process: it stops the whole tree on each platform. `child.kill` alone leaves the server listening on Windows. Then wait for the `close` event of the child, not `exit`, and delete its temporary folders with `rm(folder, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })`: Windows keeps the SQLite file locked for a moment after the process ends (`EBUSY`).
-- No script of an operating system in the suite (PowerShell, shell scripts) and no branch for a platform: a requirement that needs a signal of the operating system, such as a clean stop that writes the queued log lines, is proved by a unit test of `core` with the life cycle as an argument.
+- No script of an operating system in the suite (PowerShell, shell scripts) and no branch for a platform: `layers` rejects `process.platform`. A requirement that needs a signal of the operating system, such as a clean stop that writes the queued log lines, is proved by a unit test of `core` with the life cycle as an argument.
 - A system with a `web`: Playwright, with one browser engine (Chromium). Turn off `no-empty-pattern` for the Playwright fixtures and tests with no fixture (`({}, use)`, `({}, testInfo)`). Never add a false dependency to avoid the rule.
 
 **Arguments of a `cli`**
