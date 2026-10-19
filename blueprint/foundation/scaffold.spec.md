@@ -64,7 +64,7 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
 - The ignore file never hides source. Anchor runtime data patterns to the project root.
 - Each tooling slot of that `AGENTS.md` operates. If a mandatory slot is missing (`test`, `start`, `layers`, `crap`), install the usual tool of the stack.
 - The pre-commit hook of the root runs the unit tests of the project that a commit affects.
-- For JS / TS, the scripts of each project are its slots and no more; `layers` and `crap` point to `../../.lint/`. The coverage threshold is exactly 80, as `ecosystems.md` says.
+- For JS / TS, the scripts of each project are its slots and no more; `layers` and `crap` read the local `boundaries.json` and `complexity.json` of the project, which extend `.lint/`. The `imports` of its `package.json` give `#shared` and `#api`: no import from a parent folder. The coverage threshold is exactly 80, as `ecosystems.md` says.
 - For a `web`, copy `.product/blueprint/theme/` as it is.
 - Register the type and the slots with `node .agents/aidd/aidd.mjs config set projects.{project} '{"type":"{type}",...}'`.
 - Prove the debt checks: add an import that the architecture forbids, make sure that `layers` fails, then remove the import. Do the same with a function over the limits and `crap`.

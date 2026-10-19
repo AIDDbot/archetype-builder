@@ -108,6 +108,7 @@ Contracts:
 | facade | `{feature}/{facade_file}` | {mechanism} |
 | `presentation` / `logic` / `data` / types | `{presentation_files}` / `{logic_files}` / `{data_files}` / `{type_files}` | {mechanism} |
 | `shared` | `{source_root}/{shared_folder}/`, `{shared_folder}/{concern_folder}/` | {mechanism} |
+| imports out of a folder | `{shared_import}` for `shared`, `{facade_import}` for a facade; never a parent folder | {mechanism} |
 | unit tests | `{unit_test_location}` | {mechanism} |
 
 ```text
