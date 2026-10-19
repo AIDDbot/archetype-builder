@@ -75,7 +75,7 @@ Contracts:
 
 | Container | Is | Never |
 | --- | --- | --- |
-| `core` | The platform that the framework or the entry calls one time at startup: server or shell, router, connections, error handler, global styles. | Business rules. Imports of a feature. |
+| `core` | The platform that the framework or the entry calls one time at startup: server or shell, router, connections, error handler, global styles. Files at the root, other elements in folders by technical concern (`logging`, `database`) when the folder is full. | Business rules. Imports of a feature. Folders `utils`, `helpers`, `common`, `misc`. |
 | `shared` | Generic elements with no domain, and the contracts of the services that features need (such as the logger, the HTTP client or the error type). Primitives at the root, other elements in folders by technical concern (`http`, `database`). | Domain words. Imports of `core` or of a feature. Folders `utils`, `helpers`, `common`, `misc`. |
 | feature | One flat folder for one unit of business value. The role in each file name tells its layer. | Subfolders. Imports of `core`. Imports of a different feature, except its facade. |
 | composition | The entry. It starts `core`, registers each feature by name in one explicit list (the manifest), and gives the features the services of `core` through the contracts of `shared`. The only part that knows `core` and the features. | Automatic discovery: folder scans, global decorators, file-based routers. |
@@ -103,19 +103,19 @@ Contracts:
 | Concept | Path | Framework mechanism |
 | --- | --- | --- |
 | composition | `{source_root}/{main_file}`, `{source_root}/{compose_file}`, `{manifest_file}` | {mechanism} |
-| `core` | `{source_root}/{core_folder}/{core_file_pattern}`, such as `app.config.ts` | {mechanism} |
+| `core` | `{source_root}/{core_folder}/{core_file_pattern}`, such as `app.config.ts`, `{core_folder}/{concern_folder}/` | {mechanism} |
 | features | `{source_root}/{features_folder}/` | {mechanism} |
 | facade | `{feature}/{facade_file}` | {mechanism} |
 | `presentation` / `logic` / `data` / types | `{presentation_files}` / `{logic_files}` / `{data_files}` / `{type_files}` | {mechanism} |
 | `shared` | `{source_root}/{shared_folder}/`, `{shared_folder}/{concern_folder}/` | {mechanism} |
-| imports out of a folder | `{shared_import}` for `shared`, `{facade_import}` for a facade; never a parent folder | {mechanism} |
+| imports out of a folder | `{shared_import}` for `shared`, `{core_import}` for `core` (only `core` and the composition), `{facade_import}` for a facade; never a parent folder | {mechanism} |
 | unit tests | `{unit_test_location}` | {mechanism} |
 
 ```text
 {source_root}/
 ├── {main_file}           # entry: starts the composition
 ├── {compose_file}        # composition: starts core, registers the features
-├── {core_folder}/        # platform, called one time at startup
+├── {core_folder}/        # platform, called one time at startup; folders by technical concern
 ├── {features_folder}/    # one flat folder for each feature, and the manifest
 │   └── about/
 └── {shared_folder}/      # primitives and service contracts at the root, folders by technical concern
