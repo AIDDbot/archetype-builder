@@ -43,9 +43,16 @@
         "maxOperators": 1
       }
     ],
-    "types/named": "error"
+    "types/named": "error",
+    "typescript/explicit-module-boundary-types": "error"
   },
   "overrides": [
+    {
+      "files": ["**/*.tsx"],
+      "rules": {
+        "typescript/explicit-module-boundary-types": "off"
+      }
+    },
     {
       "files": ["**/src/core/**/*.adapter.ts"],
       "rules": {

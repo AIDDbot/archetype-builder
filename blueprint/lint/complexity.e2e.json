@@ -43,6 +43,7 @@
         "maxOperators": 1
       }
     ],
-    "types/named": "error"
+    "types/named": "error",
+    "typescript/explicit-module-boundary-types": "error"
   }
 }
