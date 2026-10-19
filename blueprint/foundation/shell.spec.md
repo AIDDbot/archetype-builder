@@ -23,7 +23,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 ### Business rules
 
-- The identity of the application (name, description, author, website and version) must come from the root `package.json`, and each project must keep it in one location only.
+- The identity of the application (name, description, author, website and version) must come from the root `package.json`. Each project must keep its copy in one location only: its own `package.json`.
 - The shell must know no feature. Each feature must add its own routes, pages, cards or commands through its registration.
 
 ### Out of context
@@ -35,7 +35,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 ### All projects
 
-- One identity function in `shared` makes the identity (`displayName` or `name`, `description`, `author`, `homepage`, `version`, and the fallbacks of `about`) from the data of the root `package.json` that it gets as an argument. Only the composition reads that file, one time, and gives the identity to `core` and to the features. Thus a unit test gives the function its data: no test reads the file or mocks a module. Nothing copies the identity by hand.
+- One identity function in `shared` makes the identity (`displayName` or `name`, `description`, `author`, `homepage`, `version`, and the fallbacks of `about`) from the data of the `package.json` of the project that it gets as an argument. Only the composition imports that file (`#package`), and gives the identity to `core` and to the features. Thus a unit test gives the function its data: no test reads the file or mocks a module. Nothing copies the identity by hand: the scaffold writes the copy, and `aidd release` writes each version.
 
 ### api
 
