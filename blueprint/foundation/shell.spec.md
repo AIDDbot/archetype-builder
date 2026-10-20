@@ -19,11 +19,11 @@ Each interface of the system must have one frame that each feature uses: the sam
 - As a user of the `web`, I want **a menu, a light or a dark theme, a home page with one card for each part of the application, and a clear page for an unknown address** so that I go to each page quickly and never see an empty screen.
 - As a user of the `cli`, I want **help for each command, and help when I type a command that does not exist** so that I learn the commands without the documentation.
 - As a script author or an agent, I want **each `cli` result as one JSON object** so that I read it with no text parser.
-- As an owner, I want **the name and the description of the application in one location** so that I change them one time.
+- As an owner, I want **the name and the description of the application in the `package.json` of each project** so that I change them with no change of code.
 
 ### Business rules
 
-- The identity of the application (name, description, author, website and version) must come from the root `package.json`. Each project must keep its copy in one location only: its own `package.json`.
+- The identity of the application (name, description, author with website, and version) must come from the `package.json` of the project that shows it, and from no other location. Each field is required, with no fallback.
 - The shell must know no feature. Each feature must add its own routes, pages, cards or commands through its registration.
 
 ### Out of context
@@ -35,7 +35,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 ### All projects
 
-- One identity function at the root of `shared` makes the identity (`displayName` or `name`, `description`, `author`, `homepage`, `version`, and the fallbacks of `about`) from the data of the `package.json` of the project that it gets as an argument. Only the composition imports that file (`#package`), and gives the identity to `core` and to the features. Thus a unit test gives the function its data: no test reads the file or mocks a module. Nothing copies the identity by hand: the scaffold writes the copy, and `aidd release` writes each version.
+- The `Identity` type at the root of `shared` names the fields of `.product/blueprint/ecosystems.md`: `displayName`, `description`, `author` (`name`, `url`) and `version`. It is a type only, with no function. Only the composition imports the `package.json` of the project (`#package`), and gives it to `core` and to the features as an `Identity`. Thus a unit test gives its own identity: no test reads the file or mocks a module.
 
 ### api
 
@@ -61,7 +61,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 - Page objects in `shared/page-objects/` for the shell, the not-found page and the home page.
 - A helper in `shared` runs one `cli` invocation with `--json` and returns the parsed object and the exit code.
-- The tests read the expected identity from the root `package.json`, never from fixed text, through one helper: `shared/projects/identity.ts` reads that file once, from a path relative to its own module, and the tests import it with `#shared`. No test imports the root `package.json`: `../` is forbidden.
+- The tests check that the identity is there, never its values: the owner changes them. The application name and the description are text that is not empty, and the version is a semantic version. No test reads a `package.json` of another project.
 - A test checks what its spec adds and the order that it needs, never that nothing else exists: later specs add settings, migrations and commands.
 
 ## Verification

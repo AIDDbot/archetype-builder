@@ -29,7 +29,7 @@ The system has user accounts with basic authentication.
 - `back`: Express, with persistence in SQLite through `node:sqlite`.
 - `front`: React on Vite, with react-router and an explicit route list as the manifest; no Next.js. Pico CSS with the brand theme of `.product/blueprint/theme/`.
 - `e2e`: Playwright, with Chromium only.
-- Identity in the root `package.json`: `displayName` "Archetype Web", `description` "A web application with its API, its browser screens and its acceptance suite", `author` "Alberto Basalo" with `url` "https://x.com/albertobasalo", `homepage` "https://aiddbot.com", `license` "MIT".
+- Identity in the `package.json` of `back` and `front`: `displayName` "Archetype Web", `description` "A web application with its API, its browser screens and its acceptance suite", `author` "Alberto Basalo" with `url` "https://x.com/albertobasalo".
 - License: MIT, with the copyright of Alberto Basalo, in `LICENSE` at the root.
 - Basic authentication: yes, the system has users.
 

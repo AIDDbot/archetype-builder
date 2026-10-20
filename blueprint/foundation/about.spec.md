@@ -20,7 +20,7 @@ A person or a client that uses the system must see what it is, which version run
 
 ### Business rules
 
-- The identity must come from the identity function of `shell`.
+- The identity must come from the `package.json` of the project, through the composition of `shell`.
 - No project must ask for the identity or the technology at runtime.
 
 ### Out of context
@@ -31,7 +31,6 @@ A person or a client that uses the system must see what it is, which version run
 
 ### All projects
 
-- With no author in the identity: `AIDDbot` and `https://aiddbot.com`. The identity function of `shell` gives this fallback, and its unit test proves it with data.
 - The technology summary is a constant of the `about` feature, made at the foundation from `.product/system.md` and the `AGENTS.md` of each project: project, type, language, framework, main libraries and test tools.
 
 ### api
@@ -59,12 +58,12 @@ A person or a client that uses the system must see what it is, which version run
 
 ### Requirements
 
-- **R01**: WHEN a client requests `GET /api/about`, the `api` SHALL answer 200 with `{ "name", "description", "version", "author", "homepage", "projects": [ { "name", "type", "technologies": [ "<technology>" ] } ] }`, with one entry for each project of the system.
+- **R01**: WHEN a client requests `GET /api/about`, the `api` SHALL answer 200 with `{ "name", "description", "version", "author": { "name", "url" }, "projects": [ { "name", "type", "technologies": [ "<technology>" ] } ] }`, with one entry for each project of the system.
 - **R02**: WHEN a user opens `/about` from the menu link `About`, the `web` SHALL show the application name, its description, its version, the author with a link to the website that opens in a new tab with no access to the application, and for each project its name, its type and its main technologies. Test: check `target` and `rel`; do not follow the link.
 - **R03**: WHEN a user opens `/`, the home header SHALL show the version, and the about card SHALL show the application name, its version and a link that shows `/about` without a full reload of the document.
 - **R04**: IF the `api` does not answer, THEN the `/about` page and the about card SHALL show `About unavailable`, and keep the menu, the link of the card and the other cards. Test: block `/api/about` in the browser.
 - **R05**: WHEN the `cli` runs with `--version`, it SHALL write only the version and one line break to its standard output, and stop with exit code 0.
-- **R06**: WHEN the `cli` runs `about`, it SHALL show the application name, its description, its version, the author, the website, and for each project its name, its type and its main technologies, and stop with exit code 0. With `--json`, it SHALL write the object of R01.
+- **R06**: WHEN the `cli` runs `about`, it SHALL show the application name, its description, its version, the author with the website, and for each project its name, its type and its main technologies, and stop with exit code 0. With `--json`, it SHALL write the object of R01.
 
 ### Expected URLs and APIs
 

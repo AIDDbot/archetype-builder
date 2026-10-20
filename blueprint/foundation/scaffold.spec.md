@@ -30,7 +30,7 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
 
 ### The system
 
-- The root `package.json` holds the identity of `.product/system.md`: `displayName`, `description`, `author`, `homepage` and `license`. The `package.json` of each project that shows it (`api`, `web`, `cli`) gets a copy of it and of the `version`, and the scaffold registers these files with `node .agents/aidd/aidd.mjs config set release.versionFiles '["projects/{project}/package.json", …]'`: `aidd release` writes each `version`. `shell` and `about` import the copy. Commit it as `chore: set the system identity`, before the first project.
+- The root `package.json` holds the `license` of `.product/system.md`, and no identity. The `package.json` of each project that shows the identity (`api`, `web`, `cli`) gets the identity of `.product/system.md` (`displayName`, `description`, `author` with `name` and `url`) and the `version` of the root, when the scaffold makes that project. The scaffold registers these files with `node .agents/aidd/aidd.mjs config set release.versionFiles '["projects/{project}/package.json", …]'`: `aidd release` writes each `version`.
 - The root of the system holds the tooling that all projects share: the pre-commit hook of the technology, the format and lint configuration, and the limits of complexity of the Blueprint. For JS / TS, it is the Vite+ workspace of `.product/blueprint/ecosystems.md`, with each project in `projects/`, and the debt checks of `.product/blueprint/lint/` copied as they are to `.lint/` at the root. The format leaves Markdown out. Commit it as `chore: set the system tooling`, before the first project; each project adds itself to it.
 
 ### Each project
