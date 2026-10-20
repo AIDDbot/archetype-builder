@@ -1,5 +1,5 @@
 <!--
-Foundation spec 0 of 6: how is each project made? (Halloween cli-6). It comes before `configuration`.
+Foundation spec 0 of 6: how is each project made? (Halloween cli-6). It comes before `platform`.
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new chore scaffold "Scaffold" --domain foundation
 Instance: one Solution subsection for each project of `.product/system.md`, with its type and its folder.
@@ -23,7 +23,7 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
 
 ### Out of context
 
-- Each behavior of the foundation specs, from `configuration` on.
+- Each behavior of the foundation specs, from `platform` on.
 - The root `AGENTS.md` and the schema documents: `ship-spec` runs `outline-system` for the new projects.
 
 ## Solution

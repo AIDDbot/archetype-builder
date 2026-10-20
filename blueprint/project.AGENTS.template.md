@@ -94,7 +94,7 @@ Contracts:
 
 - `e2e` has no layers, no manifest, no composition and no unit tests. The runner is the entry, and each run proves its `core`: the life cycle of the suite (setup, teardown, startup check of the projects).
 - An acceptance test proves one requirement. Its name contains the identifier of that requirement.
-- An e2e test uses only the API, the screens and the commands. It starts each project only with its start command, and never injects code into its process. It never uses `core` or a different feature. Only the migration tests of `configuration` open the database. Each test makes its own data with unique values. One browser engine (Chromium), unless the system asks for more.
+- An e2e test uses only the API, the screens and the commands. It starts each project only with its start command, and never injects code into its process. It never uses `core` or a different feature. No test opens the database: a unit test of `core` proves the migrations with a fake database. Each test makes its own data with unique values. One browser engine (Chromium), unless the system asks for more.
 
 ## 5 · Folder structure
 
@@ -139,7 +139,7 @@ The index of `shared`. Read it before you write a check or a conversion. Helpers
 | `formatDate(date)` | `YYYY-MM-DD` in local time. | `{shared_folder}/values/{dates_file}` |
 | `formatTime(date)` | `HH:MM:SS.mmm` in local time. | `{shared_folder}/values/{dates_file}` |
 | `formatDateTime(date)` | `YYYY-MM-DD HH:MM:SS` in local time, for a person. | `{shared_folder}/values/{dates_file}` |
-| `ExpectedError(kind, message)` | The expected error, with its kind: `rule`, `usage` or `unavailable`. Each failed check raises it; `monitoring` gives each kind its exit code or status. | `{shared_folder}/{errors_file}` |
+| `ExpectedError(kind, message)` | The expected error, with its kind: `rule`, `usage` or `unavailable`. Each failed check raises it; `platform` gives each kind its exit code or status. | `{shared_folder}/{errors_file}` |
 | `attempt(action, message)` | The result of `action`, or the expected error `unavailable` with `message` when an external resource fails. Only `data` and `core` use it. | `{shared_folder}/{errors_file}` |
 | {environment primitive} | {contract} | {path} |
 

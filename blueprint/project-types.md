@@ -14,19 +14,19 @@ A cell that does not apply is `n/a` with its reason. An empty cell is an error.
 
 ## 1 · Foundation specs
 
-Deliver them in this order (Halloween D12, D13, D35). Only a property of the system makes a spec optional, never the project type. Today there is one: the system has users. The Solution of each spec has the details of each type.
+Deliver them in this order (Halloween D12, D13, D35, D39). Only a property of the system makes a spec optional, never the project type. Today there is one: the system has users. The Solution of each spec has the details of each type.
 
-The first one, `scaffold`, is a `chore`: it makes each project with its shape and its tooling slots, with no functional code.
+The core of the archetype is a framework: `scaffold`, `platform` and `presentation` are `chore` specs, with code and unit tests and no acceptance test. The acceptance suite proves only what a person or a client sees: `shell` and the features. `shell` has the contract tests that prove the wiring of `platform`.
 
 | # | Spec (question) | `api` | `web` | `cli` | `e2e` |
 | --- | --- | --- | --- | --- | --- |
 | 0 | [`scaffold`](./foundation/scaffold.spec.md) — how is each project made? | generator, shape, slots | generator, shape, slots, theme | generator, shape, slots | generator, shape, slots; `test` passes with no test |
-| 1 | [`configuration`](./foundation/configuration.spec.md) — how does it start? | `PORT`, CORS, `DATABASE_URL`, migrations | `PORT`, `API_BASE_URL` | arguments, environment, JSON file with `config get\|set` | the settings of each project, start of the suite, preflight |
-| 2 | [`monitoring`](./foundation/monitoring.spec.md) — how do we observe it? | log file, error body, request identifier, security headers | listening line, console logger, errors of the HTTP client | log file, `error:` line, exit codes 0 / 1 / 2 / 3 | error helpers |
-| 3 | [`shell`](./foundation/shell.spec.md) — how do people use it? | API index, unknown path → 404 | layout: frame, menu, theme, home, not-found page | usage: help, unknown command → exit code 2, `--json` | shell page objects, `--json` helper |
-| 4 | [`about`](./foundation/about.spec.md) — what is it? | `GET /api/about` | tracer bullet: page `/about` and card from `GET /api/about`, version on the home page | `--version` and `about` | page objects of `/about` and the about card |
+| 1 | [`platform`](./foundation/platform.spec.md) — how does it start, and how do we observe it? `chore` | settings, migrations, middleware (CORS, headers, request identifier, body limit), log file, listening line, clean stop | settings, runtime configuration, listening line, console logger, errors of the HTTP client | settings and their sources, log file, exit codes 0 / 1 / 2 / 3 | the settings of each project, start of the suite, preflight, start and error helpers |
+| 2 | [`shell`](./foundation/shell.spec.md) — how do people use it? | API index, error answers 400 / 404 / 413 / 500, contract tests of the wiring | layout: frame, menu, theme, home, not-found page, contrast of the themes | usage: help, unknown command → exit code 2, `--json`, `error:` with exit code 3, log line | shell page objects, `--json` helper, contract tests |
+| 3 | [`presentation`](./foundation/presentation.spec.md) — how does it show and collect data? `chore` | `readFields`, `readPage`, ISO values | card, detail, table, form, states, readable values | text table, `{label}: {value}`, `readOptions` | readers of tables and records, `recordForm`, contrast helper |
+| 4 | [`about`](./foundation/about.spec.md) — what is it? | `GET /api/about` | tracer bullet: page `/about` and card from `GET /api/about`, version on the home page; the first card, record, table and states | `--version` and `about`, the first record | page objects of `/about` and the about card |
 | 5 | [`users`](./foundation/users.spec.md) — who uses it? Optional: the system has users. | register, login, session, account, logout | forms, session, menu by access, page guard | n/a: a local cli has no users (Columbus D67) | API client and page objects of the session |
-| 6 | [`presentation`](./foundation/presentation.spec.md) — how does it show and collect data? | `readFields`, ISO values | card, detail, table, form, states, readable values | text table, `{label}: {value}` | readers of tables and records, `recordForm` |
+| 6 | [`settings`](./foundation/settings.spec.md) — what does each person keep? In a `web`, optional with `users`. | `GET` and `PUT /api/users/me/settings` | page `/settings`: theme and date format of the account | `config get\|set`, the first table | page object of `/settings`, the `config` helpers |
 
 An archetype delivers the instance of each spec with the rows of its types, and removes the rows of the types that it does not have.
 
@@ -57,9 +57,9 @@ A project keeps only the column of its type in section 4 of its `AGENTS.md`.
 | `presentation` | route / controller and its registration | page / component and its registration | command and its registration | n/a: no layers |
 | `logic` | service | store / use case | service | n/a: no layers |
 | `data` | repository | API client | repository / file system / API client | n/a: no layers |
-| `shared` folders | `values/`, `database/`, `logging/`, `http/`, `session/` | `values/`, `http/`, `logging/`, `components/`, `session/` | `values/`, `settings/`, `logging/`, `output/` | `page-objects/`, `test-data/`, `database/`, `projects/` |
+| `shared` folders | `values/`, `database/`, `logging/`, `http/`, `session/` | `values/`, `http/`, `logging/`, `components/`, `session/` | `values/`, `settings/`, `logging/`, `output/` | `page-objects/`, `test-data/`, `projects/` |
 
-The `shared` folders are a closed list, by technical concern. The root of `shared` keeps only the expected error (`errors`) and the identity type (`identity`). The scaffold makes `values/` with the seed primitives; each other folder comes with the first spec that puts a file in it, never empty: `configuration` → `database/` (`api`), `http/` (`web`), `settings/` (`cli`); `monitoring` → `logging/`; `shell` → `http/` (`api`), `components/` (`web`), `output/` (`cli`); `users` → `session/`. A file goes to the folder of its concern. A new folder only when no folder of the list fits: write it in section 5 of the `AGENTS.md` of the project. The same rule divides a full folder of `core`.
+The `shared` folders are a closed list, by technical concern. The root of `shared` keeps only the expected error (`errors`) and the identity type (`identity`). The scaffold makes `values/` with the seed primitives; each other folder comes with the first spec that puts a file in it, never empty: `platform` → `database/` (`api`), `http/` (`web`), `settings/` (`cli`), `logging/`; `shell` → `http/` (`api`), `components/` (`web`), `output/` (`cli`); `users` → `session/`. A file goes to the folder of its concern. A new folder only when no folder of the list fits: write it in section 5 of the `AGENTS.md` of the project. The same rule divides a full folder of `core`.
 
 ## 4 · Environment primitive
 

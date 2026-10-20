@@ -1,5 +1,5 @@
 <!--
-Foundation spec 5 of 6: who uses the system? Optional (Halloween D12, D13; Columbus D3, D6, D13, D17, D18, D39, D45, D47, D51). It needs `configuration`, `monitoring` and `shell`.
+Foundation spec 5 of 6: who uses the system? Optional (Halloween D12, D13; Columbus D3, D6, D13, D17, D18, D39, D45, D47, D51). It needs `platform`, `shell` and `presentation`.
 Include it only if the system has users (actors, model.schema.md). Ask only if this is not clear. It is the only optional foundation spec: a property of the system decides it, never a project type.
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat users "Users" --domain foundation
@@ -45,7 +45,8 @@ A system with users must know who sends each request, before a feature needs thi
 - `logic` of `auth` keeps the session, with its contract in `shared/session/`; the token stays in the browser storage, and the HTTP client sends it.
 - One access mark on each page and menu link. `core` builds the menu and guards the pages from the marks and the session state, through the `auth` registration; it never imports `auth`.
 - After a login, `core` goes back to `returnTo` only for a registered page on the same origin; otherwise `/`.
-- Feature `users`: page `/users/:id`, mark `session`, no menu link.
+- Feature `users`: page `/users/:id`, mark `session`, no menu link: a record detail of `presentation`.
+- The register and login forms use the form of `presentation`; the auth card is a record card.
 - A change of the session state updates the menu and the cards, never the current page.
 
 ### cli
@@ -68,10 +69,10 @@ A system with users must know who sends each request, before a feature needs thi
 
 ### Requirements
 
-- **R01**: WHEN a visitor registers with a new email, a name and a password, the `api` SHALL answer 201 with the public user `{ id, email, name, role: "user", createdAt }`. IF a field is missing or is not a non-empty string, THEN it SHALL answer 400 with one `fields` entry for each incorrect field and make no user. IF the email is already registered, in any case, THEN it SHALL answer 409 and keep the first account. Test: a login with rejected values fails; after the 409, the first password still logs in.
+- **R01**: WHEN a visitor registers with a new email, a name and a password, the `api` SHALL answer 201 with the public user `{ id, email, name, role: "user", createdAt }`, with `createdAt` in ISO 8601 in UTC, such as `2026-10-13T08:30:00.000Z`. IF a field is missing or is not a non-empty string, THEN it SHALL answer 400 with one `fields` entry for each incorrect field and make no user. IF the email is already registered, in any case, THEN it SHALL answer 409 and keep the first account. Test: a login with rejected values fails; after the 409, the first password still logs in.
 - **R02**: WHEN a user logs in with valid credentials, the `api` SHALL answer 200 with `{ token, user }`, with a non-empty opaque `token`. IF the password is incorrect or the email is unknown, THEN it SHALL answer 401 with the same body `{ "error": "Invalid credentials" }`.
 - **R03**: WHEN a request has `Authorization: Bearer <token>` of a valid session, `GET /api/auth/me` SHALL answer 200 with the public user. IF a request to a protected route has no token or an invalid token, THEN the `api` SHALL answer 401 with the uniform error body.
-- **R04**: WHEN a user with a session opens `/users/{id}` with their own identifier, the `web` SHALL show their name, their email and their creation date as a date that a person reads (such as `5 Oct 2026, 16:40`), from `GET /api/users/:id` (200 `{ name, email, createdAt }`). IF the identifier is a different one, existing or not, THEN the `api` SHALL answer 404 with `{ "error": "Not found" }`, and the page SHALL show `Account not found` and keep the menu.
+- **R04**: WHEN a user with a session opens `/users/{id}` with their own identifier, the `web` SHALL show a page header with their name, and their email and their creation date as label and value pairs, with the date in a form that a person reads (such as `5 Oct 2026, 16:40`), from `GET /api/users/:id` (200 `{ name, email, createdAt }`). IF the identifier is a different one, existing or not, THEN the `api` SHALL answer 404 with `{ "error": "Not found" }`, and the page SHALL show `Account not found` and keep the menu.
 - **R05**: WHEN a user selects `Logout`, the `api` SHALL answer 204 with no body and make that token invalid, and keep the other sessions of the user. WHEN it answers 204 or 401, the `web` SHALL remove the token and the user, show `/` and show the menu for no session. IF it does not answer or answers 500, THEN the `web` SHALL show an error and keep the session. Test: log in two times, log out with the first token, `GET /api/auth/me` with each.
 - **R06**: WHEN a visitor sends the register form or the login form, the `web` SHALL send one request for the operation of the page that it shows, and write one console line with the name of the operation, with no form value, password or token. It SHALL confirm the registration, or show the name of the user in the menu after a login. IF the `api` rejects it, THEN it SHALL show the error, each `fields` message next to its field, and let the visitor try again. Test: two `click()` calls in one page script, and count the requests; move between `/register` and `/login` with no reload; a name with only spaces.
 - **R07**: WHILE a user is logged in, the `web` SHALL keep the session after a reload, the menu SHALL show the name of the user as a link to their account and a `Logout` control, and the home auth card SHALL show `Hello, {name}` as a link to their account, with no links for `anonymous`. WHILE no user is logged in, the menu and the auth card SHALL show the links for `everyone` and `anonymous`, such as `Login` and `Register`, and no account link or `Logout`.

@@ -84,6 +84,8 @@ export default defineConfig({
 
 **Acceptance tests**
 
+- An acceptance test proves what a person or a client sees, one time for each behavior, through the public interface (Halloween D39). A list of values (limits, invalid inputs, formats) is a unit test of the function that checks it; the acceptance test takes one value of the list. A `chore` has no acceptance test.
+- A test uses the servers that the suite started, with unique data for each test, so that the tests run in parallel with the workers of the runner: never `workers: 1`. Only a test of a start (a setting, the listening line) starts a server of its own.
 - The `e2e` project is a sibling folder. It starts each project with the command of its `start` slot, run directly and never through npm (`node src/app.main.ts`): npm adds about half a second to each start, and a suite starts a `cli` tens of times. A value with npm ends in `--`. It never imports the code of a project: the `**/src/**` group of `.lint/boundaries.e2e.json` checks it.
 - The settings of each project (its folder, its start command) and its client are in `shared/projects/`. A test gets them from there, never from `core`: `core` is only the life cycle of the suite.
 - A test keeps the tag of each requirement that it proves. A later spec adds its tag next to the others; it never replaces the tag of another spec.
@@ -95,7 +97,7 @@ export default defineConfig({
 **Arguments of a `cli`**
 
 - `core` reads the arguments with `node:util` `parseArgs` (`strict: true`, `allowPositionals: true`), from the options that each registration gives as data. It never writes an own parser: a hand-written parser goes over the complexity limits again and again (cli-9).
-- An error of `parseArgs` (`code` `ERR_PARSE_ARGS_*`) is the `usage` error of `monitoring`. Any other error is a defect of the definitions, and passes as it is.
+- An error of `parseArgs` (`code` `ERR_PARSE_ARGS_*`) is the `usage` error of `platform`. Any other error is a defect of the definitions, and passes as it is.
 
 **Persistence**
 
@@ -173,7 +175,7 @@ Use the current major of each framework and its current idioms. Never write the 
 **Express (5 or later)**
 
 - ES modules and async handlers. Express 5 sends a rejected promise to the error handler of `core`: no `try`/`catch` in a handler only to call `next(error)`, and no wrapper package such as `express-async-errors`.
-- `express.json()` with the body limit of `configuration`; no `body-parser`. One `express.Router()` for each feature, in its `{feature}.routes.ts`.
+- `express.json()` with the body limit of `platform`; no `body-parser`. One `express.Router()` for each feature, in its `{feature}.routes.ts`.
 - `core` writes its own middleware for CORS, the security headers, the request identifier and the log line: no `cors`, `helmet`, `morgan` or similar package. Each one is in `src/core/{concern}.middleware.ts`, where the shared limits allow the signature of Express (`request, response, next`, and `error` first in the error handler): no lint comment and no exception in `.lint/`. The composition registers the middleware of `core`; it never writes one.
 - The platform first: `node:sqlite`, `node:crypto` (`scrypt` with a random salt for a password, `randomUUID`), global `fetch` and `AbortSignal.timeout`.
 
