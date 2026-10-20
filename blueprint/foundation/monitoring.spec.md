@@ -39,6 +39,7 @@ When a failure occurs, the operator must see what occurred, and each client must
 - The `source` column of a log line is the project name, such as `api` or `cli`.
 - The expected error of `shared`, a seed of the scaffold, gets a status for each kind and optional `fields`. The error handler of `core` is the only code that makes an error response; it logs any other error at `ERROR` with its cause.
 - Keep a received `X-Request-Id` only if it has 1 to 128 characters, and each character is a letter, a digit or `-`.
+- The `api` has no route before `shell`: the success answer that R01 and R03 test is the CORS preflight of `configuration` (204). Add no route for a test.
 
 ### web
 
@@ -61,7 +62,7 @@ When a failure occurs, the operator must see what occurred, and each client must
 
 ### Requirements
 
-- **R01**: WHEN the `api` completes a request, it SHALL add one plain-text line to `{LOG_DIR}/{yyyy-mm-dd}.log` with the columns `time source LEVEL message`: the local time `HH:MM:SS.mmm`, and the method, path, status and duration in milliseconds, with no request identifier. The level SHALL be `ERROR` for a status of 500 or more, `WARN` from 400 to 499, and `INFO` otherwise. WHILE `LOG_LEVEL` is set, it SHALL write no line below that level. Test: send a known `X-Request-Id`, and the line does not contain it; with `LOG_LEVEL=warn`, a success writes no line.
+- **R01**: WHEN the `api` completes a request, it SHALL add one plain-text line to `{LOG_DIR}/{yyyy-mm-dd}.log` with the columns `time source LEVEL message`: the local time `HH:MM:SS.mmm`, and the method, path, status and duration in milliseconds, with no request identifier. The level SHALL be `ERROR` for a status of 500 or more, `WARN` from 400 to 499, and `INFO` otherwise. WHILE `LOG_LEVEL` is set, it SHALL write no line below that level. Test: send a known `X-Request-Id`, and the line does not contain it; with `LOG_LEVEL=warn`, a success writes no line. The success is a CORS preflight (204).
 - **R02**: IF a request body is not valid JSON or is larger than `BODY_LIMIT_KB` kilobytes, THEN the `api` SHALL answer 400 or 413 with `{ "error": "<message>" }`.
 - **R03**: WHEN the `api` answers a request, the answer SHALL have the received `X-Request-Id`, or a new unique one, and the headers `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` and `Referrer-Policy: no-referrer`.
 - **R04**: WHEN a server starts to listen, it SHALL write one console line with a URL that a browser can open: the configured host, or `localhost` when it listens on all interfaces. IF it cannot start, THEN it SHALL write no listening line. Test: start on a free port, and that URL answers; start with an incorrect `PORT`.
@@ -73,7 +74,7 @@ When a failure occurs, the operator must see what occurred, and each client must
 | Kind | Project | Address | Expected answer | Requirements |
 | --- | --- | --- | --- | --- |
 | api | api | `POST /api/{any}` with an incorrect body | 400 `{ "error": "<message>" }`, with `fields` for an input error; 413 for a body larger than the limit | R01, R02 |
-| api | api | any path | `X-Request-Id` and the security headers, also on an error. An unexpected failure: 500 `{ "error": "Internal server error" }` | R03 |
+| api | api | any path, and the CORS preflight | `X-Request-Id` and the security headers, also on an error. An unexpected failure: 500 `{ "error": "Internal server error" }` | R03 |
 | process | api, web | start | One console line with an openable URL | R04 |
 | command | cli | any command | One log line for each invocation | R05 |
 | command | cli | `config set LOG_LEVEL {incorrect}`, `config get --no-such-option`, a configuration file that does not open | `error: <message>`. Exit code 1, 2 or 3. | R06 |

@@ -78,7 +78,7 @@ Each project must start in the same way in each environment, with its settings o
 ### Requirements
 
 - **R01**: WHEN the `api` starts, it SHALL accept HTTP connections on `PORT`, or on port 3000 without it. Test: the default uses the instance that the suite started without `PORT`.
-- **R02**: WHEN a request to the `api` has an `Origin` header that `CORS_ORIGIN` contains, the `api` SHALL answer with `Access-Control-Allow-Origin` set to that origin. WHILE `CORS_ORIGIN` is not set, it SHALL answer `Access-Control-Allow-Origin: *`.
+- **R02**: WHEN a request to the `api` has an `Origin` header that `CORS_ORIGIN` contains, the `api` SHALL answer with `Access-Control-Allow-Origin` set to that origin. WHILE `CORS_ORIGIN` is not set, it SHALL answer `Access-Control-Allow-Origin: *`. WHEN the request is a preflight (`OPTIONS` with `Access-Control-Request-Method`), the `api` SHALL answer 204 with an empty body and the requested method in `Access-Control-Allow-Methods`.
 - **R03**: WHEN the `web` starts, it SHALL serve its application at `/` on `PORT`, or on port 4000 without it. Test: the default uses the instance that the suite started without `PORT`.
 - **R04**: WHEN the `web` starts with `API_BASE_URL` set, `GET /runtime-config.json` SHALL answer 200 with `{ "apiBaseUrl": "<that URL>" }`.
 - **R05**: WHEN a server starts with a `PORT` that is not an integer from 1 to 65535, it SHALL stop with a non-zero exit code and a message that contains `PORT`.
@@ -93,6 +93,7 @@ Each project must start in the same way in each environment, with its settings o
 | Kind | Project | Address | Expected answer | Requirements |
 | --- | --- | --- | --- | --- |
 | api | api | any path on `PORT` | An HTTP response with the CORS header | R01, R02 |
+| api | api | `OPTIONS /api/{any}` with `Origin` and `Access-Control-Request-Method` | 204 with an empty body and the CORS headers | R02 |
 | page | web | `/` on `PORT` | The application document | R03 |
 | api | web | `GET /runtime-config.json` | 200 `{ "apiBaseUrl": "..." }`. No error status. | R04 |
 | process | api, web | start with an incorrect `PORT` | Stops with a message that contains `PORT` | R05 |
