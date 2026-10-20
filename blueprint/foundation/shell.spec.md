@@ -1,6 +1,6 @@
 <!--
 Foundation spec 2 of 6: how do people use the system? (Halloween D7, D12, D13, D39; Columbus D17, D18, D37, D38, D39, D51). It needs `platform`.
-The common frame of each interface: the API index and its error answers, the layout of the `web`, the usage of the `cli`. Its contract tests are the only acceptance tests of the services of `platform` (Halloween D39).
+The common frame of each interface: the API index and its error answers, the layout of the `web`, the usage of the `cli`. Its contract tests are the only acceptance tests of the services of `platform` (Halloween D39, D40).
 Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
 Create: aidd spec new feat shell "Shell" --domain foundation
 Instance: replace each role (`api`, `web`, `cli`, `e2e`) with the project name.
@@ -63,7 +63,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 - Page objects in `shared/page-objects/` for the shell, the not-found page and the home page.
 - A helper in `shared` runs one `cli` invocation with `--json` and returns the parsed object and the exit code.
 - The tests check that the identity is there, never its values: the owner changes them. The application name and the description are text that is not empty, and the version is a semantic version. No test reads a `package.json` of another project.
-- The contract tests (R03, R04, R12, R13) use the servers of the suite and one value each. Only R04 starts a server of its own, because it proves a start.
+- The contract tests (R03, R11, R12) use the servers of the suite and one value each. No test starts a server of its own: the unit tests of `core` prove the settings, the listening line and the stop (Halloween D40).
 - A test checks what its spec adds and the order that it needs, never that nothing else exists: later specs add routes, settings and commands.
 
 ## Verification
@@ -72,17 +72,16 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 - **R01**: WHEN a client requests `GET /api`, the `api` SHALL answer 200 with `{ "routes": [ { "method": "<method>", "path": "<path>" } ] }`, with one entry for each route of the registrations.
 - **R02**: IF a request goes to an API path that does not exist, or its body is not valid JSON or is larger than the body limit, THEN the `api` SHALL answer 404 `{ "error": "Not found" }`, 400 or 413 with `{ "error": "<message>" }`. Test: one request of each.
-- **R03**: WHEN the `api` answers a request, the answer SHALL have the received valid `X-Request-Id`, the headers `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` and `Referrer-Policy: no-referrer`, and `Access-Control-Allow-Origin` for an `Origin` of `CORS_ORIGIN`, and the `api` SHALL add one line to the log of the day with the method, the full path and the status, with no request identifier. Test: one `GET /api` with a known `X-Request-Id` and an `Origin`.
-- **R04**: WHEN a server (`api`, `web`) starts, it SHALL write one console line with a URL that a browser can open, and that URL SHALL answer. IF its `PORT` is not valid, THEN it SHALL stop with a non-zero exit code and a message that contains `PORT`, and write no listening line. Test: one start of each server on a free port, and one with `PORT=0`.
-- **R05**: WHEN a user opens `/`, the `web` SHALL show the shell header with the application name, the menu, and the home page: a header with the application name and description, and a grid for the cards of the features. The title of each document SHALL be the application name.
-- **R06**: WHILE the `web` shows a page, the menu SHALL contain a link to `/` and mark the link of that page as the current page. WHEN a user follows a menu link, the `web` SHALL change the page without a full reload of the document. On a screen 375 CSS pixels wide, the menu SHALL wrap its links, also when the features add links, and the page SHALL have no horizontal scroll. Test: put a mark on the document before the link, and the mark is still there; add links to the menu in the page.
-- **R07**: WHEN a user opens an unknown path directly, the `web` SHALL show a not-found page with the requested path and a link to `/`.
-- **R08**: WHEN a user opens the `web` with no selected theme, the theme SHALL agree with the color preference of the system. WHEN the user selects the theme control, the `web` SHALL change between the light and the dark theme, and keep that theme after a reload. In each theme, the text of the shell header, the menu and the home header SHALL have a contrast ratio of 4.5:1 or more with its background. Test: set the preference of the browser, in a new context for each one; the computed text color and the first background that is not transparent.
-- **R09**: WHEN the `cli` runs with `--help`, with `help`, or with no command, it SHALL show the application name, the usage line, and each command with its one-line summary; with `help <command>` or `<command> --help`, the usage of that command with each operation and option and its summary. It SHALL stop with exit code 0.
-- **R10**: IF the `cli` runs a command that does not exist, or a command gets an option that it does not declare or an argument that it does not take, THEN it SHALL write `error: <message>` to standard error with the help of R09 or the usage of that command, write nothing to standard output, and stop with exit code 2. Test: one unknown command and one unknown option.
-- **R11**: WHEN the `cli` runs a command with `--json`, it SHALL write one JSON object, and nothing else, to its standard output: for `help --json`, `{ "name": "<name>", "commands": [ { "name", "summary", "usage" } ] }`. IF the command fails, THEN it SHALL write `{ "error": "<message>" }` to standard output, nothing to standard error, and stop with the exit code of that failure.
-- **R12**: IF a setting is not valid or the configuration file does not open, THEN the `cli` SHALL write `error: <message>` with the name of the setting or the path of the file to standard error, and stop with exit code 3. Test: `CONFIG_FILE` set to a folder.
-- **R13**: WHEN a `cli` invocation completes, the `cli` SHALL add one line to the log of the day with the command and the exit code, with no argument value. Test: one invocation with a setting as an argument; the line does not contain its value.
+- **R03**: WHEN the `api` answers a request, the answer SHALL have the received valid `X-Request-Id`, the headers `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` and `Referrer-Policy: no-referrer`, and the `api` SHALL add one line to the log of the day with the method, the full path and the status, with no request identifier. Test: one `GET /api` with a known `X-Request-Id`. A CORS failure stops the `web`, so the tests of the features find it.
+- **R04**: WHEN a user opens `/`, the `web` SHALL show the shell header with the application name, the menu, and the home page: a header with the application name and description, and a grid for the cards of the features. The title of each document SHALL be the application name.
+- **R05**: WHILE the `web` shows a page, the menu SHALL contain a link to `/` and mark the link of that page as the current page. WHEN a user follows a menu link, the `web` SHALL change the page without a full reload of the document. On a screen 375 CSS pixels wide, the menu SHALL wrap its links, also when the features add links, and the page SHALL have no horizontal scroll. Test: put a mark on the document before the link, and the mark is still there; add links to the menu in the page.
+- **R06**: WHEN a user opens an unknown path directly, the `web` SHALL show a not-found page with the requested path and a link to `/`.
+- **R07**: WHEN a user opens the `web` with no selected theme, the theme SHALL agree with the color preference of the system. WHEN the user selects the theme control, the `web` SHALL change between the light and the dark theme, and keep that theme after a reload. In each theme, the text of the shell header, the menu and the home header SHALL have a contrast ratio of 4.5:1 or more with its background. Test: set the preference of the browser, in a new context for each one; the computed text color and the first background that is not transparent.
+- **R08**: WHEN the `cli` runs with `--help`, with `help`, or with no command, it SHALL show the application name, the usage line, and each command with its one-line summary; with `help <command>` or `<command> --help`, the usage of that command with each operation and option and its summary. It SHALL stop with exit code 0.
+- **R09**: IF the `cli` runs a command that does not exist, or a command gets an option that it does not declare or an argument that it does not take, THEN it SHALL write `error: <message>` to standard error with the help of R08 or the usage of that command, write nothing to standard output, and stop with exit code 2. Test: one unknown command and one unknown option.
+- **R10**: WHEN the `cli` runs a command with `--json`, it SHALL write one JSON object, and nothing else, to its standard output: for `help --json`, `{ "name": "<name>", "commands": [ { "name", "summary", "usage" } ] }`. IF the command fails, THEN it SHALL write `{ "error": "<message>" }` to standard output, nothing to standard error, and stop with the exit code of that failure.
+- **R11**: IF a setting is not valid or the configuration file does not open, THEN the `cli` SHALL write `error: <message>` with the name of the setting or the path of the file to standard error, and stop with exit code 3. Test: `CONFIG_FILE` set to a folder.
+- **R12**: WHEN a `cli` invocation completes, the `cli` SHALL add one line to the log of the day with the command and the exit code, with no argument value. Test: one invocation with a setting as an argument; the line does not contain its value.
 
 ### Expected URLs and APIs
 
@@ -90,11 +89,10 @@ Each interface of the system must have one frame that each feature uses: the sam
 | --- | --- | --- | --- | --- |
 | api | api | `GET /api` | 200 `{ "routes": [ { "method", "path" } ] }`, with the headers, the request identifier and a log line | R01, R03 |
 | api | api | `GET /api/{unknown}`, `POST /api/{any}` with an incorrect body | 404, 400 or 413 `{ "error": "<message>" }` | R02 |
-| process | api, web | start | One console line with an openable URL, or a stop that names `PORT` | R04 |
-| page | web | `/` | Shell header with the name, menu, theme control; home header and card grid | R05, R06, R08 |
-| page | web | `/{unknown}` | Not-found page with the path and a link to `/` | R07 |
-| command | cli | `--help`, `help`, no command, `help <command>`, `<command> --help` | Name, usage line, commands with summaries, or the usage of one command. Exit code 0. | R09 |
-| command | cli | `{unknown}`, an unknown option | `error: <message>` and the help or the usage. Exit code 2. | R10 |
-| command | cli | `<command> --json` | One JSON object; on a failure, `{ "error": "<message>" }` with its exit code | R11 |
-| command | cli | any command with an incorrect setting or configuration file | `error: <message>`. Exit code 3. | R12 |
-| command | cli | any command | One log line for each invocation | R13 |
+| page | web | `/` | Shell header with the name, menu, theme control; home header and card grid | R04, R05, R07 |
+| page | web | `/{unknown}` | Not-found page with the path and a link to `/` | R06 |
+| command | cli | `--help`, `help`, no command, `help <command>`, `<command> --help` | Name, usage line, commands with summaries, or the usage of one command. Exit code 0. | R08 |
+| command | cli | `{unknown}`, an unknown option | `error: <message>` and the help or the usage. Exit code 2. | R09 |
+| command | cli | `<command> --json` | One JSON object; on a failure, `{ "error": "<message>" }` with its exit code | R10 |
+| command | cli | any command with an incorrect setting or configuration file | `error: <message>`. Exit code 3. | R11 |
+| command | cli | any command | One log line for each invocation | R12 |

@@ -16,13 +16,13 @@ A cell that does not apply is `n/a` with its reason. An empty cell is an error.
 
 Deliver them in this order (Halloween D12, D13, D35, D39). Only a property of the system makes a spec optional, never the project type. Today there is one: the system has users. The Solution of each spec has the details of each type.
 
-The core of the archetype is a framework: `scaffold`, `platform` and `presentation` are `chore` specs, with code and unit tests and no acceptance test. The acceptance suite proves only what a person or a client sees: `shell` and the features. `shell` has the contract tests that prove the wiring of `platform`.
+The core of the archetype is a framework: `scaffold`, `platform` and `presentation` are `chore` specs, with code and unit tests and no acceptance test. The acceptance suite proves only what a person or a client sees: `shell` and the features. `shell` has one contract test that proves the wiring of `platform` in the `api` (Halloween D40).
 
 | # | Spec (question) | `api` | `web` | `cli` | `e2e` |
 | --- | --- | --- | --- | --- | --- |
 | 0 | [`scaffold`](./foundation/scaffold.spec.md) — how is each project made? | generator, shape, slots | generator, shape, slots, theme | generator, shape, slots | generator, shape, slots; `test` passes with no test |
 | 1 | [`platform`](./foundation/platform.spec.md) — how does it start, and how do we observe it? `chore` | settings, migrations, middleware (CORS, headers, request identifier, body limit), log file, listening line, clean stop | settings, runtime configuration, listening line, console logger, errors of the HTTP client | settings and their sources, log file, exit codes 0 / 1 / 2 / 3 | the settings of each project, start of the suite, preflight, start and error helpers |
-| 2 | [`shell`](./foundation/shell.spec.md) — how do people use it? | API index, error answers 400 / 404 / 413 / 500, contract tests of the wiring | layout: frame, menu, theme, home, not-found page, contrast of the themes | usage: help, unknown command → exit code 2, `--json`, `error:` with exit code 3, log line | shell page objects, `--json` helper, contract tests |
+| 2 | [`shell`](./foundation/shell.spec.md) — how do people use it? | API index, error answers 400 / 404 / 413 / 500, one contract test of the wiring | layout: frame, menu, theme, home, not-found page, contrast of the themes | usage: help, unknown command → exit code 2, `--json`, `error:` with exit code 3, log line | shell page objects, `--json` helper, contract tests |
 | 3 | [`presentation`](./foundation/presentation.spec.md) — how does it show and collect data? `chore` | `readFields`, `readPage`, ISO values | card, detail, table, form, states, readable values | text table, `{label}: {value}`, `readOptions` | readers of tables and records, `recordForm`, contrast helper |
 | 4 | [`about`](./foundation/about.spec.md) — what is it? | `GET /api/about` | tracer bullet: page `/about` and card from `GET /api/about`, version on the home page; the first card, record, table and states | `--version` and `about`, the first record | page objects of `/about` and the about card |
 | 5 | [`users`](./foundation/users.spec.md) — who uses it? Optional: the system has users. | register, login, session, account, logout | forms, session, menu by access, page guard | n/a: a local cli has no users (Columbus D67) | API client and page objects of the session |
@@ -51,15 +51,17 @@ A project keeps only the column of its type in section 4 of its `AGENTS.md`.
 
 | Item | `api` | `web` | `cli` | `e2e` |
 | --- | --- | --- | --- | --- |
-| composition | process entry and manifest | browser entry and manifest | executable entry and manifest | n/a: the test runner is the entry |
-| `core` | server, configuration, logger, connections, error handler | shell, layout, router, theme, configuration | argument parser, configuration, logger, output, error handler | life cycle of the suite |
+| composition | `main`, the only file at the root of `src`: it gives the manifest and the identity to `start` of `core/lifecycle/` | the same | the same | n/a: the test runner is the entry |
+| `core` folders | `lifecycle/` (composition, start, stop), `settings/`, `logging/`, `http/` (server, router, middleware, error handler), `database/` (connection, migrations) | `lifecycle/` (composition, router, start), `settings/`, `logging/`, `http/` (client, runtime configuration), `shell/` (layout, menu, navigation, not-found page), `theme/` | `lifecycle/` (composition, pipeline, exit codes), `settings/`, `logging/`, `arguments/` (parser), `output/` (text and JSON writers) | `lifecycle/` (setup, teardown, preflight), `settings/` |
 | features | endpoints | pages | commands | tests, one folder for each feature of the system |
 | `presentation` | route / controller and its registration | page / component and its registration | command and its registration | n/a: no layers |
 | `logic` | service | store / use case | service | n/a: no layers |
 | `data` | repository | API client | repository / file system / API client | n/a: no layers |
 | `shared` folders | `values/`, `database/`, `logging/`, `http/`, `session/` | `values/`, `http/`, `logging/`, `components/`, `session/` | `values/`, `settings/`, `logging/`, `output/` | `page-objects/`, `test-data/`, `projects/` |
 
-The `shared` folders are a closed list, by technical concern. The root of `shared` keeps only the expected error (`errors`) and the identity type (`identity`). The scaffold makes `values/` with the seed primitives; each other folder comes with the first spec that puts a file in it, never empty: `platform` → `database/` (`api`), `http/` (`web`), `settings/` (`cli`), `logging/`; `shell` → `http/` (`api`), `components/` (`web`), `output/` (`cli`); `users` → `session/`. A file goes to the folder of its concern. A new folder only when no folder of the list fits: write it in section 5 of the `AGENTS.md` of the project. The same rule divides a full folder of `core`.
+The `core` folders are a closed list too, by technical concern: no file at the root of `core`. Each one comes with the first spec that puts a file in it: `scaffold` → `lifecycle/`, and `theme/` (`web`); `platform` → `settings/`, `logging/`, `http/`, `database/` (`api`), `arguments/` (`cli`); `shell` → `shell/` (`web`), `output/` (`cli`). A folder over 16 entries divides by concern; a new folder is written in section 5 of the `AGENTS.md` of the project (Halloween D41).
+
+The `shared` folders are a closed list, by technical concern. The root of `shared` keeps only the expected error (`errors`) and the identity type (`identity`). The scaffold makes `values/` with the seed primitives; each other folder comes with the first spec that puts a file in it, never empty: `platform` → `database/` (`api`), `http/` (`web`), `settings/` (`cli`), `logging/`; `shell` → `http/` (`api`), `components/` (`web`), `output/` (`cli`); `users` → `session/`. A file goes to the folder of its concern. A new folder only when no folder of the list fits: write it in section 5 of the `AGENTS.md` of the project.
 
 ## 4 · Environment primitive
 

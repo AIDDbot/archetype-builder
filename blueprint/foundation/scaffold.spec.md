@@ -49,7 +49,7 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
 **Step 2: shape to blueprint**
 
 - `{folder}/AGENTS.md` is the filled template. Put a `CLAUDE.md` next to it that contains only `@AGENTS.md`.
-- Reorganize the generator output into the architecture of that `AGENTS.md`: the composition and its manifest, `core`, features, and `shared` with the contracts of the `core` services.
+- Reorganize the generator output into the architecture of that `AGENTS.md`: the entry `main`, alone at the root of `src`; the manifest; `core`, with each file in the folder of its concern and the composition in `core/lifecycle/`; features; and `shared` with the contracts of the `core` services (Halloween D40, D41).
   - Keep the mechanisms of the framework (injector, router, store, file names) and map them to the concepts.
   - Move folders by technical layer (such as `components/`, `views/`, `stores/`) into `shared` as primitives, or into features.
 - Remove each sample of the generator (demo pages, images, icons).
@@ -64,7 +64,7 @@ Each project of `.product/system.md` must exist, with the shape of the Blueprint
 - The ignore file never hides source. Anchor runtime data patterns to the project root.
 - Each tooling slot of that `AGENTS.md` operates. If a mandatory slot is missing (`test`, `start`, `layers`, `crap`), install the usual tool of the stack.
 - The pre-commit hook of the root runs the unit tests of the project that a commit affects.
-- For JS / TS, the scripts of each project are its slots and no more; `layers` and `crap` read the local `boundaries.json` and `complexity.json` of the project, which extend `.lint/`. The `imports` of its `package.json` give `#shared`, `#core` and `#api`: no import from a parent folder. The coverage threshold is exactly 80, as `ecosystems.md` says.
+- For JS / TS, the scripts of each project are its slots and no more; `layers` and `crap` read the local `boundaries.json` and `complexity.json` of the project, which extend `.lint/`. The `imports` of its `package.json` give `#shared`, `#core` and `#api`: no import from a parent folder. The coverage threshold is exactly 100 for lines and functions of each file, as `ecosystems.md` says (Halloween D40).
 - For a `web`, copy `.product/blueprint/theme/` as it is.
 - Register the type and the slots with `node .agents/aidd/aidd.mjs config set projects.{project} '{"type":"{type}",...}'`.
 - Prove the debt checks: add an import that the architecture forbids, make sure that `layers` fails, then remove the import. Do the same with a function over the limits and `crap`.
