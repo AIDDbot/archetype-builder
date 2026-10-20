@@ -24,7 +24,8 @@ const named = {
       for (const type of derived) {
         context.report({
           node: type,
-          message: "The parameter takes its type from an implementation. Use the named type of the contract.",
+          message:
+            "The parameter takes its type from an implementation. Use the named type of the contract.",
         });
       }
     };

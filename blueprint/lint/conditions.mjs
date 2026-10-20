@@ -13,16 +13,16 @@ function children(node) {
 }
 
 function hasFunction(node) {
-  const isNode = typeof node?.type === "string";
-  if (!isNode) return false;
+  const isValue = typeof node?.type !== "string";
+  if (isValue) return false;
   const isFunction = functions.has(node.type);
   if (isFunction) return true;
   return children(node).some((child) => hasFunction(child));
 }
 
 function operands(node) {
-  const isLogical = node.type === "LogicalExpression";
-  if (!isLogical) return [node];
+  const isOperand = node.type !== "LogicalExpression";
+  if (isOperand) return [node];
   return [...operands(node.left), ...operands(node.right)];
 }
 
@@ -54,7 +54,8 @@ function comparisonConst(node, name) {
 }
 
 function references(node, name) {
-  const own = node.type === "Identifier" && node.name === name ? [node] : [];
+  const isReference = node.type === "Identifier" && node.name === name;
+  const own = isReference ? [node] : [];
   return [...own, ...children(node).flatMap((child) => references(child, name))];
 }
 
@@ -89,9 +90,10 @@ const named = {
     const condition = (head) => {
       const parts = operands(head);
       const operators = parts.length - 1;
+      const hasManyOperators = operators > maxOperators;
       if (hasFunction(head)) {
         report(head, "The condition has a callback. Name its result in a const before it.");
-      } else if (operators > maxOperators) {
+      } else if (hasManyOperators) {
         report(
           head,
           `The condition has ${operators} logical operators (max ${maxOperators}). Name each part in a const.`,
