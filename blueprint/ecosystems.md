@@ -35,9 +35,9 @@ export default defineConfig({
     "*": "vp check --fix",
     "*.ts": "vp test related --run --passWithNoTests",
   },
-  fmt: { ignorePatterns: ["**/*.md", ".agents/**", ".aiddbot/**"] },
+  fmt: { ignorePatterns: ["**/*.md", ".agents/**", ".aiddbot/**", ".lint/**"] },
   lint: {
-    ignorePatterns: [".agents/**", ".aiddbot/**"],
+    ignorePatterns: [".agents/**", ".aiddbot/**", ".lint/**"],
     plugins: ["typescript", "unicorn", "oxc", "import", "node", "promise", "vitest"],
     categories: { correctness: "error", suspicious: "error" },
     options: { typeAware: true, typeCheck: true },
@@ -52,7 +52,7 @@ export default defineConfig({
 - The hook formats, lints and checks the types of the staged files with the safe fixes, and runs the unit tests that import them. It adds the fixes to the commit. A failure stops the commit.
 - `vp check` checks the types only with `typeAware` and `typeCheck`. Without them, a type error passes.
 - Formatting leaves Markdown out (`ignorePatterns`). A commit of specs or docs only runs no test.
-- Format and lint leave out `.agents/` and `.aiddbot/` (`ignorePatterns`): AIDDbot owns them, and a commit of `aiddbot update` must pass the hook with no change to them.
+- Format and lint leave out `.agents/` and `.aiddbot/` (`ignorePatterns`): AIDDbot owns them, and a commit of `aiddbot update` must pass the hook with no change to them. They leave out `.lint/` too: it is a copy of `.product/blueprint/lint/` as it is, and a format would make it differ.
 - `test.projects` names the folder of each Vitest project, so that `vp test related` uses the configuration of each project.
 - The hook lints by packages, never rule by rule: the categories `correctness` and `suspicious`, with the plugins of the stack (add `react` and `jsx-a11y` in a `web` with React). Never turn on a rule or turn off a rule of a package one by one. A finding of a package is repaired in the code.
 - The one rule turned on: a value that can be missing is checked, never asserted with `!` (`typescript/no-non-null-assertion`). It is in the category `restriction`, which is not a package: its rules contradict each other.
