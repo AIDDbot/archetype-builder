@@ -35,8 +35,9 @@ export default defineConfig({
     "*": "vp check --fix",
     "*.ts": "vp test related --run --passWithNoTests",
   },
-  fmt: { ignorePatterns: ["**/*.md"] },
+  fmt: { ignorePatterns: ["**/*.md", ".agents/**", ".aiddbot/**"] },
   lint: {
+    ignorePatterns: [".agents/**", ".aiddbot/**"],
     plugins: ["typescript", "unicorn", "oxc", "import", "node", "promise", "vitest"],
     categories: { correctness: "error", suspicious: "error" },
     options: { typeAware: true, typeCheck: true },
@@ -51,6 +52,7 @@ export default defineConfig({
 - The hook formats, lints and checks the types of the staged files with the safe fixes, and runs the unit tests that import them. It adds the fixes to the commit. A failure stops the commit.
 - `vp check` checks the types only with `typeAware` and `typeCheck`. Without them, a type error passes.
 - Formatting leaves Markdown out (`ignorePatterns`). A commit of specs or docs only runs no test.
+- Format and lint leave out `.agents/` and `.aiddbot/` (`ignorePatterns`): AIDDbot owns them, and a commit of `aiddbot update` must pass the hook with no change to them.
 - `test.projects` names the folder of each Vitest project, so that `vp test related` uses the configuration of each project.
 - The hook lints by packages, never rule by rule: the categories `correctness` and `suspicious`, with the plugins of the stack (add `react` and `jsx-a11y` in a `web` with React). Never turn on a rule or turn off a rule of a package one by one. A finding of a package is repaired in the code.
 - The one rule turned on: a value that can be missing is checked, never asserted with `!` (`typescript/no-non-null-assertion`). It is in the category `restriction`, which is not a package: its rules contradict each other.
@@ -102,8 +104,8 @@ export default defineConfig({
 
 **Script names**
 
-- The slot names are the script names: `test`, `test:spec`, `start`, `layers`, `crap`, and `upgrade` at the root. Use the standard npm names, which run without `run`: `test` and `start`. The scripts of a project are its slots and no more: `start`, `test`, `layers` and `crap`, and `test:spec` in an `e2e`. The root has `prepare`, `test` and `upgrade`.
-- Lint, format and the affected unit tests are no scripts: the hook runs them.
+- The slot names are the script names: `test`, `test:spec`, `start`, `layers`, `crap`, and `upgrade` at the root. Use the standard npm names, which run without `run`: `test` and `start`. The scripts of a project are its slots and no more: `start`, `test`, `layers` and `crap`, and `test:spec` in an `e2e`. The root has `prepare`, `test`, `upgrade`, and two scripts for a human: `"check": "vp check && vp test run"` (the hook on the whole repository, with no fix) and `"fix": "vp check --fix"`.
+- Lint, format and the affected unit tests are no slots: the hook runs them, and `check` and `fix` run them by hand.
 - `test` runs all the tests of the project: `vp test run`. In an `e2e` project, `vp test run --passWithNoTests` (or `playwright test --pass-with-no-tests`), so that the scaffold passes before the first spec.
 - In an `e2e` project, `start` is for a human only: with Vitest, the watch mode `vp test --passWithNoTests`, with no UI package; with Playwright, `playwright test --ui`.
 - `test:spec` exists only in an `e2e` project. It ends in the filter flag of the runner, because the core adds only the tag (`@S0001-`): `vp test run --passWithNoTests -t` (or `playwright test --pass-with-no-tests --grep`).
