@@ -83,6 +83,18 @@ export default defineConfig({
 - An exported function declares its return type (`typescript/explicit-module-boundary-types`, in `crap`): `export function openDatabase(path: string): Database`. A function that returns an object with methods returns the named type of its contract, so the reader sees what it gives without the implementation. A component (`.tsx`) returns JSX and has no annotation.
 - Add a rule of our own only when no rule of a package checks the same.
 
+**Code rules of each project**
+
+Each project `AGENTS.md` copies these rules as written into its technology rules (section 6). In web-H, the code broke them 24 times in 7 specs, and each one cost a run of `crap` and a repair (Halloween D40). Write the code as they say the first time:
+
+- Name a condition as the code tests it, and test the name: `const isUnknown = version === undefined; if (isUnknown)`, never `!isKnown` on a `const` of the same function. Also in the tests. (`conditions/named`)
+- Give each parameter a named type, also the props of a component (`type AboutPageProps = { … }`): never an object type or `ReturnType<…>` in a signature. (`types/named`)
+- Declare the return type of each exported function, also in the `e2e`; only a component (`.tsx`) has none. (`explicit-module-boundary-types`)
+- A choice between kinds is a table (`Record<Kind, Handler>`), never a chain of `if` or a `switch`. A function with several steps calls one function for each step. (complexity 8, 16 statements)
+- More than 2 values go in one object with a named type. Only a middleware of `core/http/` takes the 4 parameters of Express. (`max-params`)
+- An adapter has no branch, no `??` and no default value: the decision goes to a function of `core` that gets the adapter as an argument. (complexity 1)
+- Each `.ts` file has its unit test next to it, except `main`, the adapters and the components. (coverage 100)
+
 **Acceptance tests**
 
 - An acceptance test proves what a person or a client sees, one time for each behavior, through the public interface (Halloween D39). A list of values (limits, invalid inputs, formats) is a unit test of the function that checks it; the acceptance test takes one value of the list. A `chore` has no acceptance test.

@@ -16,7 +16,7 @@
   },
   "overrides": [
     {
-      "files": ["**/src/app.*.{ts,tsx}"],
+      "files": ["**/src/app.main.{ts,tsx}"],
       "rules": {
         "eslint/no-restricted-imports": [
           "error",
@@ -25,6 +25,10 @@
               {
                 "group": ["./features/**", "!./features/features.manifest.{ts,tsx}", "#api/**"],
                 "message": "main uses the features only through the manifest."
+              },
+              {
+                "group": ["#core/**", "!#core/lifecycle/app.start.{ts,tsx}", "#shared/**"],
+                "message": "main only gives the manifest and the identity to start of core/lifecycle: the composition is in core."
               }
             ]
           }

@@ -38,7 +38,7 @@ Contracts:
 - test:spec: only in an `e2e`: the acceptance tests of one tag. The command ends in the filter flag of the runner, because the core adds only the tag (such as @S0001-). In an `api`, a `web` or a `cli`: n/a.
 - start: runs the project without a build. In an `api`: starts the server; reads PORT; answers on the API index `GET /api`. In a `web`: starts the server; reads PORT; answers on `/`. In a `cli`: runs one invocation with the arguments that it gets. In an `e2e`: runs the runner for a human only, in watch mode or with its UI.
 - layers: one command: the dependency rules between layers in `.lint/`; never the rules of the hook; never blocks; its findings go to the debt register as medium debt.
-- crap: one command: the complexity and size limits of `.lint/` and then, in an `api`, a `web` or a `cli`, the test coverage of `core` and `shared` (80). They are the inputs of CRAP (Change Risk Anti-Patterns) as separate thresholds: never compute the CRAP formula; never the rules of the hook; never blocks; its findings go to the debt register as low debt, one item for each rule.
+- crap: one command: the complexity and size limits of `.lint/` and then, in an `api`, a `web` or a `cli`, the test coverage: 100 for the lines and the functions of each file, except the entry, the adapters and the components (Halloween D40). They are the inputs of CRAP (Change Risk Anti-Patterns) as separate thresholds: never compute the CRAP formula; never the rules of the hook; never blocks; its findings go to the debt register as low debt, one item for each rule.
 -->
 
 | Slot | Blocks | Command | Tool |
@@ -75,10 +75,10 @@ Contracts:
 
 | Container | Is | Never |
 | --- | --- | --- |
-| `core` | The platform that the framework or the entry calls one time at startup: server or shell, router, connections, error handler, global styles. Files at the root, other elements in folders by technical concern (`logging`, `database`) when the folder is full. | Business rules. Imports of a feature. Folders `utils`, `helpers`, `common`, `misc`. |
+| `core` | The platform that the entry calls one time at startup: composition, server or shell, router, connections, error handler, global styles. Each file in the folder of its concern, from the closed list of `core` folders of `project-types.md` (section 3); no file at the root of `core`. | Business rules. Imports of a feature. Folders `utils`, `helpers`, `common`, `misc`. |
 | `shared` | Generic elements with no domain, and the contracts of the services that features need (such as the logger, the HTTP client or the error type). At the root, only the expected error and the identity type; each other file in the folder of its concern, from the closed list of `shared` folders of `project-types.md` (section 3). | Domain words. Imports of `core` or of a feature. Folders `utils`, `helpers`, `common`, `misc`. |
 | feature | One flat folder for one unit of business value. The role in each file name tells its layer. | Subfolders. Imports of `core`. Imports of a different feature, except its facade. |
-| composition | The entry. It starts `core`, registers each feature by name in one explicit list (the manifest), and gives the features the services of `core` through the contracts of `shared`. The only part that knows `core` and the features. | Automatic discovery: folder scans, global decorators, file-based routers. |
+| composition | The entry `main`, the only file at the root of the source: it gives the manifest (one explicit list of the features by name) and the identity to `start` of `core/lifecycle/`, with no other statement. `core/lifecycle/` registers each feature of the manifest and gives the features the services of `core` through the contracts of `shared`. `core` gets the features as data, never imports one. | Automatic discovery: folder scans, global decorators, file-based routers. Logic in `main`. |
 
 - composition → `presentation` → `logic` → `data`. A different feature → `facade` → `logic`. A layer never skips the next one: only the registration creates `data` and gives it to `logic`. Types are not a layer: each layer can use types, `shared` and the facades of other features.
 - `presentation`: input, output and the registration of the feature (route, page, command). No business rules. Only the composition imports it.
@@ -86,7 +86,7 @@ Contracts:
 - `logic`: rules and decisions. It does not know how data is stored.
 - `data`: all that the project reads or writes outside itself (database, remote API, files).
 - A feature that the manifest loads on demand has no other import. Tests start the application through the composition, without a port.
-- Unit tests prove `logic`, at least one for each business rule, with a fake `data`. They also prove `shared` and `core`. They are fast and independent, and touch no disk, database, network or process: they get each one as an argument, with a fake, never by replacing a module (`vi.mock`); the acceptance tests prove `data` and the adapters of `core`. Each one sits beside its module, with the same name. The pre-commit hook runs the ones that a commit affects. A business rule without a unit test is debt.
+- Unit tests prove `logic`, at least one for each business rule, with a fake `data`. They also prove `shared`, `core` and each other file with code: only the entry, the adapters of `core` and the components have no unit test (Halloween D40). They are fast and independent, and touch no disk, database, network or process: they get each one as an argument, with a fake, never by replacing a module (`vi.mock`); the acceptance tests prove `data` and the adapters of `core`. Each one sits beside its module, with the same name. The pre-commit hook runs the ones that a commit affects. A business rule without a unit test is debt.
 
 ### Suite
 
@@ -102,8 +102,8 @@ Contracts:
 
 | Concept | Path | Framework mechanism |
 | --- | --- | --- |
-| composition | `{source_root}/{main_file}`, `{source_root}/{compose_file}`, `{manifest_file}` | {mechanism} |
-| `core` | `{source_root}/{core_folder}/{core_file_pattern}`, such as `app.config.ts`, `{core_folder}/{concern_folder}/` | {mechanism} |
+| composition | `{source_root}/{main_file}`, `{manifest_file}`, `{core_folder}/lifecycle/{compose_file}` | {mechanism} |
+| `core` | `{source_root}/{core_folder}/{concern_folder}/{core_file_pattern}`, such as `settings/app.settings.ts` | {mechanism} |
 | features | `{source_root}/{features_folder}/` | {mechanism} |
 | facade | `{feature}/{facade_file}` | {mechanism} |
 | `presentation` / `logic` / `data` / types | `{presentation_files}` / `{logic_files}` / `{data_files}` / `{type_files}` | {mechanism} |
@@ -113,9 +113,9 @@ Contracts:
 
 ```text
 {source_root}/
-├── {main_file}           # entry: starts the composition
-├── {compose_file}        # composition: starts core, registers the features
-├── {core_folder}/        # platform, called one time at startup; folders by technical concern
+├── {main_file}           # entry, alone: gives the manifest and the identity to start of core
+├── {core_folder}/        # platform, called one time at startup; the closed list of folders by technical concern
+│   └── lifecycle/        # composition, start, stop
 ├── {features_folder}/    # one flat folder for each feature, and the manifest
 │   └── about/
 └── {shared_folder}/      # errors and identity at the root; the closed list of folders by technical concern
@@ -151,7 +151,7 @@ The index of `shared`. Read it before you write a check or a conversion. Helpers
 
 ### Technology rules
 
-<!-- [Archetype] Rules of the stack that the Blueprint does not cover. [Project] Leave out each rule that the Common stack of the root AGENTS.md gives. A framework mechanism (injection, routing, state, file names, generators) is used as is, with its reason; the direction of dependencies never changes. Write here each limit that the archetype changes. D27. -->
+<!-- [Blueprint] Copy the code rules of the stack from `ecosystems.md` (section Code rules of each project) as written: each one prevents a finding of `layers` or `crap`. [Archetype] Rules of the stack that the Blueprint does not cover. [Project] Leave out each rule that the Common stack of the root AGENTS.md gives. A framework mechanism (injection, routing, state, file names, generators) is used as is, with its reason; the direction of dependencies never changes. Write here each limit that the archetype changes. D27. -->
 
 - {rule — reason}
 
