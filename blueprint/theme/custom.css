@@ -75,3 +75,33 @@ article:hover {
   padding-left: 0;
   padding-inline: 0;
 }
+
+/* Narrow screens (375 CSS pixels): nothing makes the page wider than the screen. */
+nav,
+nav ul {
+  flex-wrap: wrap;
+}
+
+.overflow-auto {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.overflow-auto > table {
+  min-width: 36rem;
+}
+
+td,
+th,
+dt,
+dd,
+code {
+  overflow-wrap: anywhere;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+}

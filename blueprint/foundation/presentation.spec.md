@@ -39,7 +39,7 @@ A record is one thing that the application shows, such as the application itself
 
 | Primitive | `api` | `web` | `cli` | `e2e` |
 | --- | --- | --- | --- | --- |
-| **list** | `readPage` (`limit` 1–100, default 20; `offset` ≥ 0) and `{ items, total }`, for a business list | record table: a caption, one header row, one row for each record; it scrolls in its own area on a narrow screen | text table, with each column aligned | table reader |
+| **list** | `readPage` (`limit` 1–100, default 20; `offset` ≥ 0) and `{ items, total }`, for a business list | record table: a caption, one header row, one row for each record, in a `<div class="overflow-auto">` of the theme, so it scrolls in its own area on a narrow screen | text table, with each column aligned | table reader |
 | **record** | the object; an unknown one is the 404 | record card (header with a heading, facts as label and value pairs, footer link) and record detail (page header, sections with a heading) | `{label}: {value}` lines, with each value in the same column | record reader |
 | **form** | `readFields`: one `fields` entry for each incorrect field | `createRecordForm`: error next to each field, disabled while it sends | `readOptions`: the error names the option | `recordForm(scope)` |
 | **states** | n/a: an answer has no loading state | busy (marked for assistive technology, no fact), empty and error, in the place of the data | empty message (`No {records}.`), the error of `shell` | n/a: the readers report what they find |
@@ -55,6 +55,7 @@ A record is one thing that the application shows, such as the application itself
 
 - The components own the markup; a feature gives only a typed description (title, state, facts, columns, rows), which a `.ts` function of `shared` makes.
 - Semantic HTML on the style sheet of the archetype, one style sheet of the project for the records with theme tokens only, and a card grid with `repeat(auto-fit, minmax(18rem, 1fr))`: one column at 375 CSS pixels, two or more at 1024.
+- The theme (`custom.css`) gives the narrow screen: the menu wraps, a table in `overflow-auto` scrolls in its own area, and a long value wraps. The style sheet of the project never writes these rules again.
 
 ### cli
 
