@@ -37,7 +37,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 ### All projects
 
-- The `Identity` type at the root of `shared` names the fields of `.product/blueprint/ecosystems.md`: `displayName`, `description`, `author` (`name`, `url`) and `version`. It is a type only, with no function. Only the composition imports the `package.json` of the project (`#package`), and gives it to `core` and to the features as an `Identity`. Thus a unit test gives its own identity: no test reads the file or mocks a module.
+- The `Identity` type at the root of `shared` names the fields of `.product/blueprint/ecosystems.md`: `displayName`, `description`, `author` (`name`, `url`) and `version`. It is a type only, with no function. Only the entry `main` imports the `package.json` of the project (`#package`), and gives it to `core` and to the features as an `Identity`. Thus a unit test gives its own identity: no test reads the file or mocks a module.
 
 ### api
 
