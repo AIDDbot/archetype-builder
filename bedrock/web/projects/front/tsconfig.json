@@ -13,17 +13,8 @@
     "erasableSyntaxOnly": true,
     "allowImportingTsExtensions": true,
     "noEmit": true,
-    "types": [
-      "node",
-      "vite-plus/client"
-    ],
-    "lib": [
-      "ESNext",
-      "DOM"
-    ]
+    "types": ["node", "vite-plus/client"],
+    "lib": ["ESNext", "DOM"]
   },
-  "include": [
-    "src",
-    "vite.config.ts"
-  ]
+  "include": ["src", "vite.config.ts"]
 }
