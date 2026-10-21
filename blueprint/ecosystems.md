@@ -193,7 +193,7 @@ Use the current major of each framework and its current idioms. Never write the 
 - ES modules and async handlers. Express 5 sends a rejected promise to the error handler of `core`: no `try`/`catch` in a handler only to call `next(error)`, and no wrapper package such as `express-async-errors`.
 - `express.json()` with the body limit of `platform`; no `body-parser`. One `express.Router()` for each feature, in its `{feature}.routes.ts`.
 - `core` writes its own middleware for CORS, the security headers, the request identifier and the log line: no `cors`, `helmet`, `morgan` or similar package. Each one is in `src/core/http/{concern}.middleware.ts`, where the shared limits allow the signature of Express (`request, response, next`, and `error` first in the error handler): no lint comment and no exception in `.lint/`. The composition registers the middleware of `core`; it never writes one.
-- The platform first: `node:sqlite`, `node:crypto` (`scrypt` with a random salt for a password, `randomUUID`), global `fetch` and `AbortSignal.timeout`.
+- The platform first: `node:sqlite`, `node:crypto` (`scrypt` for a password, with the cost that OWASP gives as its minimum: `N` 2^17, `r` 8, `p` 1, a random salt of 16 bytes, and `maxmem` of 256 MiB, because the default of Node is 32 MiB; never the default cost of Node, which is lower; the parameters stored with each hash; `randomUUID`), global `fetch` and `AbortSignal.timeout`.
 
 **React (19 or later), with react-router (7 or later)**
 
