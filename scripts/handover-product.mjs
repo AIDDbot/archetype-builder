@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Seed the product records of an archetype from its work system (see seed.md).
-// Usage: node scripts/seed-product.mjs <work system> <archetype repository>
+// Write the product records of an archetype from its work system (see handover.md).
+// Usage: node scripts/handover-product.mjs <work system> <archetype repository>
 // Run it after the workspace and projects/ are in the archetype: it rewrites the test tags there too.
 import fs from "node:fs";
 import path from "node:path";
