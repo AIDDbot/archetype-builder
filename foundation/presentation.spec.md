@@ -42,7 +42,7 @@ A record is one thing that the application shows, such as the application itself
 | **list** | `readPage` (`limit` 1–100, default 20; `offset` ≥ 0) and `{ items, total }`, for a business list | record table: a caption, one header row, one row for each record, in a `<div class="overflow-auto">` of the theme, so it scrolls in its own area on a narrow screen | text table, with each column aligned | table reader |
 | **record** | the object; an unknown one is the 404 | record card (header with a heading, facts as label and value pairs, footer link) and record detail (page header, sections with a heading) | `{label}: {value}` lines, with each value in the same column | record reader |
 | **form** | `readFields`: one `fields` entry for each incorrect field | `createRecordForm`: error next to each field, disabled while it sends | `readOptions`: the error names the option | `recordForm(scope)` |
-| **states** | n/a: an answer has no loading state | busy (marked for assistive technology, no fact), empty and error, in the place of the data | empty message (`No {records}.`), the error of `shell` | n/a: the readers report what they find |
+| **states** | n/a: an answer has no loading state | busy (marked for assistive technology, no fact), empty and error, in the place of the data | empty message (`No {records}.`), the error of `shell` | `holdRoute(page, pattern)`: the answer waits until the test releases it (busy); `failRoute(page, pattern)`: the answer is an error |
 | **values** | ISO 8601 UTC dates, durations in seconds | readable, in the language of the browser or in the date format of `settings`; a missing value is `—` | readable; standard with `--json` | n/a: tests check the shape of a value |
 
 - Unit tests prove each decision with its list of values: each value format, the missing value, the empty list, the alignment of the columns, the order of the facts, each state.
@@ -63,7 +63,7 @@ A record is one thing that the application shows, such as the application itself
 
 ### e2e
 
-- The readers of tables and records, `recordForm(scope)`, and a helper for the contrast ratio (WCAG 2) are in `shared`, for the tests of the features.
+- The readers of tables and records, `recordForm(scope)`, `holdRoute` and `failRoute`, and a helper for the contrast ratio (WCAG 2) are in `shared`, for the tests of the features (Daylight, from web-I: `about` wrote the busy helper in two tests).
 
 ## Verification
 
