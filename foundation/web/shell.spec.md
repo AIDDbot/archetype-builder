@@ -30,7 +30,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 ### back
 
-- `core` mounts the registrations of the manifest under `/api`, and makes the index from them. No feature writes its route in a second list. The registration contract is in `shared/http/`.
+- `core` mounts the registrations of the manifest under `/api`, and makes the index from them. No feature writes its route in a second list. The registration contract is in `shared/http/`, with a fake of the request and the response for the unit tests of each route: no test writes its own (Daylight, from web-I).
 - The error answers of the error handler of `platform`: 400 for a body that is not valid JSON or an input error (with `fields`), 404 `{ "error": "Not found" }` for each unknown path under `/api`, 413 for a body larger than the limit, 500 `{ "error": "Internal server error" }` for an unexpected failure. Each one is `{ "error": "<message>" }`.
 
 ### front
