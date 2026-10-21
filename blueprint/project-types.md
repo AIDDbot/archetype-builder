@@ -6,9 +6,9 @@ Three levels, from the most generic to the most concrete. Each level only adds; 
 
 | Level | Specs | Tooling | Rules | Where |
 | --- | --- | --- | --- | --- |
-| Generic | the 6 capabilities | the slots and their contracts | the Blueprint | AIDDbot and [`foundation/`](../foundation/) |
+| Generic | the 6 capabilities | the slots and their contracts | the Blueprint | AIDDbot and this file |
 | By type | the row of each type | which slots apply, and why | layers and folders | this file |
-| By technology | the instance in `foundation/` | command and tool, in the Bedrock | technology rules | each archetype |
+| By archetype | the instance of each spec in `foundation/{archetype}/` of the Builder | command and tool, in the Bedrock | technology rules | each archetype |
 
 A cell that does not apply is `n/a` with its reason. An empty cell is an error.
 
@@ -20,13 +20,13 @@ The core of the archetype is a framework: `scaffold`, `platform` and `presentati
 
 | # | Spec (question) | `api` | `web` | `cli` | `e2e` |
 | --- | --- | --- | --- | --- | --- |
-| 0 | [`scaffold`](../foundation/scaffold.spec.md) — how is each project made? | framework, entry, slots | framework, entry, slots | entry, slots | slots; `test` passes with no test |
-| 1 | [`platform`](../foundation/platform.spec.md) — how does it start, and how do we observe it? `chore` | settings, migrations, middleware (CORS, headers, request identifier, body limit), log file, listening line, clean stop | settings, runtime configuration, listening line, console logger, errors of the HTTP client | settings and their sources, log file, exit codes 0 / 1 / 2 / 3 | the settings of each project, start of the suite, preflight, start and error helpers |
-| 2 | [`shell`](../foundation/shell.spec.md) — how do people use it? | API index, error answers 400 / 404 / 413 / 500, one contract test of the wiring | layout: frame, menu, theme, home, not-found page, contrast of the themes | usage: help, unknown command → exit code 2, `--json`, `error:` with exit code 3, log line | shell page objects, `--json` helper, contract tests |
-| 3 | [`presentation`](../foundation/presentation.spec.md) — how does it show and collect data? `chore` | `readFields`, `readPage`, ISO values | card, detail, table, form, states, readable values | text table, `{label}: {value}`, `readOptions` | readers of tables and records, `recordForm`, contrast helper |
-| 4 | [`about`](../foundation/about.spec.md) — what is it? | `GET /api/about` | tracer bullet: page `/about` and card from `GET /api/about`, version on the home page; the first card, record, table and states | `--version` and `about`, the first record | page objects of `/about` and the about card |
-| 5 | [`users`](../foundation/users.spec.md) — who uses it? Optional: the system has users. | register, login, session, account, logout | forms, session, menu by access, page guard | n/a: a local cli has no users (Columbus D67) | API client and page objects of the session |
-| 6 | [`settings`](../foundation/settings.spec.md) — what does each person keep? In a `web`, optional with `users`. | `GET` and `PUT /api/users/me/settings` | page `/settings`: theme and date format of the account | `config get\|set`, the first table | page object of `/settings`, the `config` helpers |
+| 0 | `scaffold` — how is each project made? | framework, entry, slots | framework, entry, slots | entry, slots | slots; `test` passes with no test |
+| 1 | `platform` — how does it start, and how do we observe it? `chore` | settings, migrations, middleware (CORS, headers, request identifier, body limit), log file, listening line, clean stop | settings, runtime configuration, listening line, console logger, errors of the HTTP client | settings and their sources, log file, exit codes 0 / 1 / 2 / 3 | the settings of each project, start of the suite, preflight, start and error helpers |
+| 2 | `shell` — how do people use it? | API index, error answers 400 / 404 / 413 / 500, one contract test of the wiring | layout: frame, menu, theme, home, not-found page, contrast of the themes | usage: help, unknown command → exit code 2, `--json`, `error:` with exit code 3, log line | shell page objects, `--json` helper, contract tests |
+| 3 | `presentation` — how does it show and collect data? `chore` | `readFields`, `readPage`, ISO values | card, detail, table, form, states, readable values | text table, `{label}: {value}`, `readOptions` | readers of tables and records, `recordForm`, contrast helper |
+| 4 | `about` — what is it? | `GET /api/about` | tracer bullet: page `/about` and card from `GET /api/about`, version on the home page; the first card, record, table and states | `--version` and `about`, the first record | page objects of `/about` and the about card |
+| 5 | `users` — who uses it? Optional: the system has users. | register, login, session, account, logout | forms, session, menu by access, page guard | n/a: a local cli has no users (Columbus D67) | API client and page objects of the session |
+| 6 | `settings` — what does each person keep? In a `web`, optional with `users`. | `GET` and `PUT /api/users/me/settings` | page `/settings`: theme and date format of the account | `config get\|set`, the first table | page object of `/settings`, the `config` helpers |
 
 An archetype delivers the instance of each spec with the rows of its types, and removes the rows of the types that it does not have.
 

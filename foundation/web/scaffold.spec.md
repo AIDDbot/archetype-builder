@@ -1,15 +1,9 @@
-<!--
-Foundation spec 0 of 6: how is each project made? (Halloween cli-6). It comes before `platform`. It starts from the Bedrock of the archetype (Halloween D42, D45).
-Written in ASD-STE100 Simplified Technical English. Technical names are not dictionary words.
-Create: aidd spec new chore scaffold "Scaffold" --domain foundation
-Instance: one Solution subsection for each project of `.product/system.md`, with its type and its folder.
-A `chore` has no requirements: nothing that an observer sees changes. The regression of the release and the boundary proof are its verification.
--->
+<!-- Instance of the foundation spec for Archetype Web. aidd spec new chore scaffold "Scaffold" --domain foundation --from .product/foundation/scaffold.spec.md -->
 # {id}-scaffold — Scaffold
 
 ## Problem
 
-Each project of `.product/system.md` must have its framework, its entry and all its tooling slots, before the first foundation spec adds a behavior. The Bedrock of the archetype is at the root: the workspace, the tooling of each project, the debt checks (`.lint/`), the identity, the license and, in a `web`, the brand theme (Halloween D42, D45).
+Each project of `.product/system.md` must have its framework, its entry and all its tooling slots, before the first foundation spec adds a behavior. The Bedrock of the archetype is at the root: the workspace, the tooling of each project, the debt checks (`.lint/`), the identity, the license and, in the `front`, the brand theme (Halloween D42, D45).
 
 ### User Stories
 
@@ -31,9 +25,16 @@ Each project of `.product/system.md` must have its framework, its entry and all 
 
 ### The system
 
-- The Bedrock gives the root: the root `package.json` with the `license` and no identity, the workspace, the pre-commit hook and `.lint/`. Each project that shows the identity (`api`, `web`, `cli`) has it in its `package.json` (`displayName`, `description`, `author` with `name` and `url`, `version`). The scaffold registers these files with `node .agents/aidd/aidd.mjs config set release.versionFiles '["projects/{project}/package.json", …]'`: `aidd release` writes each `version`.
+- The Bedrock gives the root: the root `package.json` with the `license` and no identity, the workspace, the pre-commit hook and `.lint/`. Each project that shows the identity (`back`, `front`) has it in its `package.json` (`displayName`, `description`, `author` with `name` and `url`, `version`). The scaffold registers these files with `node .agents/aidd/aidd.mjs config set release.versionFiles '["projects/back/package.json", "projects/front/package.json"]'`: `aidd release` writes each `version`.
 
 ### Each project
+
+| Project | Type | Folder | Framework |
+| --- | --- | --- | --- |
+| `back` | `api` | `projects/back/` | Express |
+| `front` | `web` | `projects/front/` | React with react-router |
+| `e2e` | `e2e` | `projects/e2e/` | none: Playwright, in the Bedrock |
+
 
 | Step | Commit | Result |
 | --- | --- | --- |
@@ -44,14 +45,14 @@ Each project of `.product/system.md` must have its framework, its entry and all 
 **Step 1: add framework**
 
 - Fill `.product/blueprint/project.AGENTS.template.md` for the technology, with the column of its type from `.product/blueprint/project-types.md`. `{folder}/AGENTS.md` is the filled template. Put a `CLAUDE.md` next to it that contains only `@AGENTS.md`.
-- Add the framework of that `AGENTS.md` with the commands of "Frameworks on the Bedrock" in `.product/blueprint/ecosystems.md`, as they are. Never run a generator of the framework: the Bedrock already has the project. A project with no framework (a `cli`, an `e2e`) skips this commit, except for its `AGENTS.md`.
+- Add the framework of that `AGENTS.md` with the commands of "Frameworks on the Bedrock" in `.product/blueprint/ecosystems.md`, as they are. Never run a generator of the framework: the Bedrock already has the project. The `e2e` has no framework: it skips this commit, except for its `AGENTS.md`.
 
 **Step 2: add entry**
 
 - The entry `main`, alone at the root of `src`; the manifest of the features, empty; and `core/lifecycle/` with the composition and the start (Halloween D40, D41). The `start` script of the project runs the entry.
   - Keep the mechanisms of the framework (injector, router, store, file names) and map them to the concepts.
 - The primitives of `shared` come with the Bedrock, with their unit tests: the expected error and the identity type at the root of `shared`, the others in `shared/values/`. Use them; never write a second version. The shared primitives table of the `AGENTS.md` lists them. An `e2e` has only the checks (`shared/values/values.check.ts`), with no unit test: it reads JSON with no type too.
-- In a `web`, the entry imports Pico CSS, the fonts and the theme of `src/core/theme/`, in the order of `ecosystems.md`.
+- In the `front`, the entry imports Pico CSS, the fonts and the theme of `src/core/theme/`, in the order of `ecosystems.md`.
 
 **Step 3: register tooling**
 
@@ -72,7 +73,7 @@ Each project of `.product/system.md` must have its framework, its entry and all 
 
 ### Requirements
 
-None: a `chore` changes nothing that an observer sees. The regression of the release (`test` of all projects), the hook at each commit, and the proofs of step 3 are its verification.
+None: a `chore` changes nothing that an observer sees. The `crap` of each project, the hook at each commit, the proofs of step 3 and the regression of the release are its verification.
 
 ### Expected URLs and APIs
 
