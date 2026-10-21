@@ -91,7 +91,7 @@ Each project `AGENTS.md` copies these rules as written into its technology rules
 - Give each parameter a named type, also the props of a component (`type AboutPageProps = { … }`): never an object type or `ReturnType<…>` in a signature. (`types/named`)
 - Declare the return type of each exported function, also in the `e2e`; only a component (`.tsx`) has none. (`explicit-module-boundary-types`)
 - A choice between kinds is a table (`Record<Kind, Handler>`), never a chain of `if` or a `switch`. A function with several steps calls one function for each step. (complexity 8, 16 statements)
-- More than 2 values go in one object with a named type. Only a middleware of `core/http/` takes the 4 parameters of Express. (`max-params`)
+- More than 2 values go in one object with a named type. Only a middleware of `core/http/` takes the parameters of Express (4) or of the Connect server of Vite (3). (`max-params`)
 - An adapter has no branch, no `??` and no default value: the decision goes to a function of `core` that gets the adapter as an argument. (complexity 1)
 - Each `.ts` file has its unit test next to it, except `main`, the adapters and the components. (coverage 100)
 
