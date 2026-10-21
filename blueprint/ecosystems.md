@@ -17,7 +17,7 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 A repository has one pre-commit hook, so the root of the system is one Vite+ workspace (quality gates, step 3). The Bedrock of each archetype has this workspace ready (Halloween D42): keep it as it is, and add only what a framework needs.
 
 - Each project is a flat folder with its name in `projects/`: `projects/back/`, `projects/front/`, `projects/cli/`, `projects/e2e/`. It is a project, never an app: do not use the `apps/` and `packages/` folders of the Vite+ templates. Thus the root keeps only the records of AIDDbot, the hook and the workspace.
-- The root `package.json` has `"workspaces": ["projects/*"]`, `license`, `vite-plus` in `devDependencies`, `"prepare": "vp config"` (it installs the hook) and `"test": "vp run -r test"`. It also has `"overrides": { "vite": "npm:@voidzero-dev/vite-plus-core@latest" }`: Vite+ brings its own Vite, and a plugin with `vite` as a peer dependency (such as `@vitejs/plugin-react`) installs a second one. With two copies, the `Plugin` types do not match: `vp check` passes, but the editor shows `Excessive stack depth comparing types` and `Type 'Plugin<any>[]' is not assignable to type 'PluginOption'` in `vite.config.ts` (Daylight, from web-I).
+- The root `package.json` has `"workspaces": ["projects/*"]`, `license`, `vite-plus` in `devDependencies`, `"prepare": "vp config"` (it installs the hook) and `"test": "vp run -r test"`. It also has `"overrides": { "vite": "npm:@voidzero-dev/vite-plus-core@latest" }`: Vite+ brings its own Vite, and a plugin with `vite` as a peer dependency (such as `@vitejs/plugin-react`) installs a second one. With two copies, the `Plugin` types do not match: `vp check` passes, but the editor shows `Excessive stack depth comparing types` and `Type 'Plugin<any>[]' is not assignable to type 'PluginOption'` in `vite.config.ts` (Daylight, from web-I). npm 12 applies the override only to a package that the root installs: a Vite plugin goes into the root `devDependencies` too, else its project gets its own `vite` (Daylight, from web-1).
 - `.vite-hooks/pre-commit` contains `vp staged`. `vp config` installs the dispatcher, but not this file: the Bedrock has it.
 - The root has no `tsconfig.json`. Each project has its own `tsconfig.json`, with `"erasableSyntaxOnly": true`, `"allowImportingTsExtensions": true` and `"types": ["node"]`: Node.js runs the TypeScript files as they are, so a syntax that it cannot erase (such as a parameter property `constructor(public readonly kind)`) fails at run time, not at the type check.
 - Each project has its `package.json` with its scripts, its `vite.config.ts` with its Vitest project (`name`, `include`) and its coverage, and a `.gitignore` that anchors its runtime data: the default paths of its settings, such as `/data/`, `/logs/` or `/config.json`.
@@ -141,7 +141,7 @@ The Bedrock has each project with its tooling and no framework (Halloween D42). 
 | --- | --- | --- |
 | `api` with Express | `npm install -w back express && npm install -w back -D @types/express` | The `start` script: `node src/app.main.ts`. |
 | `cli` | nothing: TypeScript on Node.js, with no framework | The `start` script: `node src/app.main.ts`, and `bin`. |
-| `web` with React | `npm install -w front react react-dom react-router && npm install -w front -D @vitejs/plugin-react @types/react @types/react-dom` | `plugins: [react()]` in the `vite.config.ts` of the project; `"jsx": "react-jsx"` in its `tsconfig.json`; `index.html` with the root element and the entry `src/app.main.tsx`; in the root `vite.config.ts`, the lint plugins `react` and `jsx-a11y` and the false alarm `react/react-in-jsx-scope` off. The `start` script: `vp dev`. |
+| `web` with React | `npm install -w front react react-dom react-router && npm install -w front -D @vitejs/plugin-react @types/react @types/react-dom && npm install -D @vitejs/plugin-react` | `plugins: [react()]` in the `vite.config.ts` of the project; `"jsx": "react-jsx"` in its `tsconfig.json`; `index.html` with the root element and the entry `src/app.main.tsx`; in the root `vite.config.ts`, the lint plugins `react` and `jsx-a11y` and the false alarm `react/react-in-jsx-scope` off. The `start` script: `vp dev`. |
 | `e2e` | nothing: the Bedrock has the runner | With Playwright: `npm exec -w e2e -- playwright install chromium`. |
 
 Use these commands as they are. A different framework is in the `AGENTS.md` of its archetype: test its commands on a copy of the Bedrock before you write them.
@@ -222,7 +222,7 @@ The dependencies that this file names for JS / TS on Node:
 
 | Where | Dependencies |
 | --- | --- |
-| root `devDependencies` | `vite-plus`, `@vitest/coverage-v8`, `@types/node` (for `"types": ["node"]`) |
+| root `devDependencies` | `vite-plus`, `@vitest/coverage-v8`, `@types/node` (for `"types": ["node"]`); with React, `@vitejs/plugin-react` too (the override of `vite`) |
 | `api` with Express | `express`, `@types/express` |
 | `web` | `@picocss/pico`, `@fontsource/roboto`, `@fontsource/audiowide`, `@fontsource/anonymous-pro` |
 | `web` with React | `react`, `react-dom`, `react-router`, `@vitejs/plugin-react`, `@types/react`, `@types/react-dom` |
