@@ -1,5 +1,5 @@
 import { expect, it } from "vite-plus/test";
-import { parseBoolean } from "#shared/values/booleans.parse.ts";
+import { parseBoolean } from "#shared/values/booleans/booleans.parse.ts";
 
 it("parses a boolean, a word or a digit", () => {
   expect(parseBoolean(true, "debug")).toBe(true);

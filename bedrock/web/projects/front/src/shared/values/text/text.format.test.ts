@@ -1,5 +1,5 @@
 import { expect, it } from "vite-plus/test";
-import { padText, truncateText } from "#shared/values/text.format.ts";
+import { padText, truncateText } from "#shared/values/text/text.format.ts";
 
 it("keeps a text that fits", () => {
   expect(truncateText("Ada", 3)).toBe("Ada");

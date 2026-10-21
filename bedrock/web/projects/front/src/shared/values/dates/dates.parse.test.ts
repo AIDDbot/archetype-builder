@@ -1,5 +1,5 @@
 import { expect, it } from "vite-plus/test";
-import { parseDate } from "#shared/values/dates.parse.ts";
+import { parseDate } from "#shared/values/dates/dates.parse.ts";
 
 it("parses an ISO date, or an ISO date and time", () => {
   expect(parseDate("2026-10-21", "since").toISOString()).toBe("2026-10-21T00:00:00.000Z");

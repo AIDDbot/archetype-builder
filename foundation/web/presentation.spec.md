@@ -41,7 +41,7 @@ A record is one thing that the application shows, such as the application itself
 
 ### back
 
-- `readFields` and `readPage` in `shared/http/`, and the date format in `shared/values/`. The features of later specs use them.
+- `readFields` and `readPage` in `shared/http/`, and the date format in `shared/values/dates/`. The features of later specs use them.
 
 ### front
 

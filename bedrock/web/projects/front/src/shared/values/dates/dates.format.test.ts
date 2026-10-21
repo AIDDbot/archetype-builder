@@ -1,5 +1,5 @@
 import { expect, it } from "vite-plus/test";
-import { formatDate, formatDateTime, formatTime } from "#shared/values/dates.format.ts";
+import { formatDate, formatDateTime, formatTime } from "#shared/values/dates/dates.format.ts";
 
 const date = new Date(2026, 0, 2, 3, 4, 5, 6);
 

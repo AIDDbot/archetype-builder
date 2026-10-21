@@ -1,5 +1,5 @@
 import { expect, it } from "vite-plus/test";
-import { optionalText, requireLength, requireText } from "#shared/values/text.parse.ts";
+import { optionalText, requireLength, requireText } from "#shared/values/text/text.parse.ts";
 
 const name = { field: "name", min: 2, max: 5 };
 

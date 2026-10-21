@@ -130,11 +130,11 @@ The index of `shared`. Read it before you write a check, a conversion or a forma
 | Primitives | Contract | Path |
 | --- | --- | --- |
 | `isMissing`, `isEmpty`, `isRecord`, `isText`, `isOneOf` | Type guards: `null` or `undefined`; missing, blank, or an empty list or record; a key-value object; a text that is not blank; one of a closed list. | `{shared_folder}/values/values.check.ts` |
-| `findByName`, `requireByName` | The item with that `name`: or nothing, or an expected error with the kind and the name. | `{shared_folder}/values/lists.find.ts` |
-| `requireText`, `optionalText`, `requireLength` | Text without end spaces: required, or nothing when blank, or with `{ field, min, max }` characters. | `{shared_folder}/values/text.parse.ts` |
-| `truncateText`, `padText` | The text cut with `…` inside a width; in a column `{ width, align }`. | `{shared_folder}/values/text.format.ts` |
-| `parseInteger`, `parseNumber`, `parseBoolean`, `parseDate` | A value from a text or its type, in `{ field, min, max }`; a boolean from `true`, `false`, `1`, `0`; a date from ISO. | `{shared_folder}/values/{numbers,booleans,dates}.parse.ts` |
-| `formatDate`, `formatTime`, `formatDateTime` | `YYYY-MM-DD`, `HH:MM:SS.mmm`, `YYYY-MM-DD HH:MM:SS`, in local time. | `{shared_folder}/values/dates.format.ts` |
+| `findByName`, `requireByName` | The item with that `name`: or nothing, or an expected error with the kind and the name. | `{shared_folder}/values/lists/lists.find.ts` |
+| `requireText`, `optionalText`, `requireLength` | Text without end spaces: required, or nothing when blank, or with `{ field, min, max }` characters. | `{shared_folder}/values/text/text.parse.ts` |
+| `truncateText`, `padText` | The text cut with `…` inside a width; in a column `{ width, align }`. | `{shared_folder}/values/text/text.format.ts` |
+| `parseInteger`, `parseNumber`, `parseBoolean`, `parseDate` | A value from a text or its type, in `{ field, min, max }`; a boolean from `true`, `false`, `1`, `0`; a date from ISO. | `{shared_folder}/values/{numbers,booleans,dates}/{numbers,booleans,dates}.parse.ts` |
+| `formatDate`, `formatTime`, `formatDateTime` | `YYYY-MM-DD`, `HH:MM:SS.mmm`, `YYYY-MM-DD HH:MM:SS`, in local time. | `{shared_folder}/values/dates/dates.format.ts` |
 | `ExpectedError`, `ruleError`, `attempt` | The expected error (`rule`, `usage`, `unavailable`) that each failed check raises; a `rule` error of one field; the result of an action, or `unavailable` when an external resource fails (only `data` and `core`). | `{shared_folder}/expected.error.ts` |
 | `Identity` | The type of the identity in the `package.json` of the project. | `{shared_folder}/identity.type.ts` |
 | `Database`, `openMemoryDatabase` | Only an `api`: the contract of the database, and a database in memory for the unit tests of `data`, with real SQL. | `{shared_folder}/database/database.{contract,open}.ts` |

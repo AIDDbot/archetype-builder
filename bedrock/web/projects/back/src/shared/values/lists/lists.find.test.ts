@@ -1,6 +1,6 @@
 import { expect, it } from "vite-plus/test";
 import { ExpectedError } from "#shared/expected.error.ts";
-import { findByName, requireByName } from "#shared/values/lists.find.ts";
+import { findByName, requireByName } from "#shared/values/lists/lists.find.ts";
 
 it("finds an item by name", () => {
   const items = [{ name: "home" }, { name: "about" }];

@@ -1,5 +1,5 @@
 import { expect, it } from "vite-plus/test";
-import { parseInteger, parseNumber } from "#shared/values/numbers.parse.ts";
+import { parseInteger, parseNumber } from "#shared/values/numbers/numbers.parse.ts";
 
 const port = { field: "PORT", min: 1, max: 65535 };
 const ratio = { field: "ratio", min: 0, max: 1 };
