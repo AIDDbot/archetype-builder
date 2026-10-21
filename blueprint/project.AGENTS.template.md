@@ -137,6 +137,7 @@ The index of `shared`. Read it before you write a check, a conversion or a forma
 | `formatDate`, `formatTime`, `formatDateTime` | `YYYY-MM-DD`, `HH:MM:SS.mmm`, `YYYY-MM-DD HH:MM:SS`, in local time. | `{shared_folder}/values/dates.format.ts` |
 | `ExpectedError`, `ruleError`, `attempt` | The expected error (`rule`, `usage`, `unavailable`) that each failed check raises; a `rule` error of one field; the result of an action, or `unavailable` when an external resource fails (only `data` and `core`). | `{shared_folder}/expected.error.ts` |
 | `Identity` | The type of the identity in the `package.json` of the project. | `{shared_folder}/identity.type.ts` |
+| `Database`, `openMemoryDatabase` | Only an `api`: the contract of the database, and a database in memory for the unit tests of `data`, with real SQL. | `{shared_folder}/database/database.{contract,open}.ts` |
 | {environment primitive} | {contract} | {path} |
 
 <!-- [Project] Write the environment primitive of this project type in the row above, from section 4 of `project-types.md`. -->
