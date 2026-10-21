@@ -41,3 +41,7 @@ secrets.json
 
 # Vite+ hook dispatcher: vp config writes it again
 /.vite-hooks/_/
+
+# Tool output: Vitest writes them in each project
+.vite/
+coverage/
