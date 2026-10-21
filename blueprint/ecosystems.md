@@ -41,7 +41,10 @@ export default defineConfig({
     plugins: ["typescript", "unicorn", "oxc", "import", "node", "promise", "vitest"],
     categories: { correctness: "error", suspicious: "error" },
     options: { typeAware: true, typeCheck: true },
-    rules: { "typescript/no-non-null-assertion": "error" },
+    rules: {
+      "typescript/no-non-null-assertion": "error",
+      "import/no-unassigned-import": ["error", { allow: ["**/*.css"] }],
+    },
   },
   test: { projects: ["projects/*"] },
 });
@@ -55,7 +58,7 @@ export default defineConfig({
 - Format and lint leave out `.agents/` and `.aiddbot/` (`ignorePatterns`): AIDDbot owns them, and a commit of `aiddbot update` must pass the hook with no change to them. They leave out `.lint/` too: it is an asset of the Bedrock, and a format would make it differ.
 - `test.projects` names the folder of each Vitest project, so that `vp test related` uses the configuration of each project.
 - The hook lints by packages, never rule by rule: the categories `correctness` and `suspicious`, with the plugins of the stack (add `react` and `jsx-a11y` in a `web` with React). Never turn on a rule or turn off a rule of a package one by one. A finding of a package is repaired in the code.
-- The one rule turned on: a value that can be missing is checked, never asserted with `!` (`typescript/no-non-null-assertion`). It is in the category `restriction`, which is not a package: its rules contradict each other.
+- The one rule turned on: a value that can be missing is checked, never asserted with `!` (`typescript/no-non-null-assertion`). One rule has an option: `import/no-unassigned-import` allows a style sheet (`**/*.css`), because a `web` imports each one for its effect. It is in the category `restriction`, which is not a package: its rules contradict each other.
 - A false alarm of a package, in a `web` with React: `react/react-in-jsx-scope`. React 17 and later transforms JSX with no `React` in scope. Turn it off in the `rules` of the root `vite.config.ts`, next to the rule turned on; never in a file of its own.
 
 **Unit tests**
@@ -208,7 +211,7 @@ In a React `web`, a `.tsx` file only renders: no rule, no check and no conversio
 The `front` project of the `web` Bedrock has the visual base (Halloween D38, D45): Pico CSS, the fonts and the brand theme. A new archetype with a `web` starts from it. For now it is the brand of the author of AIDDbot (Halloween D11).
 
 - Pico CSS and the fonts are dependencies of the Bedrock: `@picocss/pico`, and `@fontsource/roboto` for the text, `@fontsource/audiowide` for the headings, `@fontsource/anonymous-pro` for code. The entry file imports them, and the bundler serves them from the project. No CDN, thus the application operates offline. Never copy their files into the project: the `upgrade` slot keeps them current.
-- The theme is in `src/core/theme/` of the Bedrock: `theme.css` (typography and spacing on top of Pico), `colors.css` (the `--ab-*` brand tokens for the light and dark themes, mapped to the `--pico-*` variables) and `custom.css` (components). The entry imports them after Pico. Never write them again: a rewrite costs tokens and can change them. Never invent other colors: the owner changes the values only in these files.
+- The theme is in `src/core/theme/` of the Bedrock: `theme.css` (typography and spacing on top of Pico), `colors.css` (the `--ab-*` brand tokens for the light and dark themes, mapped to the `--pico-*` variables) and `custom.css` (components). The entry imports Pico, the fonts and the theme for their effect, each by the path of its file: `import "@picocss/pico/css/pico.min.css";`, `import "@fontsource/roboto/index.css";` (and the other fonts), then `import "#core/theme/theme.css";`, `colors.css` and `custom.css`. Vite injects each one in the page. Never import a style sheet as a value, never declare `*.css` modules of your own, and never write a plugin that changes CSS: the `tsconfig.json` of the `web` has `"types": ["node", "vite-plus/client"]`, which declares them (Daylight, from web-I: a default import left the page with no style, and the repair was a plugin). Never write them again: a rewrite costs tokens and can change them. Never invent other colors: the owner changes the values only in these files.
 - Components write semantic HTML with the elements and classes of Pico, so Pico, the theme and the tokens reach every element. No CSS-in-JS, no CSS modules, no component library and no Shadow DOM.
 - The theme is in the `data-theme` attribute of the document. The first value comes from `prefers-color-scheme`. The user selection stays in `localStorage`.
 

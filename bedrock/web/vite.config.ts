@@ -11,7 +11,10 @@ export default defineConfig({
     plugins: ["typescript", "unicorn", "oxc", "import", "node", "promise", "vitest"],
     categories: { correctness: "error", suspicious: "error" },
     options: { typeAware: true, typeCheck: true },
-    rules: { "typescript/no-non-null-assertion": "error" },
+    rules: {
+      "typescript/no-non-null-assertion": "error",
+      "import/no-unassigned-import": ["error", { allow: ["**/*.css"] }],
+    },
   },
   test: { projects: ["projects/*"] },
 });
