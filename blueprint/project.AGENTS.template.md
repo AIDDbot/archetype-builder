@@ -123,7 +123,7 @@ Contracts:
 
 ### Shared primitives
 
-<!-- [Blueprint] The Bedrock has these primitives, with their unit tests, in each project that is not an `e2e` (Daylight). Each one passes the debt checks: read it as the reference of the code rules. One topic for each file (`{topic}.{role}.ts`), one function for each contract, named by what it returns or checks; a failed check raises the expected error. [Project] `ship-spec` adds each new primitive that two or more features use. A helper of one feature (such as its page object or its test data) follows the naming convention below and gets no row. A helper of the life cycle of `core` gets no row. An `e2e` removes the rows of the Bedrock. D29. -->
+<!-- [Blueprint] The Bedrock has these primitives, with their unit tests, in each project that is not an `e2e` (Daylight). Each one passes the debt checks: read it as the reference of the code rules. One topic for each file (`{topic}.{role}.ts`), one function for each contract, named by what it returns or checks; a failed check raises the expected error. [Project] `ship-spec` adds each new primitive that two or more features use. A helper of one feature (such as its page object or its test data) follows the naming convention below and gets no row. A helper of the life cycle of `core` gets no row. An `e2e` keeps only the row of `values.check.ts`, the checks that it uses to read JSON. D29. -->
 
 The index of `shared`. Read it before you write a check, a conversion or a format: never write a second version of one. Helpers of one feature follow `{shared_folder}/{feature_helper_pattern}` and have no row.
 

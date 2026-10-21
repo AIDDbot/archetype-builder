@@ -57,7 +57,7 @@ A project keeps only the column of its type in section 4 of its `AGENTS.md`.
 | `presentation` | route / controller and its registration | page / component and its registration | command and its registration | n/a: no layers |
 | `logic` | service | store / use case | service | n/a: no layers |
 | `data` | repository | API client | repository / file system / API client | n/a: no layers |
-| `shared` folders | `values/`, `database/`, `logging/`, `http/`, `session/` | `values/`, `http/`, `logging/`, `components/`, `session/` | `values/`, `settings/`, `logging/`, `output/` | `page-objects/`, `test-data/`, `projects/` |
+| `shared` folders | `values/`, `database/`, `logging/`, `http/`, `session/` | `values/`, `http/`, `logging/`, `components/`, `session/` | `values/`, `settings/`, `logging/`, `output/` | `values/` (the checks of the Bedrock), `page-objects/`, `test-data/`, `projects/` |
 
 The `core` folders are a closed list too, by technical concern: no file at the root of `core`. Each one comes with the first spec that puts a file in it: the Bedrock → `theme/` (`web`); `scaffold` → `lifecycle/`; `platform` → `settings/`, `logging/`, `http/`, `database/` (`api`), `arguments/` (`cli`); `shell` → `shell/` (`web`), `output/` (`cli`). A folder over 16 entries divides by concern; a new folder is written in section 5 of the `AGENTS.md` of the project (Halloween D41).
 

@@ -50,7 +50,7 @@ Each project of `.product/system.md` must have its framework, its entry and all 
 
 - The entry `main`, alone at the root of `src`; the manifest of the features, empty; and `core/lifecycle/` with the composition and the start (Halloween D40, D41). The `start` script of the project runs the entry.
   - Keep the mechanisms of the framework (injector, router, store, file names) and map them to the concepts.
-- The primitives of `shared` come with the Bedrock, with their unit tests: the expected error and the identity type at the root of `shared`, the others in `shared/values/`. Use them; never write a second version. The shared primitives table of the `AGENTS.md` lists them. An `e2e` has none.
+- The primitives of `shared` come with the Bedrock, with their unit tests: the expected error and the identity type at the root of `shared`, the others in `shared/values/`. Use them; never write a second version. The shared primitives table of the `AGENTS.md` lists them. An `e2e` has only the checks (`shared/values/values.check.ts`), with no unit test: it reads JSON with no type too.
 - In a `web`, the entry imports Pico CSS, the fonts and the theme of `src/core/theme/`, in the order of `ecosystems.md`.
 
 **Step 3: register tooling**
