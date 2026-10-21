@@ -35,7 +35,7 @@ A system with users must know who sends each request, before a feature needs thi
 
 ### front
 
-- `logic` of `auth` keeps the session, with its contract in `shared/session/`; the token stays in the browser storage, and the HTTP client sends it.
+- `logic` of `auth` keeps the session, with its contract in `shared/session/`; the token stays in the browser storage, through an adapter in `core/session/`, and the HTTP client sends it.
 - One access mark on each page and menu link. `core` builds the menu and guards the pages from the marks and the session state, through the `auth` registration; it never imports `auth`.
 - After a login, `core` goes back to `returnTo` only for a registered page on the same origin; otherwise `/`.
 - Feature `users`: page `/users/:id`, mark `session`, no menu link: a record detail of `presentation`.
