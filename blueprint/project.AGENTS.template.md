@@ -123,24 +123,20 @@ Contracts:
 
 ### Shared primitives
 
-<!-- [Blueprint] Seed: the scaffold makes these primitives, with their unit tests, before the first spec (Halloween cli-6). One topic for each file, one function for each contract, named by what it returns or checks; a failed check raises the expected error of `monitoring`. [Archetype] Paths and idiomatic names. [Project] `ship-spec` adds each new primitive that two or more features use. A helper of one feature (such as its page object or its test data) follows the naming convention below and gets no row. A helper of the life cycle of `core` gets no row. D29. -->
+<!-- [Blueprint] The Bedrock has these primitives, with their unit tests, in each project that is not an `e2e` (Daylight). Each one passes the debt checks: read it as the reference of the code rules. One topic for each file (`{topic}.{role}.ts`), one function for each contract, named by what it returns or checks; a failed check raises the expected error. [Project] `ship-spec` adds each new primitive that two or more features use. A helper of one feature (such as its page object or its test data) follows the naming convention below and gets no row. A helper of the life cycle of `core` gets no row. An `e2e` removes the rows of the Bedrock. D29. -->
 
-The index of `shared`. Read it before you write a check or a conversion. Helpers of one feature follow `{shared_folder}/{feature_helper_pattern}` and have no row.
+The index of `shared`. Read it before you write a check, a conversion or a format: never write a second version of one. Helpers of one feature follow `{shared_folder}/{feature_helper_pattern}` and have no row.
 
-| Primitive | Contract | Path |
+| Primitives | Contract | Path |
 | --- | --- | --- |
-| `isRecord(value)` | True for a key-value object. Other type guards use it. | `{shared_folder}/values/{checks_file}` |
-| `isText(value)` | True for a text with a character that is not a space. | `{shared_folder}/values/{checks_file}` |
-| `isOneOf(value, options)` | True for one of a closed list of values; narrows the type. | `{shared_folder}/values/{checks_file}` |
-| `findByName(items, name)` | The item with that `name`, or nothing. | `{shared_folder}/values/{checks_file}` |
-| `requireByName(items, { name, kind })` | The item with that `name`, or an expected error that names the kind and the name. | `{shared_folder}/values/{checks_file}` |
-| `requireText(value, field)` | Text without end spaces, or an expected error with the field. | `{shared_folder}/values/{text_file}` |
-| `parseInteger(value, { field, min, max })` | Integer from `min` to `max`, or an expected error with the field and the range. | `{shared_folder}/values/{numbers_file}` |
-| `formatDate(date)` | `YYYY-MM-DD` in local time. | `{shared_folder}/values/{dates_file}` |
-| `formatTime(date)` | `HH:MM:SS.mmm` in local time. | `{shared_folder}/values/{dates_file}` |
-| `formatDateTime(date)` | `YYYY-MM-DD HH:MM:SS` in local time, for a person. | `{shared_folder}/values/{dates_file}` |
-| `ExpectedError(kind, message)` | The expected error, with its kind: `rule`, `usage` or `unavailable`. Each failed check raises it; `platform` gives each kind its exit code or status. | `{shared_folder}/{errors_file}` |
-| `attempt(action, message)` | The result of `action`, or the expected error `unavailable` with `message` when an external resource fails. Only `data` and `core` use it. | `{shared_folder}/{errors_file}` |
+| `isMissing`, `isEmpty`, `isRecord`, `isText`, `isOneOf` | Type guards: `null` or `undefined`; missing, blank, or an empty list or record; a key-value object; a text that is not blank; one of a closed list. | `{shared_folder}/values/values.check.ts` |
+| `findByName`, `requireByName` | The item with that `name`: or nothing, or an expected error with the kind and the name. | `{shared_folder}/values/lists.find.ts` |
+| `requireText`, `optionalText`, `requireLength` | Text without end spaces: required, or nothing when blank, or with `{ field, min, max }` characters. | `{shared_folder}/values/text.parse.ts` |
+| `truncateText`, `padText` | The text cut with `…` inside a width; in a column `{ width, align }`. | `{shared_folder}/values/text.format.ts` |
+| `parseInteger`, `parseNumber`, `parseBoolean`, `parseDate` | A value from a text or its type, in `{ field, min, max }`; a boolean from `true`, `false`, `1`, `0`; a date from ISO. | `{shared_folder}/values/{numbers,booleans,dates}.parse.ts` |
+| `formatDate`, `formatTime`, `formatDateTime` | `YYYY-MM-DD`, `HH:MM:SS.mmm`, `YYYY-MM-DD HH:MM:SS`, in local time. | `{shared_folder}/values/dates.format.ts` |
+| `ExpectedError`, `ruleError`, `attempt` | The expected error (`rule`, `usage`, `unavailable`) that each failed check raises; a `rule` error of one field; the result of an action, or `unavailable` when an external resource fails (only `data` and `core`). | `{shared_folder}/expected.error.ts` |
+| `Identity` | The type of the identity in the `package.json` of the project. | `{shared_folder}/identity.type.ts` |
 | {environment primitive} | {contract} | {path} |
 
 <!-- [Project] Write the environment primitive of this project type in the row above, from section 4 of `project-types.md`. -->

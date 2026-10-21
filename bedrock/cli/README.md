@@ -1,6 +1,6 @@
 # Archetype CLI
 
-A system made from the Archetype CLI bedrock of the [Archetype Builder](https://github.com/AIDDbot/archetype-builder). It has the tooling of each project and no framework: the `scaffold` spec adds the framework and the code (Halloween D42).
+A system made from the Archetype CLI bedrock of the [Archetype Builder](https://github.com/AIDDbot/archetype-builder). It has the tooling of each project and no framework: the `scaffold` spec adds the framework and the code (Halloween D42). Each project that is not an `e2e` has the primitives of `src/shared/` in pure TypeScript, with their unit tests: checks, parsers and formats of text, numbers, booleans and dates, and the expected error (Halloween D47).
 
 | Folder | Project type | Technology |
 | --- | --- | --- |

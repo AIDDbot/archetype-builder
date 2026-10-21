@@ -18,7 +18,7 @@ Each project of `.product/system.md` must have its framework, its entry and all 
 
 ### Business rules
 
-- A project has no functional code: no setting, no command, no route, no page, and no acceptance test. The seed primitives of `shared` are not functional code: they have no behavior that an observer sees.
+- A project has no functional code: no setting, no command, no route, no page, and no acceptance test. The primitives of `shared` in the Bedrock are not functional code: they have no behavior that an observer sees.
 - The assets of the Bedrock stay as they are: `.lint/`, the theme, the license, the identity and the tooling of the workspace. Change one only to add what the framework needs, with the commands of `.product/blueprint/ecosystems.md`.
 - Do one project before you start the next. Commit each step alone, so that each step can be reviewed and reverted.
 
@@ -38,7 +38,7 @@ Each project of `.product/system.md` must have its framework, its entry and all 
 | Step | Commit | Result |
 | --- | --- | --- |
 | 1 | `chore({project}): add framework` | The `AGENTS.md` of the project, and its framework on the Bedrock. |
-| 2 | `chore({project}): add entry` | The entry, the composition and the seed primitives, with their unit tests. |
+| 2 | `chore({project}): add entry` | The entry and the composition, with their unit tests. |
 | 3 | `chore({project}): register tooling` | All tooling slots operate and are registered. |
 
 **Step 1: add framework**
@@ -50,7 +50,7 @@ Each project of `.product/system.md` must have its framework, its entry and all 
 
 - The entry `main`, alone at the root of `src`; the manifest of the features, empty; and `core/lifecycle/` with the composition and the start (Halloween D40, D41). The `start` script of the project runs the entry.
   - Keep the mechanisms of the framework (injector, router, store, file names) and map them to the concepts.
-- Make the seed primitives of the shared primitives table, with their unit tests: the expected error at the root of `shared`, the others in `shared/values/` (section 3 of `project-types.md`). An `e2e` makes only the ones that it uses, with no unit tests. Each primitive keeps its row.
+- The primitives of `shared` come with the Bedrock, with their unit tests: the expected error and the identity type at the root of `shared`, the others in `shared/values/`. Use them; never write a second version. The shared primitives table of the `AGENTS.md` lists them. An `e2e` has none.
 - In a `web`, the entry imports Pico CSS, the fonts and the theme of `src/core/theme/`, in the order of `ecosystems.md`.
 
 **Step 3: register tooling**
