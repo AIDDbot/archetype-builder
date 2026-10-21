@@ -1,0 +1,24 @@
+{
+  "name": "back",
+  "displayName": "Archetype Web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A web application with its API, its browser screens and its acceptance suite",
+  "license": "MIT",
+  "author": {
+    "name": "Alberto Basalo",
+    "url": "https://x.com/albertobasalo"
+  },
+  "type": "module",
+  "imports": {
+    "#shared/*": "./src/shared/*",
+    "#core/*": "./src/core/*",
+    "#api/*": "./src/features/*/*.api.ts",
+    "#package": "./package.json"
+  },
+  "scripts": {
+    "test": "vp test run --passWithNoTests",
+    "layers": "vp lint -c boundaries.json",
+    "crap": "vp lint -c complexity.json && vp test run --coverage --passWithNoTests"
+  }
+}

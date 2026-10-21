@@ -14,11 +14,11 @@ JS / TS on Node is the exception: AIDDbot sets its stack. Other platforms, such 
 
 **System workspace**
 
-A repository has one pre-commit hook, so the root of the system is one Vite+ workspace (quality gates, step 3):
+A repository has one pre-commit hook, so the root of the system is one Vite+ workspace (quality gates, step 3). The Bedrock of each archetype has this workspace ready (Halloween D42): keep it as it is, and add only what a framework needs.
 
 - Each project is a flat folder with its name in `projects/`: `projects/back/`, `projects/front/`, `projects/cli/`, `projects/e2e/`. It is a project, never an app: do not use the `apps/` and `packages/` folders of the Vite+ templates. Thus the root keeps only the records of AIDDbot, the hook and the workspace.
 - The root `package.json` has `"workspaces": ["projects/*"]`, `license`, `vite-plus` in `devDependencies`, `"prepare": "vp config"` (it installs the hook) and `"test": "vp run -r test"`.
-- `.vite-hooks/pre-commit` contains `vp staged`. `vp config` installs the dispatcher, but not this file: write it.
+- `.vite-hooks/pre-commit` contains `vp staged`. `vp config` installs the dispatcher, but not this file: the Bedrock has it.
 - The root has no `tsconfig.json`. Each project has its own `tsconfig.json`, with `"erasableSyntaxOnly": true`, `"allowImportingTsExtensions": true` and `"types": ["node"]`: Node.js runs the TypeScript files as they are, so a syntax that it cannot erase (such as a parameter property `constructor(public readonly kind)`) fails at run time, not at the type check.
 - Each project has its `package.json` with its scripts, its `vite.config.ts` with its Vitest project (`name`, `include`) and its coverage, and a `.gitignore` that anchors its runtime data: the default paths of its settings, such as `/data/`, `/logs/` or `/config.json`.
 - A file never imports from a parent folder (`../`). The `imports` of the `package.json` of each project give the three ways out of a folder: `"#shared/*": "./src/shared/*"`, `"#core/*": "./src/core/*"` and `"#api/*": "./src/features/*/*.api.ts"` (in an `e2e`, only `"#shared/*": "./shared/*"`). A file imports `#shared/dates.format.ts`, `#core/settings/app.settings.ts` from a folder of `core` or from the entry, `#api/{feature}` for the facade of a different feature, and `./` in its own folder. Node.js, Vite and TypeScript resolve them with no other configuration. `#api` reaches only the facade: thus a feature has no way into the files of a different feature. `layers` forbids `#core` in `shared` and in the features: they get the services of `core` from the composition, through the contracts of `shared`.
@@ -52,7 +52,7 @@ export default defineConfig({
 - The hook formats, lints and checks the types of the staged files with the safe fixes, and runs the unit tests that import them. It adds the fixes to the commit. A failure stops the commit.
 - `vp check` checks the types only with `typeAware` and `typeCheck`. Without them, a type error passes.
 - Formatting leaves Markdown out (`ignorePatterns`). A commit of specs or docs only runs no test.
-- Format and lint leave out `.agents/` and `.aiddbot/` (`ignorePatterns`): AIDDbot owns them, and a commit of `aiddbot update` must pass the hook with no change to them. They leave out `.lint/` too: it is a copy of `.product/blueprint/lint/` as it is, and a format would make it differ.
+- Format and lint leave out `.agents/` and `.aiddbot/` (`ignorePatterns`): AIDDbot owns them, and a commit of `aiddbot update` must pass the hook with no change to them. They leave out `.lint/` too: it is an asset of the Bedrock, and a format would make it differ.
 - `test.projects` names the folder of each Vitest project, so that `vp test related` uses the configuration of each project.
 - The hook lints by packages, never rule by rule: the categories `correctness` and `suspicious`, with the plugins of the stack (add `react` and `jsx-a11y` in a `web` with React). Never turn on a rule or turn off a rule of a package one by one. A finding of a package is repaired in the code.
 - The one rule turned on: a value that can be missing is checked, never asserted with `!` (`typescript/no-non-null-assertion`). It is in the category `restriction`, which is not a package: its rules contradict each other.
@@ -69,7 +69,7 @@ export default defineConfig({
 
 **Debt checks**
 
-- All the debt checks are in `.lint/` at the root, named by what they check. Copy them as they are: [`boundaries.json`](./lint/boundaries.json) and [`boundaries.e2e.json`](./lint/boundaries.e2e.json) for `layers`, [`complexity.json`](./lint/complexity.json) (the limits of code, with an override for `*.test.ts`) and [`complexity.e2e.json`](./lint/complexity.e2e.json) (the limits of tests for all files) for `crap`, and [`conditions.mjs`](./lint/conditions.mjs) and [`types.mjs`](./lint/types.mjs), the rules of our own, which both `complexity` files load. Each project has a `boundaries.json` and a `complexity.json` at its root, with only `$schema` and `extends` (`["../../.lint/boundaries.json"]`; `boundaries.e2e.json` and `complexity.e2e.json` in an `e2e`): Oxlint reads the path of `extends` from the file, never from the working directory, and the scripts of each project type stay the same. No project has a `lint/` folder. A change for one project is an override by path in the file of `.lint/`.
+- All the debt checks are in `.lint/` at the root, named by what they check. They are assets of the Bedrock, as the license (Halloween D45): `boundaries.json` and `boundaries.e2e.json` for `layers`, `complexity.json` (the limits of code, with an override for `*.test.ts`) and `complexity.e2e.json` (the limits of tests for all files) for `crap`, and `conditions.mjs` and `types.mjs`, the rules of our own, which both `complexity` files load. Each project has a `boundaries.json` and a `complexity.json` at its root, with only `$schema` and `extends` (`["../../.lint/boundaries.json"]`; `boundaries.e2e.json` and `complexity.e2e.json` in an `e2e`): Oxlint reads the path of `extends` from the file, never from the working directory, and the scripts of each project type stay the same. No project has a `lint/` folder. A change for one project is an override by path in the file of `.lint/`.
 - Run `npm run fix` at the root before `layers` and `crap`. The hook formats each commit, and `layers` counts duplicated blocks on the lines as they are: a check before the format misses a block that the format makes, and that block comes back as debt after the ship.
 - The patterns use braces for each set of names and extensions (`*.{page,component,card}.{ts,tsx}`), in `files` and in each `group`.
 - Each rule is an `error`, so that a check fails with its findings. The configurations turn off the categories of the hook: a debt check never reports what the hook reports.
@@ -120,28 +120,27 @@ Each project `AGENTS.md` copies these rules as written into its technology rules
 
 **Script names**
 
-- The slot names are the script names: `test`, `test:spec`, `start`, `layers`, `crap`, and `upgrade` at the root. Use the standard npm names, which run without `run`: `test` and `start`. The scripts of a project are its slots and no more: `start`, `test`, `layers` and `crap`, and `test:spec` in an `e2e`. The root has `prepare`, `test`, `upgrade`, and two scripts for a human: `"check": "vp check && vp test run"` (the hook on the whole repository, with no fix) and `"fix": "vp check --fix"`.
+- The slot names are the script names: `test`, `test:spec`, `start`, `layers`, `crap`, and `upgrade` at the root. Use the standard npm names, which run without `run`: `test` and `start`. The scripts of a project are its slots and no more: `start`, `test`, `layers` and `crap`, and `test:spec` in an `e2e`. The root has `prepare`, `test`, `upgrade`, and two scripts for a human: `"check": "vp check && vp test run --passWithNoTests"` (the hook on the whole repository, with no fix; it passes in the Bedrock, which has no test) and `"fix": "vp check --fix"`.
 - Lint, format and the affected unit tests are no slots: the hook runs them, and `check` and `fix` run them by hand.
-- `test` runs all the tests of the project: `vp test run`. In an `e2e` project, `vp test run --passWithNoTests` (or `playwright test --pass-with-no-tests`), so that the scaffold passes before the first spec.
+- `test` runs all the tests of the project: `vp test run --passWithNoTests`, so that the Bedrock passes before the first test. In an `e2e` project, `vp test run --passWithNoTests` (or `playwright test --pass-with-no-tests`), so that the scaffold passes before the first spec.
 - In an `e2e` project, `start` is for a human only: with Vitest, the watch mode `vp test --passWithNoTests`, with no UI package; with Playwright, `playwright test --ui`.
 - `test:spec` exists only in an `e2e` project. It ends in the filter flag of the runner, because the core adds only the tag (`@S0001-`): `vp test run --passWithNoTests -t` (or `playwright test --pass-with-no-tests --grep`).
 - `layers` is `vp lint -c boundaries.json`. `crap` is one script: `vp lint -c complexity.json && vp test run --coverage`, always in that order, so that a repair first simplifies and then proves; in an `e2e`, only `vp lint -c complexity.json`. Both read the local file of the project, which extends `.lint/`. Each project registers `npm run layers` and `npm run crap`.
-- The dependencies are in the root `package.json`, so one `upgrade` script at the root raises them all: `npx npm-check-updates@latest -u && npm install`. npm-check-updates runs with `npx` only when the slot runs: it is no dependency. Each project registers the slot as the command `npm --prefix ../.. run upgrade`, with no script of its own. Vite+ has no upgrade command yet.
+- One `upgrade` script at the root raises the dependencies of the root and of each project: `npx npm-check-updates@latest -u --workspaces --root && npm install`. Without `--workspaces --root`, it raises only the root. With Playwright, it also installs its browser: `&& npm exec -w e2e -- playwright install chromium`. npm-check-updates runs with `npx` only when the slot runs: it is no dependency. Each project registers the slot as the command `npm --prefix ../.. run upgrade`, with no script of its own. Vite+ has no upgrade command yet.
 - `upgrade` raises `vite-plus` and `@vitest/coverage-v8` together: their Vitest must be the same.
 
-**Scaffold commands**
+**Frameworks on the Bedrock**
 
-These commands were tested without a terminal (the input is closed). Run them from the repository root. Each one writes only its folder and asks nothing:
+The Bedrock has each project with its tooling and no framework (Halloween D42). The `scaffold` spec adds the framework of each project with these commands, from the repository root, and never runs a generator of the framework: the Bedrock already has the project.
 
-| Project | Command | Notes |
+| Project | Add | Then |
 | --- | --- | --- |
-| system root | `npm init -y --init-type=module && npm install -D vite-plus` | Then write the workspace files above, and run `npm install`: its `prepare` installs the hook. |
-| `api` | `mkdir -p projects/back && (cd projects/back && npm init -y --init-type=module)` | Writes only `package.json`. Not tested yet in a Vite+ workspace. |
-| `cli` | `mkdir -p projects/cli && (cd projects/cli && npm init -y --init-type=module)` | Writes only `package.json`. Add `bin`. |
-| `web` | `npm create vite@latest projects/front -- --template react-ts --no-interactive --no-immediate` | Installs nothing. Remove what Vite+ replaces: the ESLint packages and `eslint.config.js`, `typescript`, and the `lint` script; keep `react`, `react-dom`, `@vitejs/plugin-react` and the React types. Then run `npm install` at the root. Not tested yet in a Vite+ workspace. |
-| `e2e` | `mkdir -p projects/e2e && (cd projects/e2e && npm init -y --init-type=module)` | With a `web`: `npm init playwright@latest projects/e2e -- --quiet --browser=chromium --lang=TypeScript --no-examples --no-browsers`, then `npx playwright install chromium` in the folder. |
+| `api` with Express | `npm install -w back express && npm install -w back -D @types/express` | The `start` script: `node src/app.main.ts`. |
+| `cli` | nothing: TypeScript on Node.js, with no framework | The `start` script: `node src/app.main.ts`, and `bin`. |
+| `web` with React | `npm install -w front react react-dom react-router && npm install -w front -D @vitejs/plugin-react @types/react @types/react-dom` | `plugins: [react()]` in the `vite.config.ts` of the project; `"jsx": "react-jsx"` in its `tsconfig.json`; `index.html` with the root element and the entry `src/app.main.tsx`; in the root `vite.config.ts`, the lint plugins `react` and `jsx-a11y` and the false alarm `react/react-in-jsx-scope` off. The `start` script: `vp dev`. |
+| `e2e` | nothing: the Bedrock has the runner | With Playwright: `npm exec -w e2e -- playwright install chromium`. |
 
-Use these commands as they are. Test a different generator in a temporary folder before you write it in the proposal.
+Use these commands as they are. A different framework is in the `AGENTS.md` of its archetype: test its commands on a copy of the Bedrock before you write them.
 
 | Ecosystem | Hook: lint, format, affected unit tests | Types | Unit tests (inside `test`) | Boundaries (`layers`) | Complexity and coverage (`crap`) |
 | --- | --- | --- | --- | --- | --- |
@@ -204,13 +203,12 @@ In a React `web`, a `.tsx` file only renders: no rule, no check and no conversio
 
 ## `web`: the visual base
 
-The `front` project of Archetype Web sets the visual base (Halloween D38). A new archetype with a `web` copies it. For now it is the brand of the author of AIDDbot (Halloween D11).
+The `front` project of the `web` Bedrock has the visual base (Halloween D38, D45): Pico CSS, the fonts and the brand theme. A new archetype with a `web` starts from it. For now it is the brand of the author of AIDDbot (Halloween D11).
 
-- Pico CSS and the fonts are dependencies, added with the package manager: `@picocss/pico`, and `@fontsource/roboto` for the text, `@fontsource/audiowide` for the headings, `@fontsource/anonymous-pro` for code. The entry file imports them, and the bundler serves them from the project. No CDN, thus the application operates offline. Never copy their files into the project: the `upgrade` slot keeps them current.
-- Copy [`theme/theme.css`](./theme/theme.css) (typography and spacing on top of Pico), [`theme/colors.css`](./theme/colors.css) (the `--ab-*` brand tokens for the light and dark themes, mapped to the `--pico-*` variables) and [`theme/custom.css`](./theme/custom.css) (components) into the project as they are, with a copy command of the system (`cp`, `Copy-Item`), and import them after Pico. Never read them to write them again: a rewrite costs tokens and can change them. Never invent other colors: the owner changes the values only in these files.
+- Pico CSS and the fonts are dependencies of the Bedrock: `@picocss/pico`, and `@fontsource/roboto` for the text, `@fontsource/audiowide` for the headings, `@fontsource/anonymous-pro` for code. The entry file imports them, and the bundler serves them from the project. No CDN, thus the application operates offline. Never copy their files into the project: the `upgrade` slot keeps them current.
+- The theme is in `src/core/theme/` of the Bedrock: `theme.css` (typography and spacing on top of Pico), `colors.css` (the `--ab-*` brand tokens for the light and dark themes, mapped to the `--pico-*` variables) and `custom.css` (components). The entry imports them after Pico. Never write them again: a rewrite costs tokens and can change them. Never invent other colors: the owner changes the values only in these files.
 - Components write semantic HTML with the elements and classes of Pico, so Pico, the theme and the tokens reach every element. No CSS-in-JS, no CSS modules, no component library and no Shadow DOM.
 - The theme is in the `data-theme` attribute of the document. The first value comes from `prefers-color-scheme`. The user selection stays in `localStorage`.
-- Source of the three files: [`theme/`](./theme/) of this Blueprint. Archetype Web copies them to `projects/front/src/core/theme/`.
 
 ## Dependencies: add and upgrade
 
@@ -232,7 +230,7 @@ Add a dependency only with the package manager's add command, so it resolves the
 
 | Ecosystem | Package manager | Add | `upgrade` |
 | --- | --- | --- | --- |
-| JS / TS | npm | `npm install {pkg}` | `npx npm-check-updates@latest -u && npm install`, at the root |
+| JS / TS | npm | `npm install {pkg}` | `npx npm-check-updates@latest -u --workspaces --root && npm install`, at the root |
 | JS / TS | pnpm | `pnpm add {pkg}` | `pnpm update --latest` |
 | JS / TS | Yarn (Berry) | `yarn add {pkg}` | `yarn up "*"` |
 | JS / TS | Bun | `bun add {pkg}` | `bun update --latest` |

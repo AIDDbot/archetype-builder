@@ -2,7 +2,7 @@
 
 An **archetype** is a whole solution: projects that pass one acceptance suite together, with their shipped foundation specs and their schema documents in `.product/`, as in any AIDDbot system (Halloween D28). Archetype CLI and Archetype Web are archetypes (Archetype Web replaces Archetype Base, Halloween D38). AIDDbot offers only the archetypes of its catalog.
 
-You make an archetype with AIDDbot, as a normal system (Halloween D10). This repository gives the generic inputs in `blueprint/`. AIDDbot gives the process.
+You make an archetype with AIDDbot, as a normal system (Halloween D10). This repository gives the inputs: the Bedrock (`bedrock/`), the Foundation (`foundation/`) and the Blueprint (`blueprint/`) (Halloween D45). AIDDbot gives the process.
 
 You use two repositories (Halloween D20):
 
@@ -14,7 +14,8 @@ You use two repositories (Halloween D20):
 The human prepares an empty work system:
 
 - An empty git repository, with AIDDbot installed (`npx aiddbot init`) at the release whose Blueprint the archetype obeys.
-- A copy of `blueprint/` in `.product/blueprint/`, without `foundation-0.3/`: the plan of the archetype is product. The agent reads only its own folder, and the run stays fixed when the Builder changes. This procedure stays here: the prompt of the run gives its steps.
+- A copy of `bedrock/{archetype}/` at the root, as it is, after `aiddbot init`: the tooling, the debt checks, the identity and the license of the archetype. Then `npm install`: its `prepare` installs the pre-commit hook.
+- A copy of `foundation/` in `.product/foundation/`, and of `blueprint/` in `.product/blueprint/`: the plan of the archetype is product. The agent reads only its own folder, and the run stays fixed when the Builder changes. This procedure stays here: the prompt of the run gives its steps.
 - The manifest of the archetype in `.product/system.md`, in English, from `archetypes/{archetype}.system.md`: the purpose, the users, the identity, and each project with its type. AIDDbot writes each record in the language of `system.md`, and an archetype ships in English.
 - One commit of all of it on the default branch.
 
@@ -22,6 +23,6 @@ Do not run `/architect-system-foundation`: it offers only the archetypes of the 
 
 ## 2. Deliver the specs
 
-Run `/build-ordered-specs` with the spec files of `.product/blueprint/foundation/`, in the order of section 1 of `.product/blueprint/project-types.md`. The first one, `scaffold`, makes the projects. An archetype ships with zero debt, because each system that starts from it copies its debt (Halloween D19).
+Run `/build-ordered-specs` with the spec files of `.product/foundation/`, in the order of section 1 of `.product/blueprint/project-types.md`. The first one, `scaffold`, adds the framework of each project to the Bedrock. An archetype ships with zero debt, because each system that starts from it copies its debt (Halloween D19).
 
 When the last spec ships with zero debt, the work system is complete. To publish it, follow [`seed.md`](./seed.md).

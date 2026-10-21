@@ -27,7 +27,7 @@ The system has user accounts with basic authentication.
 
 - TypeScript on Node.js, with the stack of `.product/blueprint/ecosystems.md`.
 - `back`: Express, with persistence in SQLite through `node:sqlite`.
-- `front`: React on Vite, with react-router and an explicit route list as the manifest; no Next.js. Pico CSS with the brand theme of `.product/blueprint/theme/`.
+- `front`: React on Vite, with react-router and an explicit route list as the manifest; no Next.js. Pico CSS with the brand theme of the Bedrock, in `projects/front/src/core/theme/`.
 - `e2e`: Playwright, with Chromium only.
 - Identity in the `package.json` of `back` and `front`: `displayName` "Archetype Web", `description` "A web application with its API, its browser screens and its acceptance suite", `author` "Alberto Basalo" with `url` "https://x.com/albertobasalo".
 - License: MIT, with the copyright of Alberto Basalo, in `LICENSE` at the root.
@@ -35,4 +35,4 @@ The system has user accounts with basic authentication.
 
 ## Scaffold
 
-The `scaffold` spec of `.product/blueprint/foundation/` makes each project.
+The `scaffold` spec of `.product/foundation/` adds the framework of each project to the Bedrock of the archetype.

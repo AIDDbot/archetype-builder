@@ -12,7 +12,7 @@ if (!fs.existsSync(path.join(archetype, "projects"))) throw new Error(`Copy the 
 const source = path.join(work, ".product");
 const target = path.join(archetype, ".product");
 const foundation = fs
-  .readdirSync(path.join(source, "blueprint", "foundation"))
+  .readdirSync(path.join(source, "foundation"))
   .filter((name) => name.endsWith(".spec.md"))
   .map((name) => name.slice(0, -".spec.md".length));
 

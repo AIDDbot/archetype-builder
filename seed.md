@@ -5,7 +5,7 @@ The seed copies a complete work system (see [`procedure.md`](./procedure.md)) to
 - Copy the whole workspace of the work system: the root files (`package.json`, `package-lock.json`, `vite.config.ts`, `.vite-hooks/`, `.gitattributes`, `.gitignore`, `LICENSE`), the debt checks (`.lint/`), and `projects/`. Leave out `.aiddbot/`, `.product/`, `CHANGELOG.md` and the agent folders (`.agents/`, `.claude/`, `.codex/`, `.cursor/`, `.github/`).
 - Run `node scripts/seed-product.mjs {work system} {archetype}`. It writes `.product/` of the archetype:
   - `system.md` and `model/` of the work system.
-  - Only the foundation specs, the ones with a file in `blueprint/foundation/`, never the `fix` and `refactor` specs that repaired debt. Each one in `specs/{type}/`.
+  - Only the foundation specs, the ones with a file in `.product/foundation/` of the work system, never the `fix` and `refactor` specs that repaired debt. Each one in `specs/{type}/`.
   - The specs numbered in their delivery order with no gaps (`S0001` scaffold, then each `feat`), with each reference and each test tag rewritten.
   - `PRD.md` with the shipped features.
 - Set the version of the root `package.json` to the release version.

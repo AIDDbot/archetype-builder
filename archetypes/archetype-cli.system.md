@@ -30,4 +30,4 @@ The system has no user accounts.
 
 ## Scaffold
 
-The `scaffold` spec of `.product/blueprint/foundation/` makes each project.
+The `scaffold` spec of `.product/foundation/` adds the framework of each project to the Bedrock of the archetype.
