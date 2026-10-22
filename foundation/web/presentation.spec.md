@@ -27,7 +27,7 @@ A record is one thing that the application shows, such as the application itself
 
 ### All projects
 
-- The five primitives, in the `shared` folder of their concern (`http/` in the `back`, `components/` in the `front`, `page-objects/` in the `e2e`; values in `values/`), each with a row in the shared primitives of the `AGENTS.md`:
+- The five primitives, in the `shared` folder of their concern (`http/` in the `back`, `components/` in the `front`, `page-objects/` in the `e2e`; values in `values/`), each listed in the index of `shared`:
 
 | Primitive | `back` | `front` | `e2e` |
 | --- | --- | --- | --- |

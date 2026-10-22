@@ -50,12 +50,12 @@ Each project of `.product/system.md` must have its framework, its entry and all 
 
 - The entry `main`, alone at the root of `src`; the manifest of the features, empty; and `core/lifecycle/` with the composition and the start (Halloween D40, D41). The `start` script of the project runs the entry.
   - Keep the mechanisms of the framework (injector, router, store, file names) and map them to the concepts.
-- The primitives of `shared` come with the Bedrock, with their unit tests: the expected error and the identity type at the root of `shared`, the others in `shared/values/`, one folder for each type of value. Use them; never write a second version. The shared primitives table of the `AGENTS.md` lists them. An `e2e` has only the checks (`shared/values/values.check.ts`), with no unit test: it reads JSON with no type too.
+- The primitives of `shared` come with the Bedrock, with their unit tests: the expected error and the identity type at the root of `shared`, the others in `shared/values/`, one folder for each type of value. Use them; never write a second version. The index of `shared` (`src/shared/README.md`, written by `aidd release`) lists them. An `e2e` has only the checks (`shared/values/values.check.ts`), with no unit test: it reads JSON with no type too.
 
 **Step 3: register tooling**
 
 - Run the `upgrade` command one time, because models remember old releases.
-  - If a new major breaks a different tool of the stack, keep the last compatible major. Write the pin and its reason in the technology rules of that `AGENTS.md`.
+  - If a new major breaks a different tool of the stack, keep the last compatible major. Write the pin and its reason in the project rules of that `AGENTS.md`.
   - Never pin a major that `ecosystems.md` requires. Replace the tool that breaks.
 - The ignore file never hides source. Anchor runtime data patterns to the project root.
 - Each tooling slot of that `AGENTS.md` operates. The Bedrock gives `test`, `layers` and `crap`; step 2 gives `start`.

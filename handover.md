@@ -24,7 +24,7 @@ An archetype enters or changes in its repository only when all of these are true
 - Each requirement in `.product/specs/` has a test with its tag, and each tag names a requirement in `.product/specs/`. The spec IDs have no gaps.
 - The schema documents in `.product/model/` match the code. AIDDbot copies them into each system and never derives them again.
 - No open technical debt and no exception in `tools/lint/`: debt in an archetype goes into each system that starts from it.
-- Each `AGENTS.md` has fewer than 100 lines.
+- Each `AGENTS.md` is in form: `node .agents/aidd/aidd.mjs agents check` gives no problem (at most 128 lines, the sections of its template in order, no empty section, no comment).
 - A boundary canary fails `layers`: a `core` file that imports a feature. Undo the canary.
 
 A new archetype of a type (for example a `cli` in a different language) passes the same `e2e` suite. Change the suite only when the foundation specs change: first change the spec in `.product/specs/`, then the tests, then the code.

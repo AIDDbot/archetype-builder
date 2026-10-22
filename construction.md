@@ -16,7 +16,7 @@ The human prepares an empty work system:
 - An empty git repository, with AIDDbot installed (`npx aiddbot init`) at the release whose Blueprint the archetype obeys.
 - A copy of `bedrock/{archetype}/` at the root, as it is, after `aiddbot init`: the tooling, the debt checks, the identity and the license of the archetype. Then `npm install`: its `prepare` installs the pre-commit hook.
 - A copy of `foundation/{archetype}/` in `.product/foundation/`: the foundation specs of the archetype, written once in the Builder (Halloween D52), and of `blueprint/` in `.product/blueprint/`: the plan of the archetype is product. The agent reads only its own folder, and the run stays fixed when the Builder changes. This construction guide stays here: the prompt of the run gives its steps.
-- The manifest of the archetype in `.product/system.md`, in English, from `archetypes/{archetype}.system.md`: the purpose, the users, the identity, and each project with its type. AIDDbot writes each record in the language of `system.md`, and an archetype ships in English.
+- The manifest of the archetype in `.product/system.md`, in English, from `archetypes/{archetype}.system.md`: the purpose, the users, the identity, and each project with its type. An archetype ships its documents and its code in English (the Assistant section of the root `AGENTS.md`, Halloween D59).
 - One commit of all of it on the default branch.
 
 Do not run `/architect-system-foundation`: it offers only the archetypes of the catalog (Halloween D5), and this system makes one.

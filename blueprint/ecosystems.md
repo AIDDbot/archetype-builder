@@ -1,6 +1,6 @@
 # Usual implementations by ecosystem
 
-Guidance to fill the Tooling section of [`project.AGENTS.template.md`](./project.AGENTS.template.md). It never obliges: the archetype chooses the best tool for its stack, and any tool that meets the slot contract is valid.
+Guidance to fill the Technology of [`project.AGENTS.template.md`](./project.AGENTS.template.md) (its stack, dependencies and slots). It never obliges: the archetype chooses the best tool for its stack, and any tool that meets the slot contract is valid.
 
 ## JS / TS on Node: the required stack
 
@@ -89,15 +89,7 @@ export default defineConfig({
 
 **Code rules of each project**
 
-Each project `AGENTS.md` copies these rules as written into its technology rules (section 6). In web-H, the code broke them 24 times in 7 specs, and each one cost a run of `crap` and a repair (Halloween D40). Write the code as they say the first time:
-
-- Name a condition as the code tests it, and test the name: `const isUnknown = version === undefined; if (isUnknown)`, never `!isKnown` on a `const` of the same function. Also in the tests. (`conditions/named`)
-- Give each parameter a named type, also the props of a component (`type AboutPageProps = { … }`): never an object type or `ReturnType<…>` in a signature. (`types/named`)
-- Declare the return type of each exported function, also in the `e2e`; only a component (`.tsx`) has none. (`explicit-module-boundary-types`)
-- A choice between kinds is a table (`Record<Kind, Handler>`), never a chain of `if` or a `switch`. A function with several steps calls one function for each step. (complexity 8, 16 statements)
-- More than 2 values go in one object with a named type. Only a middleware of `core/http/` takes the parameters of Express (4) or of the Connect server of Vite (3). (`max-params`)
-- An adapter has no branch, no `??` and no default value: the decision goes to a function of `core` that gets the adapter as an argument. (complexity 1)
-- Each `.ts` file has its unit test next to it, except `main`, the adapters and the components. (coverage 100)
+The Code of the root `AGENTS.md` (the template of `outline-system` in AIDDbot) gives these rules one time for the system, with their limits: a choice between kinds is a table, more than 2 values go in one object with a named type, a condition is a name, each parameter and each exported return has a named type, an adapter has no branch, and each `.ts` file has its unit test. A project `AGENTS.md` never copies them. In web-H, the code broke them 24 times in 7 specs, and each one cost a run of `crap` and a repair (Halloween D40, D59). Only a middleware of `core/http/` takes the parameters of Express (4) or of the Connect server of Vite (3).
 
 **Acceptance tests**
 
@@ -122,7 +114,7 @@ Each project `AGENTS.md` copies these rules as written into its technology rules
 
 - Use `node:sqlite` (`DatabaseSync`) for the database of an `api`, and for the local store of a `cli` when a spec adds one: the foundation of a `cli` has no store (Halloween D35). It is part of Node.js: no dependency to add or upgrade.
 - `DATABASE_URL` is the path of the database file. Its default is `./data/app.sqlite`, relative to the project folder.
-- Write it in the main dependencies and in the technology rules of the project `AGENTS.md`: the specs never name it.
+- Write it in the dependencies and in the project rules of the project `AGENTS.md`: the specs never name it.
 
 **Script names**
 

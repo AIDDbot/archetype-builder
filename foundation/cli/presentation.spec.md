@@ -26,7 +26,7 @@ A record is one thing that the application shows, such as the application itself
 
 ### All projects
 
-- The five primitives, in the `shared` folder of their concern (`output/` in the `cli`, `page-objects/` in the `e2e`; values in `values/`), each with a row in the shared primitives of the `AGENTS.md`:
+- The five primitives, in the `shared` folder of their concern (`output/` in the `cli`, `page-objects/` in the `e2e`; values in `values/`), each listed in the index of `shared`:
 
 | Primitive | `cli` | `e2e` |
 | --- | --- | --- |
