@@ -7,7 +7,7 @@ A system made from the Archetype CLI bedrock of the [Archetype Builder](https://
 | [`projects/cli/`](./projects/cli/) | `cli` | TypeScript on Node.js; no framework yet |
 | [`projects/e2e/`](./projects/e2e/) | `e2e` | Vitest with no browser |
 
-Common tooling: npm workspaces and [Vite+](https://viteplus.dev) (format, lint, type check, Vitest, and the `vp staged` pre-commit hook). The debt checks are in `.lint/`.
+Common tooling: npm workspaces and [Vite+](https://viteplus.dev) (format, lint, type check, Vitest, and the `vp staged` pre-commit hook). The debt checks are in `tools/lint/`.
 
 ## Identity
 

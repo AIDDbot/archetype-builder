@@ -1,4 +1,4 @@
 {
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
-  "extends": ["../../.lint/boundaries.e2e.json"]
+  "extends": ["../../tools/lint/boundaries.e2e.json"]
 }

@@ -3,7 +3,7 @@
 
 ## Problem
 
-Each project of `.product/system.md` must have its framework, its entry and all its tooling slots, before the first foundation spec adds a behavior. The Bedrock of the archetype is at the root: the workspace, the tooling of each project, the debt checks (`.lint/`), the identity, the license and, in the `front`, the brand theme (Halloween D42, D45).
+Each project of `.product/system.md` must have its framework, its entry and all its tooling slots, before the first foundation spec adds a behavior. The Bedrock of the archetype is at the root: the workspace, the tooling of each project, the debt checks (`tools/lint/`), the identity, the license and, in the `front`, the brand theme (Halloween D42, D45).
 
 ### User Stories
 
@@ -13,7 +13,7 @@ Each project of `.product/system.md` must have its framework, its entry and all 
 ### Business rules
 
 - A project has no functional code: no setting, no command, no route, no page, and no acceptance test. The primitives of `shared` in the Bedrock are not functional code: they have no behavior that an observer sees.
-- The assets of the Bedrock stay as they are: `.lint/`, the theme, the license, the identity and the tooling of the workspace. Change one only to add what the framework needs, with the commands of `.product/blueprint/ecosystems.md`.
+- The assets of the Bedrock stay as they are: `tools/lint/`, the theme, the license, the identity and the tooling of the workspace. Change one only to add what the framework needs, with the commands of `.product/blueprint/ecosystems.md`.
 - Do one project before you start the next. Commit each step alone, so that each step can be reviewed and reverted.
 
 ### Out of context
@@ -25,7 +25,7 @@ Each project of `.product/system.md` must have its framework, its entry and all 
 
 ### The system
 
-- The Bedrock gives the root: the root `package.json` with the `license` and no identity, the workspace, the pre-commit hook and `.lint/`. Each project that shows the identity (`back`, `front`) has it in its `package.json` (`displayName`, `description`, `author` with `name` and `url`, `version`). The scaffold registers these files with `node .agents/aidd/aidd.mjs config set release.versionFiles '["projects/back/package.json", "projects/front/package.json"]'`: `aidd release` writes each `version`.
+- The Bedrock gives the root: the root `package.json` with the `license` and no identity, the workspace, the pre-commit hook and `tools/lint/`. Each project that shows the identity (`back`, `front`) has it in its `package.json` (`displayName`, `description`, `author` with `name` and `url`, `version`). The scaffold registers these files with `node .agents/aidd/aidd.mjs config set release.versionFiles '["projects/back/package.json", "projects/front/package.json"]'`: `aidd release` writes each `version`.
 
 ### Each project
 
