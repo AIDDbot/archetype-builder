@@ -16,6 +16,12 @@ it("rejects an integer out of its range, or a value that is not an integer", () 
   }
 });
 
+it("names an open range by its lower limit", () => {
+  const offset = { field: "offset", min: 0, max: Infinity };
+  expect(parseInteger("12", offset)).toBe(12);
+  expect(() => parseInteger("-1", offset)).toThrow("offset is an integer of 0 or more");
+});
+
 it("parses a number in its range", () => {
   expect(parseNumber("0.25", ratio)).toBe(0.25);
   expect(parseNumber(1, ratio)).toBe(1);

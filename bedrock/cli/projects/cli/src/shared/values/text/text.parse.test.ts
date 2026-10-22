@@ -21,6 +21,11 @@ it("requires a text with a length in its range", () => {
   expect(requireLength("Grace", name)).toBe("Grace");
 });
 
+it("names an open length by its lower limit", () => {
+  const open = { field: "name", min: 2, max: Infinity };
+  expect(() => requireLength("A", open)).toThrow("name has 2 or more characters");
+});
+
 it("rejects a text that is too short or too long", () => {
   const invalid = ["A", "Lovelace"];
   for (const value of invalid) {
