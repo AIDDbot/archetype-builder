@@ -9,7 +9,8 @@
   "type": "module",
   "scripts": {
     "prepare": "vp config",
-    "test": "vp run -r test",
+    "test": "vp run --filter \"./projects/*\" --filter \"!e2e\" test",
+    "test:e2e": "vp run --filter e2e test",
     "upgrade": "npx npm-check-updates@latest -u --workspaces --root && npm install",
     "check": "vp check && vp test run --passWithNoTests",
     "fix": "vp check --fix"

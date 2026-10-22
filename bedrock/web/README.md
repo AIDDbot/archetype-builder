@@ -24,7 +24,7 @@ npm run check
 npm test
 ```
 
-`npm install` runs `prepare`, which installs the pre-commit hook. `npm run check` formats, lints and type-checks the whole repository and runs every unit test, with no fix; `npm run fix` applies the safe fixes. `npm run upgrade` raises each dependency of the root and of each project to its latest version. In each project: `npm test`, `npm run layers` (import boundaries) and `npm run crap` (complexity and coverage).
+`npm install` runs `prepare`, which installs the pre-commit hook. `npm start` starts the `back` and the `front` in parallel. `npm test` runs the unit tests of each project but the `e2e`, and `npm run test:e2e` runs the acceptance tests. `npm run check` formats, lints and type-checks the whole repository and runs every unit test, with no fix; `npm run fix` applies the safe fixes. `npm run upgrade` raises each dependency of the root and of each project to its latest version. In each project: `npm test`, `npm run layers` (import boundaries) and `npm run crap` (complexity and coverage).
 
 ## License
 
