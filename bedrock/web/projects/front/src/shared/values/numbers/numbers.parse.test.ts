@@ -16,10 +16,10 @@ it("rejects an integer out of its range, or a value that is not an integer", () 
   }
 });
 
-it("names an open range by its lower limit", () => {
+it("refuses a range with no upper limit", () => {
   const offset = { field: "offset", min: 0, max: Infinity };
-  expect(parseInteger("12", offset)).toBe(12);
-  expect(() => parseInteger("-1", offset)).toThrow("offset is an integer of 0 or more");
+  expect(() => parseInteger("12", offset)).toThrow("offset needs a closed range");
+  expect(() => parseNumber("12", offset)).toThrow("offset needs a closed range");
 });
 
 it("parses a number in its range", () => {
