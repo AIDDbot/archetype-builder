@@ -54,7 +54,8 @@ article:hover {
   font-weight: 600;
 }
 
-.secondary {
+/* Not on a control: Pico gives its own `.secondary` button. */
+.secondary:not(button, [role="button"], input) {
   background: var(--ab-gradient-secondary);
   -webkit-background-clip: text;
   background-clip: text;

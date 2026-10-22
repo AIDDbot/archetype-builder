@@ -47,10 +47,11 @@
   --pico-background-color: var(--ab-dark-900);
   --pico-color: #e5ecff;
 
+  /* Each text has a contrast of 4.5:1 or more with its background, in each state. */
   --pico-primary: var(--ab-primary);
   --pico-primary-hover: #60a5fa;
-  --pico-primary-background: var(--ab-primary);
-  --pico-primary-hover-background: #60a5fa;
+  --pico-primary-background: #2563eb;
+  --pico-primary-hover-background: #1d4ed8;
   --pico-primary-inverse: #ffffff;
   --pico-primary-underline: var(--ab-primary);
 
@@ -58,6 +59,7 @@
   --pico-secondary-hover: var(--ab-secondary-accent-hover);
   --pico-secondary-background: var(--ab-secondary-accent);
   --pico-secondary-hover-background: var(--ab-secondary-accent-hover);
+  --pico-secondary-inverse: var(--ab-text);
 
   --pico-card-background-color: rgba(9, 15, 31, 0.78);
   --pico-box-shadow: 0 14px 48px -18px var(--ab-primary-alpha-40);
@@ -90,17 +92,19 @@
   --pico-background-color: #f8faff;
   --pico-color: var(--ab-text);
 
-  --pico-primary: var(--ab-primary);
-  --pico-primary-hover: #2563eb;
-  --pico-primary-background: var(--ab-primary);
-  --pico-primary-hover-background: #2563eb;
+  /* Each text has a contrast of 4.5:1 or more with its background, in each state. */
+  --pico-primary: #2563eb;
+  --pico-primary-hover: #1d4ed8;
+  --pico-primary-background: #2563eb;
+  --pico-primary-hover-background: #1d4ed8;
   --pico-primary-inverse: #ffffff;
-  --pico-primary-underline: var(--ab-primary);
+  --pico-primary-underline: #2563eb;
 
-  --pico-secondary: var(--ab-secondary-accent);
-  --pico-secondary-hover: #16a34a;
+  --pico-secondary: #15803d;
+  --pico-secondary-hover: #166534;
   --pico-secondary-background: var(--ab-secondary-accent);
   --pico-secondary-hover-background: #16a34a;
+  --pico-secondary-inverse: var(--ab-text);
 
   --pico-card-background-color: rgba(255, 255, 255, 0.78);
   --pico-box-shadow: 0 14px 40px -20px var(--ab-primary-alpha-30);
@@ -142,20 +146,6 @@ b {
 code {
   color: var(--pico-color);
   background-color: var(--ab-code-bg);
-}
-
-a {
-  background: var(--ab-gradient-secondary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-[role="button"] {
-  background: var(--ab-gradient-secondary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 a:hover {

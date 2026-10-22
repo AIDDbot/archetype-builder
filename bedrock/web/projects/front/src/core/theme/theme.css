@@ -157,8 +157,8 @@ pre code {
 }
 
 mark {
-  color: var(--pico-secondary);
-  background-color: var(--pico-primary);
+  color: var(--pico-primary-inverse);
+  background-color: var(--pico-primary-background);
 }
 
 kbd {
