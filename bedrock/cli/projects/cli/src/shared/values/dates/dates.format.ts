@@ -18,3 +18,7 @@ export function formatTime(date: Date): string {
 export function formatDateTime(date: Date): string {
   return `${formatDate(date)} ${formatClock(date)}`;
 }
+
+export function formatIsoDate(date: Date): string {
+  return date.toISOString();
+}
