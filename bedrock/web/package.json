@@ -13,7 +13,7 @@
     "test": "vp run --filter \"./projects/*\" --filter \"!e2e\" test",
     "test:e2e": "vp run --filter e2e test",
     "upgrade": "npx npm-check-updates@latest -u --workspaces --root && npm install && npm exec -w e2e -- playwright install chromium",
-    "check": "vp check && vp test run --passWithNoTests",
+    "check": "node tools/scripts/check.mjs",
     "fix": "vp check --fix"
   },
   "devDependencies": {
