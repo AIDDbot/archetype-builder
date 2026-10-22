@@ -5,6 +5,12 @@
     "correctness": "off"
   },
   "rules": {
+    "eslint/no-param-reassign": [
+      "error",
+      {
+        "props": true
+      }
+    ],
     "eslint/complexity": [
       "error",
       {

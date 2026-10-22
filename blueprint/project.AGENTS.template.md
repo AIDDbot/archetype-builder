@@ -138,6 +138,7 @@ The index of `shared`. Read it before you write a check, a conversion or a forma
 | `ExpectedError`, `ruleError`, `attempt` | The expected error (`rule`, `usage`, `unavailable`) that each failed check raises; a `rule` error of one field; the result of an action, or `unavailable` when an external resource fails (only `data` and `core`). | `{shared_folder}/expected.error.ts` |
 | `Identity` | The type of the identity in the `package.json` of the project. | `{shared_folder}/identity.type.ts` |
 | `Database`, `openMemoryDatabase` | Only an `api`: the contract of the database, and a database in memory for the unit tests of `data`, with real SQL. | `{shared_folder}/database/database.{contract,open}.ts` |
+| `Store`, `createStore` | Only a `web`: a state with `read`, `set` (a new value) and `subscribe`; each store and each form keeps its state in one. | `{shared_folder}/state/store.create.ts` |
 | {environment primitive} | {contract} | {path} |
 
 <!-- [Project] Write the environment primitive of this project type in the row above, from section 4 of `project-types.md`. -->

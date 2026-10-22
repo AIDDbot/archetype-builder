@@ -30,7 +30,7 @@ A system with users must know who sends each request, before a feature needs thi
 - Feature `auth`: register, login, me and logout. `Email` is a value object in `shared/values/email/` (lower case), used at the edge and inside. The contracts of the session and the passwords are in `shared/session/`.
 - Passwords: a slow, salted algorithm that OWASP recommends, with explicit cost parameters stored with each hash. An unknown email still does one verification.
 - Sessions: a random opaque token; the database stores only its hash. `SESSION_TTL_HOURS` (1–720, default 24) is a new setting.
-- Session guard in `core`, with a resolver from the `auth` registration. Each registration is protected unless it is marked public; `core` mounts the public ones first. No separate list of paths.
+- Session guard in `core`, with a resolver from the `auth` registration. It keeps the session of each request in a `WeakMap` of `shared/session/`, and a route reads it with `readSession(request)`; it never writes a property of `request`. Each registration is protected unless it is marked public; `core` mounts the public ones first. No separate list of paths.
 - Feature `users`: `GET /api/users/:id`, only for the current user, through the `auth` facade.
 
 ### front
