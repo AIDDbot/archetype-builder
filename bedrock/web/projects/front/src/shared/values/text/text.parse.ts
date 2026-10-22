@@ -15,16 +15,17 @@ export function optionalText(value: unknown, field: string): string | undefined 
   return isAbsent ? undefined : requireText(value, field);
 }
 
-function describeLength(length: TextLength): string {
-  const isOpen = length.max === Infinity;
-  return isOpen ? `${length.min} or more` : `${length.min} to ${length.max}`;
+function checkLength(length: TextLength): void {
+  const isOpen = !Number.isFinite(length.min) || !Number.isFinite(length.max);
+  if (isOpen) throw new Error(`${length.field} needs a closed range`);
 }
 
 export function requireLength(value: unknown, length: TextLength): string {
+  checkLength(length);
   const text = requireText(value, length.field);
   const isShort = text.length < length.min;
   const isLong = text.length > length.max;
   const isOutside = isShort || isLong;
-  if (isOutside) throw ruleError(length.field, `has ${describeLength(length)} characters`);
+  if (isOutside) throw ruleError(length.field, `has ${length.min} to ${length.max} characters`);
   return text;
 }
