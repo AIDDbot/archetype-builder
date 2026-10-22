@@ -33,18 +33,19 @@ A record is one thing that the application shows, such as the application itself
 | --- | --- | --- | --- |
 | **list** | `readPage` (`limit` 1–100, default 20; `offset` ≥ 0) and `{ items, total }`, for a business list | record table: a caption, one header row, one row for each record, in a `<div class="overflow-auto">` of the theme, so it scrolls in its own area on a narrow screen | table reader |
 | **record** | the object; an unknown one is the 404 | record card (header with a heading, facts as label and value pairs, footer link) and record detail (page header, sections with a heading) | record reader |
-| **form** | `readFields`: one `fields` entry for each incorrect field | `createRecordForm`: error next to each field, disabled while it sends | `recordForm(scope)` |
+| **form** | `readFields`: one `fields` entry for each incorrect field | `createRecordForm`: error next to each field, out of its `<label>` and linked with `aria-describedby`, so that the name of a field is its label only; disabled while it sends | `recordForm(scope)`: a field by its label, its error by the description of the field (`toHaveAccessibleDescription`) |
 | **states** | n/a: an answer has no loading state | busy (marked for assistive technology, no fact), empty and error, in the place of the data | `holdRoute(page, pattern)`: the answer waits until the test releases it (busy); the release lets each held answer go on, then removes the interception (from web-1); `failRoute(page, pattern)`: the answer is an error |
-| **values** | ISO 8601 UTC dates, durations in seconds | readable, in the language of the browser or in the date format of `settings`; a missing value is `—` | n/a: tests check the shape of a value |
+| **values** | ISO 8601 UTC dates (`formatIsoDate`), durations in seconds (`toSeconds`) | readable (`readableDate`, `readableNumber`, `readableDuration`, `readableText`), in the language of the browser or in the date format of `settings`; a missing value is `—` | n/a: tests check the shape of a value |
 
 - Unit tests prove each decision with its list of values: each value format, the missing value, the empty list, the alignment of the columns, the order of the facts, each state.
 
 ### back
 
-- `readFields` and `readPage` in `shared/http/`, and the date format in `shared/values/dates/`. The features of later specs use them.
+- `readFields` and `readPage` in `shared/http/`. The features of later specs use them, and the value formats of the Bedrock in `shared/values/`: never write a format again.
 
 ### front
 
+- The readable values use `shared/values/readable/` of the Bedrock: never write a format again.
 - The components own the markup; a feature gives only a typed description (title, state, facts, columns, rows), which a `.ts` function of `shared` makes.
 - Semantic HTML on the style sheet of the archetype, one style sheet of the project for the records with theme tokens only, and a card grid with `repeat(auto-fit, minmax(18rem, 1fr))`: one column at 375 CSS pixels, two or more at 1024.
 - The theme (`custom.css`) gives the narrow screen: the menu wraps, a table in `overflow-auto` scrolls in its own area, and a long value wraps. The style sheet of the project never writes these rules again.

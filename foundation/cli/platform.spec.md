@@ -39,7 +39,7 @@ Each project must start in the same way in each environment, with its settings o
 - `core` parses the arguments one time, in one function, from options as data: each setting gives its option. A later spec adds its options to that parse, never a second parse.
 - The settings contract is in `shared/settings/`, with `readSetting`. A configuration file that is not a valid JSON object is an `unavailable` error with its path.
 - The expected error gives each kind its exit code: `rule` (1), `usage` (2) or `unavailable` (3). `core` catches each failure at the top level and is the only code that makes an exit code. An unexpected failure writes `error: Unexpected failure`, exit code 1, and logs its cause. Never a stack trace on the console. A unit test of `core` proves it: no test injects a failure into the `cli` process.
-- One log line for each invocation: the command, the exit code and the duration in milliseconds, with no argument value; `ERROR` for exit code 3, `WARN` for 1 and 2, `INFO` for 0.
+- One log line for each invocation: the command, the exit code and the duration in whole milliseconds with `formatMilliseconds` (`12ms`), with no argument value; `ERROR` for exit code 3, `WARN` for 1 and 2, `INFO` for 0.
 - Results go to standard output; messages and errors go to standard error.
 
 ### e2e
