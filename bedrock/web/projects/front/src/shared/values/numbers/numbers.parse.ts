@@ -17,16 +17,21 @@ function isInRange(value: number, range: NumberRange): boolean {
   return isNumber && !isLow && !isHigh;
 }
 
+function describeRange(range: NumberRange): string {
+  const isOpen = range.max === Infinity;
+  return isOpen ? `of ${range.min} or more` : `from ${range.min} to ${range.max}`;
+}
+
 export function parseNumber(value: unknown, range: NumberRange): number {
   const parsed = toNumber(value);
   const isValid = isInRange(parsed, range);
-  if (!isValid) throw ruleError(range.field, `is a number from ${range.min} to ${range.max}`);
+  if (!isValid) throw ruleError(range.field, `is a number ${describeRange(range)}`);
   return parsed;
 }
 
 export function parseInteger(value: unknown, range: NumberRange): number {
   const parsed = toNumber(value);
   const isValid = Number.isInteger(parsed) && isInRange(parsed, range);
-  if (!isValid) throw ruleError(range.field, `is an integer from ${range.min} to ${range.max}`);
+  if (!isValid) throw ruleError(range.field, `is an integer ${describeRange(range)}`);
   return parsed;
 }
