@@ -1,5 +1,5 @@
 // The whole repository, with no fix: each step runs, also after a red one, so that no check hides another.
-import { spawnSync } from "node:child_process";
+import { run } from "./shell.mjs";
 
 const steps = [
   ["format", "vp fmt --check"],
@@ -10,8 +10,7 @@ const steps = [
 
 const red = [];
 for (const [name, command] of steps) {
-  const result = spawnSync(command, { shell: true, stdio: "inherit" });
-  if (result.status !== 0) red.push(name);
+  if (!run(command)) red.push(name);
 }
 
 console.log(red.length > 0 ? `check: red in ${red.join(", ")}` : "check: green");

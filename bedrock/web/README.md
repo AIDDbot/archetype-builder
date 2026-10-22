@@ -8,7 +8,7 @@ A system made from the Archetype Web bedrock of the [Archetype Builder](https://
 | [`projects/front/`](./projects/front/) | `web` | TypeScript on Vite, with the brand theme on Pico CSS; no framework yet |
 | [`projects/e2e/`](./projects/e2e/) | `e2e` | Playwright with Chromium |
 
-Common tooling: npm workspaces and [Vite+](https://viteplus.dev) (format, lint, type check, Vitest, and the `vp staged` pre-commit hook). The debt checks are in `tools/lint/`.
+Common tooling: npm workspaces and [Vite+](https://viteplus.dev) (format, lint, type check, Vitest, and the `vp staged` pre-commit hook). The debt checks are in `tools/lint/`, and the longer root scripts in `tools/scripts/`.
 
 ## Identity
 

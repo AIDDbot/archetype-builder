@@ -9,9 +9,9 @@
   "type": "module",
   "scripts": {
     "prepare": "vp config",
-    "test": "vp run --filter \"./projects/*\" --filter \"!e2e\" test",
+    "test": "node tools/scripts/test.mjs",
     "test:e2e": "vp run --filter e2e test",
-    "upgrade": "npx npm-check-updates@latest -u --workspaces --root && npm install",
+    "upgrade": "node tools/scripts/upgrade.mjs",
     "check": "node tools/scripts/check.mjs",
     "fix": "vp check --fix"
   },

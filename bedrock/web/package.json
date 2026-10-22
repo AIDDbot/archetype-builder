@@ -9,10 +9,10 @@
   "type": "module",
   "scripts": {
     "prepare": "vp config",
-    "start": "vp run --parallel --log labeled --filter \"./projects/*\" --filter \"!e2e\" start",
-    "test": "vp run --filter \"./projects/*\" --filter \"!e2e\" test",
+    "start": "node tools/scripts/start.mjs",
+    "test": "node tools/scripts/test.mjs",
     "test:e2e": "vp run --filter e2e test",
-    "upgrade": "npx npm-check-updates@latest -u --workspaces --root && npm install && npm exec -w e2e -- playwright install chromium",
+    "upgrade": "node tools/scripts/upgrade.mjs",
     "check": "node tools/scripts/check.mjs",
     "fix": "vp check --fix"
   },
