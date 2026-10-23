@@ -1,6 +1,6 @@
 {
   "name": "archetype-builder",
-  "version": "0.4.1",
+  "version": "0.4.20",
   "codename": "Daylight",
   "private": true,
   "description": "Build, check and hand over the archetypes of AIDDbot",
