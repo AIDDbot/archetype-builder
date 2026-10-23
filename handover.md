@@ -8,13 +8,18 @@ The handover copies a complete work system (see [`construction.md`](./constructi
   - Only the foundation specs, the ones with a file in `.product/foundation/` of the work system, never the `fix` and `refactor` specs that repaired debt. Each one in `specs/{type}/`.
   - The specs numbered in their delivery order with no gaps (`S0001` scaffold, then each `feat`), with each reference and each test tag rewritten.
   - `PRD.md` with the shipped features.
-- Set the version of the root `package.json` to the release version.
+- Set the version and the codename of the root `package.json` to the version and the codename of the release.
 - Write the root `AGENTS.md` of the archetype with no trace of AIDDbot, because a person can use the archetype without it, and the scaffold of AIDDbot never copies this file: the system writes its own. Keep the sections of the root template (Assistant, System, Commands, Git):
   - Assistant: the lines of the harness, the language and the closed questions, with no identity of an assistant.
   - System: the problem, the solution, the verification and the projects of the work system.
   - Commands: the npm scripts of the root (`npm test`, `npm run test:e2e`, `npm run check`, `npm run fix`, `npm start`) and the pre-commit hook.
   - Git: preserve work, no secrets, no destructive commands; conventional commits on a branch, never on `main`.
-- Put the line "Changes pass the archetype gate of the Builder (`handover.md`)." in the `README.md` of the archetype.
+- Write the `README.md` of the archetype for a person, with no table of projects. Keep these sections in this order, the same in each archetype:
+  - The title and a short welcome: what the system has on its first day, and that it has no business feature. Then a link to `.product/PRD.md` for the features, and a link to `.product/system.md` for the projects, the technology and the technical decisions.
+  - Start, Check and Update: the npm scripts of the root.
+  - Your system: where the identity goes, and the ID of the first business spec.
+  - Changes: the line "Changes pass the archetype gate of the [Archetype Builder](https://github.com/AIDDbot/archetype-builder) (`handover.md`)."
+  - About and License: the same blocks as the `README.md` of the Builder.
 - The archetype gate passes.
 - Release at the `major.minor` and codename of the AIDDbot release, with tag `v{version}`. Then pin the tag in the catalog of AIDDbot (`architect-system-foundation/assets/archetypes.md`).
 
