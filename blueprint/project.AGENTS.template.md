@@ -1,5 +1,5 @@
 <!--
-Archetype-Blueprint: the data of one project (Halloween D59). A map, not a manual: the Architecture and the Code of the root AGENTS.md give the rules one time for the system. Never copy them here.
+Archetype-Blueprint: the data of one project (Halloween D59). A map, not a manual: the code rules of `implement-project` (`.agents/skills/implement-project/references/code-rules.md`) give the rules one time for the system. Never copy them here.
 Three levels fill this file: [Blueprint] this file, [Archetype] the AGENTS.md of the archetype repository, [Project] {project}/AGENTS.md. No level changes the sections or their order.
 Write short lists and tables, not prose. Remove each comment and each empty section. `aidd release` refuses a file over 128 lines, with a comment, or with an empty section.
 For implementation examples by ecosystem, see ecosystems.md. They are guidance, not rules.
