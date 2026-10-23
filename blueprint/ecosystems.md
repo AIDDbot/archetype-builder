@@ -43,6 +43,7 @@ export default defineConfig({
     options: { typeAware: true, typeCheck: true },
     rules: {
       "typescript/no-non-null-assertion": "error",
+      "typescript/no-deprecated": "error",
       "import/no-unassigned-import": ["error", { allow: ["**/*.css"] }],
     },
   },
@@ -58,7 +59,7 @@ export default defineConfig({
 - Format and lint leave out `.agents/` and `.aiddbot/` (`ignorePatterns`): AIDDbot owns them, and a commit of `aiddbot update` must pass the hook with no change to them. They leave out `tools/` too: it is an asset of the Bedrock, and a format would make it differ.
 - `test.projects` names the folder of each Vitest project, so that `vp test related` uses the configuration of each project.
 - The hook lints by packages, never rule by rule: the categories `correctness` and `suspicious`, with the plugins of the stack (add `react` and `jsx-a11y` in a `web` with React). Never turn on a rule or turn off a rule of a package one by one. A finding of a package is repaired in the code.
-- The one rule turned on: a value that can be missing is checked, never asserted with `!` (`typescript/no-non-null-assertion`). One rule has an option: `import/no-unassigned-import` allows a style sheet (`**/*.css`), because a `web` imports each one for its effect. It is in the category `restriction`, which is not a package: its rules contradict each other.
+- The two rules turned on: a value that can be missing is checked, never asserted with `!` (`typescript/no-non-null-assertion`); and no code uses an API marked `@deprecated` (`typescript/no-deprecated`, with `typeAware`), because the next `upgrade` removes it. One rule has an option: `import/no-unassigned-import` allows a style sheet (`**/*.css`), because a `web` imports each one for its effect. It is in the category `restriction`, which is not a package: its rules contradict each other.
 - A false alarm of a package, in a `web` with React: `react/react-in-jsx-scope`. React 17 and later transforms JSX with no `React` in scope. Turn it off in the `rules` of the root `vite.config.ts`, next to the rule turned on; never in a file of its own.
 
 **Unit tests**
@@ -85,6 +86,7 @@ export default defineConfig({
 - A function never writes into an object that it gets (`eslint/no-param-reassign` with `props: true`): it returns a new value. `Object.assign` to a parameter is the same, though the rule does not see it. State that changes stays in a local variable of a closure, never in an object passed from function to function (from web-1).
 - A parameter has a named type (`types/named`, a `jsPlugins` rule of Oxlint in `tools/lint/types.mjs`). An object type is never written in a signature: `function listen(options: ListenOptions)`, with `type ListenOptions = { … }` in the contract of `shared` or above the function. The props of a component too: `type AboutPageProps = { … }`. A type that a function returns has a name too, never `ReturnType<typeof …>` in a parameter.
 - An exported function declares its return type (`typescript/explicit-module-boundary-types`, in `crap`): `export function openDatabase(path: string): Database`. A function that returns an object with methods returns the named type of its contract, so the reader sees what it gives without the implementation. A component (`.tsx`) returns JSX and has no annotation.
+- A number with a meaning has a name (`eslint/no-magic-numbers`, in `crap`): a `const` in `UPPER_SNAKE_CASE` at the top of its module (`const NO_CONTENT = 204;`), or a member in camelCase of a named object `as const` for numbers that go together (`const BYTES = { salt: 16, hash: 64, token: 32 } as const;`): `as const` makes each member `readonly`. The rule ignores `-1`, `0`, `1` and `2`, the indexes of an array, the default values, the enums and the types. The tests and the `e2e` are out (an override for `*.test.ts` and `*.spec.ts` turns it off, and `complexity.e2e.json` has no such rule): their numbers are the expected values of the spec.
 - Add a rule of our own only when no rule of a package checks the same.
 
 **Code rules of each project**
