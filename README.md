@@ -30,6 +30,17 @@ For now, only the author of AIDDbot uses this repository. It has no tool yet: th
 
 The `major.minor` and the codename are the same as the AIDDbot release whose Blueprint this repository obeys. Patch versions are independent. Each version has a tag `v{version}`. Never move a published tag.
 
+## About
+
+- **Author**: [Alberto Basalo](https://albertobasalo.dev)
+- **Socials**:
+  - [X](https://x.com/albertobasalo)
+  - [LinkedIn](https://www.linkedin.com/in/albertobasalo/)
+  - [GitHub](https://github.com/albertobasalo)
+- **Cursos en Español**: [AI code Academy](https://aicode.academy)
+- **AIDDbot.com**: [AIDDbot.com](https://aiddbot.com)
+- **The main Repository for AIDDBot**: [AIDDbot](https://github.com/AIDDbot/AIDDbot)
+
 ## License
 
 MIT
