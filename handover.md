@@ -9,7 +9,12 @@ The handover copies a complete work system (see [`construction.md`](./constructi
   - The specs numbered in their delivery order with no gaps (`S0001` scaffold, then each `feat`), with each reference and each test tag rewritten.
   - `PRD.md` with the shipped features.
 - Set the version of the root `package.json` to the release version.
-- Write the root `AGENTS.md` of the archetype: the Blueprint of the root `AGENTS.md` of the work system, and the line "Changes pass the archetype gate of the Builder (`handover.md`)."
+- Write the root `AGENTS.md` of the archetype with no trace of AIDDbot, because a person can use the archetype without it, and the scaffold of AIDDbot never copies this file: the system writes its own. Keep the sections of the root template (Assistant, System, Commands, Git):
+  - Assistant: the lines of the harness, the language and the closed questions, with no identity of an assistant.
+  - System: the problem, the solution, the verification and the projects of the work system.
+  - Commands: the npm scripts of the root (`npm test`, `npm run test:e2e`, `npm run check`, `npm run fix`, `npm start`) and the pre-commit hook.
+  - Git: preserve work, no secrets, no destructive commands; conventional commits on a branch, never on `main`.
+- Put the line "Changes pass the archetype gate of the Builder (`handover.md`)." in the `README.md` of the archetype.
 - The archetype gate passes.
 - Release at the `major.minor` and codename of the AIDDbot release, with tag `v{version}`. Then pin the tag in the catalog of AIDDbot (`architect-system-foundation/assets/archetypes.md`).
 
