@@ -3,7 +3,7 @@
 
 ## Problem
 
-Each project of `.product/system.md` must have its framework, its entry and all its tooling slots, before the first foundation spec adds a behavior. The Bedrock of the archetype is at the root: the workspace, the tooling of each project, the debt checks (`tools/lint/`), the identity, the license and, in the `front`, the brand theme (Halloween D42, D45).
+Each project of `.product/system.md` must have its framework, its entry and all its tooling slots, before the first foundation spec adds a behavior. The Bedrock of the archetype is at the root: the workspace, the tooling of each project, the debt checks (`tools/lint/`), the identity, the license and, in the `front`, the brand theme.
 
 ### User Stories
 
@@ -49,14 +49,14 @@ Each project of `.product/system.md` must have its framework, its entry and all 
 
 **Step 2: add entry**
 
-- The entry `main`, alone at the root of `src`; the manifest of the features, empty; and `core/lifecycle/` with the composition and the start (Halloween D40, D41). The `start` script of the project runs the entry.
+- The entry `main`, alone at the root of `src`; the manifest of the features, empty; and `core/lifecycle/` with the composition and the start. The `start` script of the project runs the entry.
   - Keep the mechanisms of the framework (injector, router, store, file names) and map them to the concepts.
 - The primitives of `shared` come with the Bedrock, with their unit tests: the expected error and the identity type at the root of `shared`, the others in `shared/values/`, one folder for each type of value and, in the `back`, the database contract and `openMemoryDatabase()` in `shared/database/`. Use them; never write a second version. The index of `shared` (`src/shared/README.md`, written by `aidd release`) lists them. An `e2e` has only the checks (`shared/values/values.check.ts`), with no unit test: it reads JSON with no type too.
 - In the `front`, the entry imports Pico CSS, the fonts and the theme of `src/core/theme/`, in the order of `ecosystems.md`.
 
 **Step 3: register tooling**
 
-- Run the `upgrade` command one time, because models remember old releases.
+- Run the `upgrade` command one time.
   - If a new major breaks a different tool of the stack, keep the last compatible major. Write the pin and its reason in the project rules of that `AGENTS.md`.
   - Never pin a major that `ecosystems.md` requires. Replace the tool that breaks.
 - The ignore file never hides source. Anchor runtime data patterns to the project root.

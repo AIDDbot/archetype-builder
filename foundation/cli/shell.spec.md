@@ -39,7 +39,7 @@ Each interface of the system must have one frame that each feature uses: the sam
 
 - A helper in `shared` runs one `cli` invocation with `--json` and returns the parsed object and the exit code.
 - The tests check that the identity is there, never its values: the owner changes them. The application name and the description are text that is not empty, and the version is a semantic version. No test reads a `package.json` of another project.
-- The contract tests (R04, R05) run one invocation each, with one value: the unit tests of `core` prove each check of a setting with its list of values (Halloween D40).
+- The contract tests (R04, R05) run one invocation each, with one value: the unit tests of `core` prove each check of a setting with its list of values.
 - A test checks what its spec adds and the order that it needs, never that nothing else exists: later specs add settings and commands.
 
 ## Verification

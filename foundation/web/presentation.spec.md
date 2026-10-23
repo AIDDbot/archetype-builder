@@ -52,7 +52,7 @@ A record is one thing that the application shows, such as the application itself
 
 ### e2e
 
-- The readers of tables and records, `recordForm(scope)`, `holdRoute` and `failRoute`, and a helper for the contrast ratio (WCAG 2) are in `shared`, for the tests of the features (Daylight, from web-I: `about` wrote the busy helper in two tests).
+- The readers of tables and records, `recordForm(scope)`, `holdRoute` and `failRoute`, and a helper for the contrast ratio (WCAG 2) are in `shared`, for the tests of the features.
 
 ## Verification
 
