@@ -15,11 +15,10 @@ The handover copies a complete work system (see [`construction.md`](./constructi
   - Commands: the npm scripts of the root (`npm test`, `npm run test:e2e`, `npm run check`, `npm run fix`, `npm start`) and the pre-commit hook.
   - Git: preserve work, no secrets, no destructive commands; conventional commits on a branch, never on `main`.
 - Write the `README.md` of the archetype for a person, with no table of projects. Keep these sections in this order, the same in each archetype:
-  - The title and a short welcome: what the system has on its first day, and that it has no business feature. Then a link to `.product/PRD.md` for the features, and a link to `.product/system.md` for the projects, the technology and the technical decisions.
-  - Start, Check and Update: the npm scripts of the root.
-  - Your system: where the identity goes, and the ID of the first business spec.
-  - Changes: the line "Changes pass the archetype gate of the [Archetype Builder](https://github.com/AIDDbot/archetype-builder) (`handover.md`)."
-  - About and License: the same blocks as the `README.md` of the Builder.
+  - The title and a short welcome: what the system has out of the box on its first day, and that it has no business feature. Then that it comes from AIDDbot, a set of agent skills, and that a person can also use it on their own. Then a link to `.product/PRD.md` for the features, and a link to `.product/system.md` for the projects, the technology and the technical decisions.
+  - Start, Check and Update: the npm scripts of the root. Start has the requirements, and a `> [!NOTE]` that the workspace is built on the [Vite+](https://viteplus.dev/) toolchain.
+  - Make it yours: a `> [!TIP]` to give the app its name and sign it; where the identity goes; the `.product/` folder with the foundation specs and the schema documents; and the ID of the first business spec, with AIDDbot.
+  - A rule (`---`), then About and License: the same blocks as the `README.md` of the Builder.
 - The archetype gate passes.
 - Release at the `major.minor` and codename of the AIDDbot release, with tag `v{version}`. Then pin the tag in the catalog of AIDDbot (`architect-system-foundation/assets/archetypes.md`).
 
