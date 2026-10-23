@@ -70,6 +70,13 @@ for (const { name, fields } of specs) {
   fs.renameSync(path.join(folder, name), path.join(folder, name.replace(fields.id, map.get(fields.id))));
 }
 
+/** The first sentence of the Problem, cut at its first colon or semicolon, as `aidd release` writes it in the PRD. */
+function summary(text) {
+  const paragraph = /^## Problem\r?\n(?:[ \t]*\r?\n)*([^\r\n]+)/m.exec(text)?.[1]?.trim() ?? "";
+  if (!paragraph || /^[{#]/.test(paragraph)) return "";
+  return `${paragraph.split(/(?<=\.)\s/)[0].split(/[:;]/)[0].trim().replace(/\.$/, "")}.`;
+}
+
 // 3. Write PRD.md: the shipped features by domain, as `aidd release` writes it.
 const features = specs.filter(({ fields }) => fields.type === "feat");
 const domains = [...new Set(features.map(({ fields }) => fields.domain))];
@@ -78,8 +85,8 @@ for (const domain of domains) {
   lines.push(`## ${domain}`, "");
   for (const { name, text, fields } of features.filter((spec) => spec.fields.domain === domain)) {
     const title = /^# \S+ — (.+)$/m.exec(text)?.[1] ?? fields.slug;
-    const id = map.get(fields.id);
-    lines.push(`- [${id}](specs/feat/${name.replace(fields.id, id)}) ${title}`);
+    const key = name.replace(fields.id, map.get(fields.id)).replace(/\.md$/, "");
+    lines.push(`- [${key}](specs/feat/${key}.md): ${summary(text) || title}`);
   }
   lines.push("");
 }
