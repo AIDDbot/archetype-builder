@@ -29,7 +29,7 @@ Each person must keep the preferences of their account, and change them with no 
 ### front
 
 - Feature `settings`: page `/settings`, menu link `Settings`, access mark `session`. The form of `presentation`, with the current values, a save control, the confirmation `Settings saved` and the error of each field next to it.
-- After a login and after a save, `core` applies the theme of the account through a session service of `shared/session/`; after a logout, the theme of the browser of `shell`. `core` never imports the feature.
+- After a login, after a reload with a session and after a save, `core` applies the theme of the account through a session service of `shared/session/`; after a logout, the theme of the browser of `shell`. The theme control of `shell` changes the theme until the next reload or login. `core` never imports the feature.
 - The values primitive of `presentation` reads the date format from the same service: `locale` is the language of the browser; `iso` is `2026-10-13 08:30`, in local time.
 
 ### e2e
@@ -50,7 +50,7 @@ Each person must keep the preferences of their account, and change them with no 
 - **R01**: WHEN a client with a session requests `GET /api/users/me/settings`, the `back` SHALL answer 200 with `{ "theme", "dateFormat" }` of that user, or the defaults `system` and `locale`. IF the request has no valid session, THEN it SHALL answer 401.
 - **R02**: WHEN a client with a session sends `PUT /api/users/me/settings` with valid values, the `back` SHALL keep them and answer 200 with the kept record, and the next `GET` SHALL answer them. IF a value is not valid, THEN it SHALL answer 400 with one `fields` entry for each incorrect field, and keep nothing. Test: one invalid value in each field, in one request.
 - **R03**: WHEN a user with a session opens `/settings` from the menu link `Settings`, the `front` SHALL show a form with the current theme and date format. WHEN the user saves new values, it SHALL show `Settings saved`, apply the theme at once, and show each date in the new format. IF the `back` rejects the values or does not answer, THEN it SHALL show the error and keep the values of the form. Test: save `dark` and `iso`, then open the account page and read its creation date; block the `PUT` in the browser.
-- **R04**: WHEN a user logs in, the `front` SHALL apply the theme of their account, also when the browser keeps a different theme. WHEN the user logs out, it SHALL apply the theme of the browser. Test: a new browser context with the other theme.
+- **R04**: WHEN a user logs in, the `front` SHALL apply the theme of their account, also when the browser keeps a different theme. WHEN a user with a session reloads a page, it SHALL apply the theme of their account, also after the theme control changed it. WHEN the user logs out, it SHALL apply the theme of the browser. Test: a new browser context with the other theme; select the theme control, then reload.
 
 ### Expected URLs and APIs
 
