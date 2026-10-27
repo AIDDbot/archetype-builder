@@ -23,7 +23,7 @@ The human prepares an empty work system:
   3. One commit for each folder of `projects/`: `chore: the Bedrock {project} project of {Archetype} (Builder {hash})`.
   4. `.product/`: `chore: the Foundation, the Blueprint and the {Archetype} manifest (Builder {hash}, AIDDbot {hash})`.
 
-Do not run `/architect-system-foundation`: it offers only the archetypes of the catalog (Halloween D5), and this system makes one.
+Do not run `/architect-initial-foundation`: it offers only the archetypes of the catalog (Halloween D5), and this system makes one.
 
 ## 2. Deliver the specs
 

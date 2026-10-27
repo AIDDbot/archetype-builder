@@ -20,7 +20,7 @@ The handover copies a complete work system (see [`construction.md`](./constructi
   - Make it yours: a `> [!TIP]` to give the app its name and sign it; where the identity goes; the `.product/` folder with the foundation specs and the schema documents; and the ID of the first business spec, with AIDDbot.
   - A rule (`---`), then About and License: the same blocks as the `README.md` of the Builder.
 - The archetype gate passes.
-- Release at the `major.minor` and codename of the AIDDbot release, with tag `v{version}`. Then pin the tag in the catalog of AIDDbot (`architect-system-foundation/assets/archetypes.md`).
+- Release at the `major.minor` and codename of the AIDDbot release, with tag `v{version}`. Then pin the tag in the catalog of AIDDbot (`architect-initial-foundation/assets/archetypes.md`).
 
 The archetype has no `.aiddbot/` and no counter file. A system that starts from it gets the specs in `.product/specs/`, and AIDDbot gives its first business spec the ID after the last one.
 
